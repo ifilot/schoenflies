@@ -20,11 +20,33 @@
 #define MAIN_H
 
 #include <iostream>
+#include <string>
+#include <boost/program_options.hpp>
 #include <QApplication>
 #include <QPushButton>
 
-#define PROGRAM_NAME "schoenflies"
+namespace po = boost::program_options;
+
+#define PROGRAM_NAME "Schoenflies"
 #define PROGRAM_DESC "determine and visualise molecular symmetry"
 #define PROGRAM_VERSION "0.1.0"
+
+/**
+ * @brief Run Schoenflies with command-line arguments.
+ *
+ * @param argc argument count
+ * @param argv argument vector
+ * @return int return code
+ */
+int main_cmd(int argc, char** argv);
+
+/**
+ * @brief Run the Schoenflies GUI.
+ *
+ * @param argc argument count
+ * @param argv argument vector
+ * @return int return code
+ */
+int main_gui(int argc, char** argv);
 
 #endif  // MAIN_H
