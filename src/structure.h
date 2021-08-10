@@ -1,0 +1,120 @@
+/**
+ * Schoenflies
+ * Copyright (c) 2021 Luuk Kempen
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+#ifndef STRUCTURE_H
+#define STRUCTURE_H
+
+#include <fstream>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <boost/algorithm/string.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/lexical_cast.hpp>
+#include <glm/glm.hpp>
+#include "periodic_table/periodic_table.h"
+
+class Structure {
+private:
+    unsigned int num_atoms;
+    std::vector<glm::vec3> coordinates;
+    std::vector<unsigned int> atomic_numbers;
+    std::string description;
+    std::string filename;
+
+public:
+    /**
+     * @brief Default constructor
+     */
+    Structure();
+
+    /**
+     * @brief Construct a new Structure object from a file
+     *
+     * @param path
+     */
+    Structure(const std::string& path);
+
+    /**
+     * @brief Get the number of atoms in the structure
+     *
+     * @return const unsigned int
+     */
+    const unsigned int get_num_atoms() const;
+
+    /**
+     * @brief Get the coordinates of the atoms in the structure
+     *
+     * @return const std::vector<glm::vec3>&
+     */
+    const std::vector<glm::vec3>& get_coordinates() const;
+
+    /**
+     * @brief Get the coordinates of an atom in the structure by index
+     *
+     * @param index index of atom
+     * @return const glm::vec3
+     */
+    const glm::vec3 get_coordinates(unsigned int index) const;
+
+    /**
+     * @brief Get the atomic numbers of the atoms in the structure
+     *
+     * @return const std::vector<unsigned int>&
+     */
+    const std::vector<unsigned int>& get_atomic_numbers() const;
+
+    /**
+     * @brief Get the atomic number of an atom in the structure by index
+     *
+     * @param index index of atom
+     * @return const unsigned int
+     */
+    const unsigned int get_atomic_number(unsigned int index) const;
+
+    /**
+     * @brief Get the description of the structure
+     *
+     * @return const std::string&
+     */
+    const std::string& get_description() const;
+
+    /**
+     * @brief Get the filename of the structure
+     *
+     * @return const std::string&
+     */
+    const std::string& get_filename() const;
+
+private:
+    /**
+     * @brief Load structure from file
+     *
+     * @param path
+     */
+    void load_from_file(const std::string& path);
+
+    /**
+     * @brief Load structure from xyz file
+     *
+     * @param path
+     */
+    void load_from_xyz(const std::string& path);
+};
+
+#endif  // STRUCTURE_H
