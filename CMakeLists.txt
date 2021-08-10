@@ -12,7 +12,10 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 set(BOOST_ALL_DYN_LINK OFF)
 
-find_package(Boost 1.67.0 COMPONENTS program_options REQUIRED)
+find_package(Boost 1.67.0 COMPONENTS filesystem program_options REQUIRED)
+
+# Use GLM
+find_package(glm REQUIRED)
 
 # Use Qt5
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
@@ -22,13 +25,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${CMAKE_BINARY_DIR})
 
 # Add sources
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.cpp" "src/**/*.cpp")
 add_executable(schoenflies ${SOURCES})
 
 # Set C++17
 add_definitions(-std=c++17 -march=native)
 
 # Libraries
-target_link_libraries(schoenflies Qt5::Widgets ${Boost_LIBRARIES})
+target_link_libraries(schoenflies ${Boost_LIBRARIES} glm Qt5::Widgets)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

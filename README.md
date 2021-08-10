@@ -7,7 +7,7 @@ Determine and visualise molecular symmetry.
 ## Dependencies (Debian)
 
 ```
-sudo apt install build-essential qt5-default libboost-all-dev
+sudo apt install build-essential qt5-default libboost-all-dev libglm-dev
 ```
 
 ## Compilation (Debian)
