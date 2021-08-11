@@ -82,10 +82,18 @@ int main_cmd(int argc, char** argv) {
 int main_gui(int argc, char** argv) {
     QApplication app(argc, argv);
 
-    // TODO do more stuff
-    QPushButton hello("Hello, World!", 0);
+    std::unique_ptr<MainWindow> main_window;
 
-    hello.show();
+    try {
+        // build main window
+        main_window = std::make_unique<MainWindow>();
+        main_window->resize(800, 600);
+    } catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return -1;
+    }
+
+    main_window->show();
 
     return app.exec();
 }

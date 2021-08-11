@@ -16,36 +16,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef PROGRAM_H
+#define PROGRAM_H
 
-#include <iostream>
-#include <memory>
-#include <string>
-#include <boost/program_options.hpp>
-#include <QApplication>
-#include <QPushButton>
-#include "program.h"
-#include "gui/main_window.h"
+#define PROGRAM_NAME "Schoenflies"
+#define PROGRAM_DESC "determine and visualise molecular symmetry"
+#define PROGRAM_VERSION "0.1.0"
 
-namespace po = boost::program_options;
-
-/**
- * @brief Run Schoenflies with command-line arguments.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
- */
-int main_cmd(int argc, char** argv);
-
-/**
- * @brief Run the Schoenflies GUI.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
- */
-int main_gui(int argc, char** argv);
-
-#endif  // MAIN_H
+#endif  // PROGRAM_H

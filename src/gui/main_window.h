@@ -16,36 +16,44 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef GUI_MAIN_WINDOW_H
+#define GUI_MAIN_WINDOW_H
 
-#include <iostream>
-#include <memory>
-#include <string>
-#include <boost/program_options.hpp>
+#include <QAction>
 #include <QApplication>
-#include <QPushButton>
-#include "program.h"
-#include "gui/main_window.h"
+#include <QKeySequence>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QObject>
+#include <QString>
+#include "../program.h"
 
-namespace po = boost::program_options;
+class MainWindow: public QMainWindow {
+    Q_OBJECT
 
-/**
- * @brief Run Schoenflies with command-line arguments.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
- */
-int main_cmd(int argc, char** argv);
+public:
+    /**
+     * @brief Construct a new Main Window object
+     */
+    MainWindow();
 
-/**
- * @brief Run the Schoenflies GUI.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
- */
-int main_gui(int argc, char** argv);
+private slots:
+    /**
+     * @brief Open a new file
+     */
+    void open();
 
-#endif  // MAIN_H
+    /**
+     * @brief Close the application
+     */
+    void exit();
+
+    /**
+     * @brief Display about menu
+     */
+    void about();
+};
+
+#endif  // GUI_MAIN_WINDOW_H
