@@ -51,6 +51,10 @@ MainWindow::MainWindow() {
     menu_help->addAction(action_about);
 
     setMenuBar(menu_bar);
+
+    // central widget
+    CentralWidget* central_widget = new CentralWidget(this);
+    setCentralWidget(central_widget);
 }
 
 /**

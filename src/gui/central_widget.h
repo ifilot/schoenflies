@@ -16,45 +16,26 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_MAIN_WINDOW_H
-#define GUI_MAIN_WINDOW_H
+#ifndef GUI_CENTRAL_WIDGET_H
+#define GUI_CENTRAL_WIDGET_H
 
-#include <QAction>
-#include <QApplication>
-#include <QKeySequence>
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QObject>
-#include <QString>
-#include "../program.h"
-#include "central_widget.h"
+#include <QHBoxLayout>
+#include <QTextEdit>
+#include <QWidget>
+#include "main_window.h"
 
-class MainWindow: public QMainWindow {
+class MainWindow;  // forward declaration
+
+class CentralWidget: public QWidget {
     Q_OBJECT
 
 public:
     /**
-     * @brief Construct a new Main Window object
+     * @brief Construct a new Central Widget object
+     *
+     * @param mw pointer to MainWindow object
      */
-    MainWindow();
-
-private slots:
-    /**
-     * @brief Open a new file
-     */
-    void open();
-
-    /**
-     * @brief Close the application
-     */
-    void exit();
-
-    /**
-     * @brief Display about menu
-     */
-    void about();
+    CentralWidget(MainWindow* mw);
 };
 
-#endif  // GUI_MAIN_WINDOW_H
+#endif  // GUI_CENTRAL_WIDGET_H

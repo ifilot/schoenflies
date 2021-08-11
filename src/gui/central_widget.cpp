@@ -16,45 +16,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_MAIN_WINDOW_H
-#define GUI_MAIN_WINDOW_H
-
-#include <QAction>
-#include <QApplication>
-#include <QKeySequence>
-#include <QMainWindow>
-#include <QMenu>
-#include <QMenuBar>
-#include <QMessageBox>
-#include <QObject>
-#include <QString>
-#include "../program.h"
 #include "central_widget.h"
 
-class MainWindow: public QMainWindow {
-    Q_OBJECT
+/**
+ * @brief Construct a new Central Widget object
+ *
+ * @param mw pointer to MainWindow object
+ */
+CentralWidget::CentralWidget(MainWindow* mw) {
+    QHBoxLayout *layout = new QHBoxLayout;
 
-public:
-    /**
-     * @brief Construct a new Main Window object
-     */
-    MainWindow();
+    // TODO text edit is temporary
+    QTextEdit *text_edit = new QTextEdit();
+    text_edit->setReadOnly(true);
+    text_edit->setPlainText("Hello, World!");
+    layout->addWidget(text_edit);
 
-private slots:
-    /**
-     * @brief Open a new file
-     */
-    void open();
-
-    /**
-     * @brief Close the application
-     */
-    void exit();
-
-    /**
-     * @brief Display about menu
-     */
-    void about();
-};
-
-#endif  // GUI_MAIN_WINDOW_H
+    this->setLayout(layout);
+}
