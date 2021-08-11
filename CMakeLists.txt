@@ -28,7 +28,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${CMAKE_BINARY_DIR})
 
 # Add sources
-file(GLOB SOURCES "src/*.cpp" "src/**/*.cpp")
+file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
 add_executable(schoenflies ${SOURCES})
 
 # Libraries
