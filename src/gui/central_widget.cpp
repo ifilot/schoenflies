@@ -26,9 +26,9 @@
 CentralWidget::CentralWidget(MainWindow* mw) {
     QHBoxLayout *layout = new QHBoxLayout;
 
-    GLWidget *gl_widget = new GLWidget(this);
-    gl_widget->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
-    layout->addWidget(gl_widget);
+    this->gl_widget = new GLWidget(this);
+    this->gl_widget->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+    layout->addWidget(this->gl_widget);
 
     // TODO text edit is temporary
     this->text_edit = new QTextEdit();
@@ -46,6 +46,8 @@ CentralWidget::CentralWidget(MainWindow* mw) {
  */
 void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->structure = structure;
+
+    this->gl_widget->set_structure(structure);
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
 }

@@ -167,3 +167,23 @@ const std::string& Structure::get_description() const {
 const std::string& Structure::get_filename() const {
     return this->filename;
 }
+
+/**
+ * @brief Calculate pairs of elements between which bonds are (likely) formed
+ *
+ * @return const std::vector<std::pair<unsigned int, unsigned int>>
+ */
+const std::vector<std::pair<unsigned int, unsigned int>> Structure::calculate_bond_pairs() const {
+    std::vector<std::pair<unsigned int, unsigned int>> pairs;
+
+    for (unsigned int i = 0; i < this->get_num_atoms() - 1; ++i) {
+        for (unsigned int j = i + 1; j < this->get_num_atoms(); ++j) {
+            float dist2 = glm::length2(this->get_coordinates(i) - this->get_coordinates(j));
+            float thres = 20 * PeriodicTable::get_element(this->get_atomic_number(i)).radius *
+                PeriodicTable::get_element(this->get_atomic_number(j)).radius;
+            if (dist2 < thres) pairs.emplace_back(i, j);
+        }
+    }
+
+    return pairs;
+}

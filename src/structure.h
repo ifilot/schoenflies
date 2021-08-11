@@ -19,14 +19,18 @@
 #ifndef STRUCTURE_H
 #define STRUCTURE_H
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 #include <fstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/lexical_cast.hpp>
 #include <glm/glm.hpp>
+#include <glm/gtx/norm.hpp>
 #include "periodic_table/periodic_table.h"
 
 class Structure {
@@ -100,6 +104,13 @@ public:
      * @return const std::string&
      */
     const std::string& get_filename() const;
+
+    /**
+     * @brief Calculate pairs of elements between which bonds are (likely) formed
+     *
+     * @return const std::vector<std::pair<unsigned int, unsigned int>>
+     */
+    const std::vector<std::pair<unsigned int, unsigned int>> calculate_bond_pairs() const;
 
 private:
     /**

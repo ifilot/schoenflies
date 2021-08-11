@@ -35,6 +35,9 @@
 #include <QVector3D>
 #include <QWheelEvent>
 #include <QWidget>
+#include "../structure.h"
+#include "../periodic_table/element.h"
+#include "../periodic_table/periodic_table.h"
 #include "models/geometry.h"
 #include "models/model.h"
 #include "shaders/shader_program_manager.h"
@@ -70,6 +73,13 @@ public:
      * @param parent pointer to parent widget
      */
     GLWidget(QWidget* parent);
+
+    /**
+     * @brief Set the structure displayed in the widget
+     *
+     * @param structure
+     */
+    void set_structure(std::shared_ptr<Structure> structure);
 
 protected:
     /**
@@ -144,6 +154,11 @@ private:
      * @param vector arcball rotation vector
      */
     void set_arcball_rotation(float angle, const QVector4D& vector);
+
+    /**
+     * @brief Remove all instances of models
+     */
+    void remove_model_instances();
 
 public slots:
     /**

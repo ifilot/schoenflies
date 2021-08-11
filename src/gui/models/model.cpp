@@ -93,6 +93,13 @@ void Model::add_instance(const glm::vec3& scale, const glm::mat4& rotation, cons
 }
 
 /**
+ * @brief Remove all instances of the model
+ */
+void Model::remove_instances() {
+    this->instances.clear();
+}
+
+/**
  * @brief Get all model instances
  *
  * @return const std::vector<ModelInstance>&

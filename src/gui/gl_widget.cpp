@@ -31,9 +31,55 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
 
     this->models.push_back(Geometry::sphere());
     this->models.push_back(Geometry::cylinder());
+}
 
-    // TODO load actual model here
-    this->models[0]->add_instance(glm::vec3(1.0), glm::mat4(1.0), glm::vec3(0.0), glm::vec4(0.0, 1.0, 0.0, 1.0));
+/**
+ * @brief Set the structure displayed in the widget
+ *
+ * @param structure
+ */
+void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
+    this->remove_model_instances();
+
+    for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
+        Element el = PeriodicTable::get_element(structure->get_atomic_number(i));
+        this->models[0]->add_instance(glm::vec3(el.radius), glm::mat4(1.0), structure->get_coordinates(i), glm::vec4(el.colour, 1.0f));
+    }
+
+    auto pairs = structure->calculate_bond_pairs();
+    for (auto pair : pairs) {
+        // generate two cylinders for each bond
+        Element el_a = PeriodicTable::get_element(structure->get_atomic_number(pair.first));
+        Element el_b = PeriodicTable::get_element(structure->get_atomic_number(pair.second));
+
+        glm::vec3 v = structure->get_coordinates(pair.second) - structure->get_coordinates(pair.first);
+        glm::vec3 vn = glm::normalize(v);
+        float vl = glm::length(v);
+
+        float scale_factor = .5 + (el_a.radius - el_b.radius) / vl / 2;
+
+        glm::vec3 trans_a = structure->get_coordinates(pair.first);
+        glm::vec3 trans_b = trans_a + scale_factor * v;
+
+        glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};
+        glm::vec3 scale_b = {0.05f, 0.05f, (1 - scale_factor) * vl};
+
+        glm::mat4 rotation(1.0f);
+        if (qFabs(vn.z) > .9999f) {
+            if (vn.z < -.5f) {
+                rotation = glm::rotate(glm::mat4(1.0f), -(float) M_PI, glm::vec3(0.0f, 1.0f, 0.0f));
+            }
+        } else {
+            float angle = qAcos(vn.z);
+            glm::vec3 axis_angle = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), v));
+            rotation = glm::rotate(glm::mat4(1.0), angle, axis_angle);
+        }
+
+        this->models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
+        this->models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
+    }
+
+    this->update();
 }
 
 /**
@@ -232,6 +278,15 @@ void GLWidget::set_arcball_rotation(float angle, const QVector4D& vector) {
     this->arcball_rotation.setToIdentity();
     this->arcball_rotation.rotate(angle, QVector3D(vector));
     this->update();
+}
+
+/**
+ * @brief Remove all instances of models
+ */
+void GLWidget::remove_model_instances() {
+    for (unsigned int i = 0; i < this->models.size(); ++i) {
+        this->models[i]->remove_instances();
+    }
 }
 
 /**

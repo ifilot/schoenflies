@@ -34,6 +34,7 @@ class CentralWidget: public QWidget {
     Q_OBJECT
 
 private:
+    GLWidget *gl_widget;
     QTextEdit *text_edit;
 
     std::shared_ptr<Structure> structure;
