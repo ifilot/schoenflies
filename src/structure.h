@@ -106,6 +106,13 @@ public:
     const std::string& get_filename() const;
 
     /**
+     * @brief Get a combination of description and filename of the structure
+     *
+     * @return const std::string
+     */
+    const std::string get_description_filename() const;
+
+    /**
      * @brief Calculate pairs of elements between which bonds are (likely) formed
      *
      * @return const std::vector<std::pair<unsigned int, unsigned int>>

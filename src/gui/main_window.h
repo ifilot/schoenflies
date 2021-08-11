@@ -32,6 +32,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QObject>
+#include <QStatusBar>
 #include <QString>
 #include "../program.h"
 #include "../structure.h"

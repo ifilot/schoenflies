@@ -169,6 +169,20 @@ const std::string& Structure::get_filename() const {
 }
 
 /**
+ * @brief Get a combination of description and filename of the structure
+ *
+ * @return const std::string&
+ */
+const std::string Structure::get_description_filename() const {
+    if (!this->description.empty()) {
+        return this->description + " \u2013 " + this->filename;
+    } else {
+        // only return filename if the description is empty
+        return this->filename;
+    }
+}
+
+/**
  * @brief Calculate pairs of elements between which bonds are (likely) formed
  *
  * @return const std::vector<std::pair<unsigned int, unsigned int>>

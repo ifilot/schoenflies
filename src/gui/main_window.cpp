@@ -55,6 +55,9 @@ MainWindow::MainWindow() {
     // central widget
     this->central_widget = new CentralWidget(this);
     setCentralWidget(this->central_widget);
+
+    // status bar
+    statusBar()->showMessage(PROGRAM_NAME);
 }
 
 /**
@@ -65,6 +68,8 @@ void MainWindow::open() {
     if (filename.empty()) return;
 
     auto structure = std::make_shared<Structure>(filename);
+
+    statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
 
     this->central_widget->set_structure(structure);
 }
