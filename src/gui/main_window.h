@@ -19,8 +19,13 @@
 #ifndef GUI_MAIN_WINDOW_H
 #define GUI_MAIN_WINDOW_H
 
+#include <iostream>
+
+#include <memory>
+#include <string>
 #include <QAction>
 #include <QApplication>
+#include <QFileDialog>
 #include <QKeySequence>
 #include <QMainWindow>
 #include <QMenu>
@@ -29,10 +34,16 @@
 #include <QObject>
 #include <QString>
 #include "../program.h"
+#include "../structure.h"
 #include "central_widget.h"
+
+class CentralWidget;  // forward declaration
 
 class MainWindow: public QMainWindow {
     Q_OBJECT
+
+private:
+    CentralWidget* central_widget;
 
 public:
     /**

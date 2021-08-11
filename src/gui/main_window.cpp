@@ -53,15 +53,20 @@ MainWindow::MainWindow() {
     setMenuBar(menu_bar);
 
     // central widget
-    CentralWidget* central_widget = new CentralWidget(this);
-    setCentralWidget(central_widget);
+    this->central_widget = new CentralWidget(this);
+    setCentralWidget(this->central_widget);
 }
 
 /**
  * @brief Open a new file
  */
 void MainWindow::open() {
-    // TODO add action
+    std::string filename = QFileDialog::getOpenFileName(this, tr("Open file"), "", tr("All supported files (*.xyz);;xyz file (*.xyz)")).toStdString();
+    if (filename.empty()) return;
+
+    auto structure = std::make_shared<Structure>(filename);
+
+    this->central_widget->set_structure(structure);
 }
 
 /**

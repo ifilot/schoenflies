@@ -27,10 +27,21 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     QHBoxLayout *layout = new QHBoxLayout;
 
     // TODO text edit is temporary
-    QTextEdit *text_edit = new QTextEdit();
-    text_edit->setReadOnly(true);
-    text_edit->setPlainText("Hello, World!");
-    layout->addWidget(text_edit);
+    this->text_edit = new QTextEdit();
+    this->text_edit->setReadOnly(true);
+    this->text_edit->setPlainText("Hello, World!");
+    layout->addWidget(this->text_edit);
 
     this->setLayout(layout);
+}
+
+/**
+ * @brief Set the structure object
+ *
+ * @param structure
+ */
+void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
+    this->structure = structure;
+
+    this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
 }

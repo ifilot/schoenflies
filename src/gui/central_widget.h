@@ -19,15 +19,22 @@
 #ifndef GUI_CENTRAL_WIDGET_H
 #define GUI_CENTRAL_WIDGET_H
 
+#include <memory>
 #include <QHBoxLayout>
 #include <QTextEdit>
 #include <QWidget>
+#include "../structure.h"
 #include "main_window.h"
 
 class MainWindow;  // forward declaration
 
 class CentralWidget: public QWidget {
     Q_OBJECT
+
+private:
+    QTextEdit *text_edit;
+
+    std::shared_ptr<Structure> structure;
 
 public:
     /**
@@ -36,6 +43,13 @@ public:
      * @param mw pointer to MainWindow object
      */
     CentralWidget(MainWindow* mw);
+
+    /**
+     * @brief Set the structure object
+     *
+     * @param structure
+     */
+    void set_structure(std::shared_ptr<Structure> structure);
 };
 
 #endif  // GUI_CENTRAL_WIDGET_H
