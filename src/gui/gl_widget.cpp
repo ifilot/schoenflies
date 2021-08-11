@@ -149,6 +149,20 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 /**
+ * @brief Handle mouse wheel event
+ *
+ * @param event
+ */
+void GLWidget::wheelEvent(QWheelEvent* event) {
+    this->camera_position += event->delta() * 0.01f * QVector3D(0, 1, 0);
+
+    // prevent zooming in too far
+    if (this->camera_position[1] > -5.0) this->camera_position[1] = -5.0;
+
+    this->update();
+}
+
+/**
  * @brief Paint all instances of models to the screen
  */
 void GLWidget::paint_models() {

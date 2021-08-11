@@ -33,6 +33,7 @@
 #include <QPalette>
 #include <QPoint>
 #include <QVector3D>
+#include <QWheelEvent>
 #include <QWidget>
 #include "models/geometry.h"
 #include "models/model.h"
@@ -109,6 +110,13 @@ protected:
      * @param event
      */
     void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+
+    /**
+     * @brief Handle mouse wheel event
+     *
+     * @param event
+     */
+    void wheelEvent(QWheelEvent* event) Q_DECL_OVERRIDE;
 
 private:
     /**
