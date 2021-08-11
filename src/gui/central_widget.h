@@ -21,9 +21,11 @@
 
 #include <memory>
 #include <QHBoxLayout>
+#include <QSizePolicy>
 #include <QTextEdit>
 #include <QWidget>
 #include "../structure.h"
+#include "gl_widget.h"
 #include "main_window.h"
 
 class MainWindow;  // forward declaration

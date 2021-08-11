@@ -25,6 +25,7 @@
 #include <boost/program_options.hpp>
 #include <QApplication>
 #include <QPushButton>
+#include <QSurfaceFormat>
 #include "program.h"
 #include "gui/main_window.h"
 

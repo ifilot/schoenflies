@@ -26,6 +26,10 @@
 CentralWidget::CentralWidget(MainWindow* mw) {
     QHBoxLayout *layout = new QHBoxLayout;
 
+    GLWidget *gl_widget = new GLWidget(this);
+    gl_widget->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
+    layout->addWidget(gl_widget);
+
     // TODO text edit is temporary
     this->text_edit = new QTextEdit();
     this->text_edit->setReadOnly(true);

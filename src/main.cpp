@@ -82,6 +82,15 @@ int main_cmd(int argc, char** argv) {
 int main_gui(int argc, char** argv) {
     QApplication app(argc, argv);
 
+    // configure OpenGL
+    QSurfaceFormat fmt;
+    fmt.setDepthBufferSize(24);
+    fmt.setSamples(4);
+    fmt.setVersion(3, 3);
+    fmt.setProfile(QSurfaceFormat::CoreProfile);
+    fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    QSurfaceFormat::setDefaultFormat(fmt);
+
     std::unique_ptr<MainWindow> main_window;
 
     try {
