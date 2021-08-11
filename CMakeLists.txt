@@ -21,7 +21,7 @@ find_package(Boost 1.67.0 COMPONENTS filesystem program_options REQUIRED)
 find_package(glm REQUIRED)
 
 # Use Qt5
-find_package(Qt5 COMPONENTS Gui Widgets REQUIRED)
+find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
 # Set include folders
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}

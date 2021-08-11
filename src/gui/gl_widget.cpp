@@ -89,6 +89,66 @@ void GLWidget::resizeGL(int width, int height) {
 }
 
 /**
+ * @brief Handle mouse press event
+ *
+ * @param event
+ */
+void GLWidget::mousePressEvent(QMouseEvent* event) {
+    if (event->buttons() & Qt::MouseButton::LeftButton) {
+        this->arcball_rotating = true;
+        this->mouse_position = event->pos();
+    }
+}
+
+/**
+ * @brief Handle mouse release event
+ *
+ * @param event
+ */
+void GLWidget::mouseReleaseEvent(QMouseEvent* event) {
+    if (this->arcball_rotating && !(event->buttons() & Qt::MouseButton::LeftButton)) {
+        // apply arcball rotation to rotation matrix, and reset arcball rotation
+        this->rotation_matrix = this->arcball_rotation * this->rotation_matrix;
+        this->arcball_rotation.setToIdentity();
+        this->arcball_rotating = false;
+    }
+}
+
+/**
+ * @brief Handle mouse move event
+ *
+ * @param event
+ */
+void GLWidget::mouseMoveEvent(QMouseEvent* event) {
+    if (this->arcball_rotating) {
+        // implementation from
+        // https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Arcball
+        if (event->x() != this->mouse_position.x() || event->y() != this->mouse_position.y()) {
+            // calculate arcball vectors
+            QVector3D va = this->calc_arcball_vector(this->mouse_position);
+            QVector3D vb = this->calc_arcball_vector(event->pos());
+
+            // calculate angle between vectors
+            float dotprod = QVector3D::dotProduct(va, vb);
+            if (qFabs(dotprod) > .9999f) return;
+            float angle = qAcos(qMin(1.0f, dotprod));
+
+            // rotation vector in camera space
+            QVector4D axis_cam_space = QVector4D(QVector3D::crossProduct(va, vb).normalized());
+
+            // matrix to change basis from camera to model space
+            QMatrix3x3 cam_to_model_trans = this->view.inverted().toGenericMatrix<3, 3>();
+
+            // rotation vector in model space
+            QVector4D axis_model_space = QMatrix4x4(cam_to_model_trans) * axis_cam_space;
+
+            // set rotation
+            this->set_arcball_rotation(qRadiansToDegrees(angle), axis_model_space);
+        }
+    }
+}
+
+/**
  * @brief Paint all instances of models to the screen
  */
 void GLWidget::paint_models() {
@@ -101,7 +161,7 @@ void GLWidget::paint_models() {
             // build model matrix (scale -> rotation -> translation)
             this->model.setToIdentity();
             this->model.translate(-this->camera_translation);
-            this->model *= this->rotation_matrix;
+            this->model *= this->arcball_rotation * this->rotation_matrix;
             this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
             this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
             this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);
@@ -125,6 +185,39 @@ void GLWidget::paint_models() {
  */
 void GLWidget::load_shaders() {
     this->shader_program_manager->create_shader_program("model_shader", ShaderProgramType::ModelShader, ":/assets/shaders/phong.vs", ":/assets/shaders/phong.fs");
+}
+
+/**
+ * @brief Calculate the arcball vector
+ *
+ * @param pos position of the mouse cursor
+ * @return QVector3D arcball vector
+ */
+QVector3D GLWidget::calc_arcball_vector(QPoint pos) {
+    QVector3D P = QVector3D(1.0f * (float) pos.x() / (float) this->geometry().width() * 2.0f - 1.0f,
+                            -(1.0f * (float) pos.y() / (float) this->geometry().height() * 2.0f - 1.0f),
+                            0.0f);
+
+    float OP_squared = P[0] * P[0] + P[1] * P[1];
+
+    if (OP_squared <= 1.0f) {
+        P[2] = qSqrt(1.0f - OP_squared);
+    } else {
+        P = P.normalized();
+    }
+    return P;
+}
+
+/**
+ * @brief Set arcball vector rotation and update
+ *
+ * @param angle arcball angle
+ * @param vector arcball rotation vector
+ */
+void GLWidget::set_arcball_rotation(float angle, const QVector4D& vector) {
+    this->arcball_rotation.setToIdentity();
+    this->arcball_rotation.rotate(angle, QVector3D(vector));
+    this->update();
 }
 
 /**

@@ -22,12 +22,16 @@
 #include <memory>
 #include <stdexcept>
 #include <glm/gtc/type_ptr.hpp>
+#include <Qt>
+#include <QtMath>
 #include <QColor>
 #include <QMatrix4x4>
+#include <QMouseEvent>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 #include <QPalette>
+#include <QPoint>
 #include <QVector3D>
 #include <QWidget>
 #include "models/geometry.h"
@@ -53,6 +57,10 @@ private:
     QMatrix4x4 mvp;
     QVector3D camera_position;
     QVector3D camera_translation;
+
+    QMatrix4x4 arcball_rotation;  // temporary rotation while dragging mouse
+    bool arcball_rotating = false;  // whether arcball rotation is active
+    QPoint mouse_position;  // at start of arcball rotation
 
 public:
     /**
@@ -81,6 +89,27 @@ protected:
      */
     void resizeGL(int width, int height) Q_DECL_OVERRIDE;
 
+    /**
+     * @brief Handle mouse press event
+     *
+     * @param event
+     */
+    void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+
+    /**
+     * @brief Handle mouse release event
+     *
+     * @param event
+     */
+    void mouseReleaseEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+
+    /**
+     * @brief Handle mouse move event
+     *
+     * @param event
+     */
+    void mouseMoveEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
+
 private:
     /**
      * @brief Paint all instances of models to the screen
@@ -91,6 +120,22 @@ private:
      * @brief Load OpenGL shaders
      */
     void load_shaders();
+
+    /**
+     * @brief Calculate the arcball vector
+     *
+     * @param pos position of the mouse cursor
+     * @return QVector3D arcball vector
+     */
+    QVector3D calc_arcball_vector(QPoint pos);
+
+    /**
+     * @brief Set arcball vector rotation and update
+     *
+     * @param angle arcball angle
+     * @param vector arcball rotation vector
+     */
+    void set_arcball_rotation(float angle, const QVector4D& vector);
 
 public slots:
     /**
