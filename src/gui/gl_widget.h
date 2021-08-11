@@ -21,12 +21,19 @@
 
 #include <memory>
 #include <stdexcept>
+#include <glm/gtc/type_ptr.hpp>
 #include <QColor>
+#include <QMatrix4x4>
 #include <QOpenGLContext>
 #include <QOpenGLFunctions>
 #include <QOpenGLWidget>
 #include <QPalette>
+#include <QVector3D>
 #include <QWidget>
+#include "models/geometry.h"
+#include "models/model.h"
+#include "shaders/shader_program_manager.h"
+#include "shaders/shader_program_type.h"
 
 class GLWidget: public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -34,6 +41,18 @@ class GLWidget: public QOpenGLWidget, protected QOpenGLFunctions {
 private:
     QWidget* parent;
     QColor bg;
+
+    std::unique_ptr<ShaderProgramManager> shader_program_manager;
+
+    std::vector<std::unique_ptr<Model>> models;
+
+    QMatrix4x4 projection;
+    QMatrix4x4 view;
+    QMatrix4x4 rotation_matrix;
+    QMatrix4x4 model;
+    QMatrix4x4 mvp;
+    QVector3D camera_position;
+    QVector3D camera_translation;
 
 public:
     /**
@@ -61,6 +80,17 @@ protected:
      * @param height widget height
      */
     void resizeGL(int width, int height) Q_DECL_OVERRIDE;
+
+private:
+    /**
+     * @brief Paint all instances of models to the screen
+     */
+    void paint_models();
+
+    /**
+     * @brief Load OpenGL shaders
+     */
+    void load_shaders();
 
 public slots:
     /**
