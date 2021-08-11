@@ -89,10 +89,14 @@ void Model::load_to_vao() {
  * @param colour colour of instance
  */
 void Model::add_instance(const glm::vec3& scale, const glm::mat4& rotation, const glm::vec3& translation, const glm::vec4& colour) {
-    // this->instances.emplace_back(scale, rotation, translation, colour);
     this->instances.push_back({scale, rotation, translation, colour});
 }
 
+/**
+ * @brief Get all model instances
+ *
+ * @return const std::vector<ModelInstance>&
+ */
 const std::vector<ModelInstance>& Model::get_instances() const {
     return this->instances;
 }
