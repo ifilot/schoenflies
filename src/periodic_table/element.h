@@ -24,7 +24,8 @@
 
 struct Element {
     std::string symbol;
-    double radius;
+    float radius;
+    float mass;
     glm::vec3 colour;
 };
 
