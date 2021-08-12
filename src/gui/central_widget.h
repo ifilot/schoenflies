@@ -21,12 +21,19 @@
 
 #include <memory>
 #include <QHBoxLayout>
+#include <QModelIndex>
 #include <QSizePolicy>
+#include <QStandardItem>
+#include <QStandardItemModel>
 #include <QTextEdit>
+#include <QTreeView>
+#include <QVBoxLayout>
+#include <QVector>
 #include <QWidget>
 #include "../structure.h"
 #include "gl_widget.h"
 #include "main_window.h"
+#include "symmetry_operation_item_delegate.h"
 
 class MainWindow;  // forward declaration
 
@@ -36,6 +43,8 @@ class CentralWidget: public QWidget {
 private:
     GLWidget *gl_widget;
     QTextEdit *text_edit;
+
+    QStandardItemModel *model;
 
     std::shared_ptr<Structure> structure;
 
@@ -53,6 +62,14 @@ public:
      * @param structure
      */
     void set_structure(std::shared_ptr<Structure> structure);
+
+private slots:
+    /**
+     * @brief Trigger the animation of a symmetry operation in the GL widget
+     *
+     * @param index index of symmetry operation in the data model
+     */
+    void trigger_animation(QModelIndex index);
 };
 
 #endif  // GUI_CENTRAL_WIDGET_H

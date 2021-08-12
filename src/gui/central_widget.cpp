@@ -28,13 +28,54 @@ CentralWidget::CentralWidget(MainWindow* mw) {
 
     this->gl_widget = new GLWidget(this);
     this->gl_widget->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
-    layout->addWidget(this->gl_widget);
+    layout->addWidget(this->gl_widget, 3);
+
+    QVBoxLayout *symmetry_layout = new QVBoxLayout;
+
+    layout->addLayout(symmetry_layout, 1);
 
     // TODO text edit is temporary
     this->text_edit = new QTextEdit();
     this->text_edit->setReadOnly(true);
     this->text_edit->setPlainText("Hello, World!");
-    layout->addWidget(this->text_edit);
+    symmetry_layout->addWidget(this->text_edit);
+
+    QTreeView *tree_view = new QTreeView();
+    this->model = new QStandardItemModel();
+    SymmetryOperationItemDelegate *delegate = new SymmetryOperationItemDelegate();
+
+    connect(this->model, SIGNAL(dataChanged(QModelIndex, QModelIndex, QVector<int>)), this, SLOT(trigger_animation(QModelIndex)));
+
+    tree_view->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::MinimumExpanding);
+    tree_view->setMinimumSize(320, 50);
+    tree_view->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);
+    tree_view->setSelectionMode(QTreeView::SelectionMode::NoSelection);
+    tree_view->setMouseTracking(true);
+    tree_view->setHeaderHidden(true);
+    tree_view->setModel(this->model);
+    tree_view->setItemDelegate(delegate);
+
+    // TODO temporary items to test layout
+    QStandardItem *root = this->model->invisibleRootItem();
+    QStandardItem *item, *sub_item;
+
+    item = new QStandardItem("<i>E</i> identity");
+    root->appendRow({item});
+
+    item = new QStandardItem("<i>C</i><sub>4</sub> rotations (2)");
+    sub_item = new QStandardItem("<i>C</i><sub>4</sub> rotation");
+    sub_item->setData("button", SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
+    item->appendRow({sub_item});
+    sub_item = new QStandardItem("<i>C</i><sub>4</sub><sup>&minus;1</sup> rotation");
+    sub_item->setData("button", SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
+    item->appendRow({sub_item});
+    root->appendRow({item});
+
+    item = new QStandardItem("<i>C</i><sub>2</sub> rotation");
+    item->setData("button", SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
+    root->appendRow({item});
+
+    symmetry_layout->addWidget(tree_view);
 
     this->setLayout(layout);
 }
@@ -50,4 +91,22 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->gl_widget->set_structure(structure);
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
+}
+
+/**
+ * @brief Trigger the animation of a symmetry operation in the GL widget
+ *
+ * @param index index of symmetry operation in the data model
+ */
+void CentralWidget::trigger_animation(QModelIndex index) {
+    QStandardItem *item = this->model->itemFromIndex(index);
+
+    if (item->data(SymmetryOperationItemDelegate::ItemDataRole::ButtonClickedRole).toBool()) {
+        QString str = item->data(0).toString();
+
+        // TODO perform animation in GL widget
+        this->text_edit->setText("Triggered animation playback for " + str);
+
+        item->setData(false, SymmetryOperationItemDelegate::ItemDataRole::ButtonClickedRole);
+    }
 }
