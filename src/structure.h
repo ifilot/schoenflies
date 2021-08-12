@@ -21,6 +21,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
+#include <iostream>
 #include <fstream>
 #include <stdexcept>
 #include <string>
@@ -133,6 +134,11 @@ private:
      * @param path
      */
     void load_from_xyz(const std::string& path);
+
+    /**
+     * @brief Centre the structure at its centre of mass
+     */
+    void centre_at_com();
 };
 
 #endif  // STRUCTURE_H

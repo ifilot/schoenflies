@@ -30,6 +30,8 @@ Structure::Structure() {}
  */
 Structure::Structure(const std::string& path) {
     this->load_from_file(path);
+
+    this->centre_at_com();
 }
 
 /**
@@ -93,6 +95,26 @@ void Structure::load_from_xyz(const std::string& path) {
     }
 
     ifs.close();
+}
+
+/**
+ * @brief Centre the structure at its centre of mass
+ */
+void Structure::centre_at_com() {
+    glm::vec3 centre_of_mass(0);
+    float total_mass = 0;
+
+    for (unsigned int i = 0; i < this->get_num_atoms(); ++i) {
+        float mass = PeriodicTable::get_element(this->get_atomic_number(i)).mass;
+        centre_of_mass += mass * this->get_coordinates(i);
+        total_mass += mass;
+    }
+
+    centre_of_mass /= total_mass;
+
+    for (unsigned int i = 0; i < this->get_num_atoms(); ++i) {
+        this->coordinates[i] -= centre_of_mass;
+    }
 }
 
 /**
