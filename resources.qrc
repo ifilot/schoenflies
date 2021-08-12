@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
+        <file>assets/models/arrow.obj</file>
+        <file>assets/shaders/axes.fs</file>
+        <file>assets/shaders/axes.vs</file>
         <file>assets/shaders/phong.fs</file>
         <file>assets/shaders/phong.vs</file>
     </qresource>

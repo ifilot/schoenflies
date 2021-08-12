@@ -31,6 +31,8 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
 
     this->models.push_back(Geometry::sphere());
     this->models.push_back(Geometry::cylinder());
+
+    this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
 }
 
 /**
@@ -93,6 +95,8 @@ void GLWidget::initializeGL() {
         this->models[i]->load_to_vao();
     }
 
+    this->arrow_model->load_to_vao();
+
     glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
 
     this->load_shaders();
@@ -108,9 +112,6 @@ void GLWidget::paintGL() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    // bind program
-    this->shader_program_manager->bind("model_shader");
-
     // set camera
     QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
     this->view.setToIdentity();
@@ -119,8 +120,8 @@ void GLWidget::paintGL() {
     // draw models
     this->paint_models();
 
-    // release program
-    this->shader_program_manager->release("model_shader");
+    // draw axes
+    this->paint_gizmos();
 }
 
 /**
@@ -213,6 +214,7 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
  */
 void GLWidget::paint_models() {
     ShaderProgram *model_shader = this->shader_program_manager->get_shader_program("model_shader");
+    model_shader->bind();
 
     for (unsigned int i = 0; i < this->models.size(); ++i) {
         Model *model = this->models[i].get();
@@ -237,14 +239,76 @@ void GLWidget::paint_models() {
             model->draw();
         }
     }
+
+    model_shader->release();
 }
 
+/**
+ * @brief Paint axis gizmos
+ */
+void GLWidget::paint_gizmos() {
+    ShaderProgram *axes_shader = this->shader_program_manager->get_shader_program("axes_shader");
+    axes_shader->bind();
+
+    const QVector3D r(1.0f      , 0.2117647f, 0.3254902f);
+    const QVector3D g(0.5411765f, 0.854902f , 0.0235294f);
+    const QVector3D b(0.172549f , 0.5607843f, 1.0f      );
+
+    // set viewport, projection, and view matrices
+    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+    f->glViewport(0.75f * this->geometry().width(), 0.0f, 0.25f * this->geometry().width(), 0.25f * this->geometry().height());
+
+    QMatrix4x4 projection_ortho;
+    projection_ortho.setToIdentity();
+    float ratio = (float) this->geometry().height() / (float) this->geometry().width();
+    static const float size = 25.0f;
+    projection_ortho.ortho(-size, size, -size * ratio, size * ratio, 0.1f, 1000.0f);
+
+    this->view.setToIdentity();
+    this->view.lookAt(QVector3D(0.0f, -10.0f, 0.0f), QVector3D(0.0f, 0.0f, 0.0f), QVector3D(0.0f, 0.0f, 1.0f));
+    axes_shader->set_uniform("view", this->view);
+
+    // draw the three axes
+    QMatrix4x4 axis_rotation;
+
+    // z axis
+    axis_rotation.setToIdentity();
+    this->model = this->arcball_rotation * this->rotation_matrix * axis_rotation;
+    this->mvp = projection_ortho * this->view * this->model;
+    axes_shader->set_uniform("model", this->model);
+    axes_shader->set_uniform("mvp", this->mvp);
+    axes_shader->set_uniform("color", b);
+    this->arrow_model->draw();
+
+    // y axis
+    axis_rotation.setToIdentity();
+    axis_rotation.rotate(-90.0f, QVector3D(1.0f, 0.0f, 0.0f));
+    this->model = this->arcball_rotation * this->rotation_matrix * axis_rotation;
+    this->mvp = projection_ortho * this->view * this->model;
+    axes_shader->set_uniform("model", this->model);
+    axes_shader->set_uniform("mvp", this->mvp);
+    axes_shader->set_uniform("color", g);
+    this->arrow_model->draw();
+
+    // x axis
+    axis_rotation.setToIdentity();
+    axis_rotation.rotate(90.0f, QVector3D(0.0f, 1.0f, 0.0f));
+    this->model = this->arcball_rotation * this->rotation_matrix * axis_rotation;
+    this->mvp = projection_ortho * this->view * this->model;
+    axes_shader->set_uniform("model", this->model);
+    axes_shader->set_uniform("mvp", this->mvp);
+    axes_shader->set_uniform("color", r);
+    this->arrow_model->draw();
+
+    axes_shader->release();
+}
 
 /**
  * @brief Load OpenGL shaders
  */
 void GLWidget::load_shaders() {
     this->shader_program_manager->create_shader_program("model_shader", ShaderProgramType::ModelShader, ":/assets/shaders/phong.vs", ":/assets/shaders/phong.fs");
+    this->shader_program_manager->create_shader_program("axes_shader", ShaderProgramType::AxesShader, ":/assets/shaders/axes.vs", ":/assets/shaders/axes.fs");
 }
 
 /**

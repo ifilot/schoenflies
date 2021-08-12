@@ -40,6 +40,7 @@
 #include "../periodic_table/periodic_table.h"
 #include "models/geometry.h"
 #include "models/model.h"
+#include "models/obj_loader.h"
 #include "shaders/shader_program_manager.h"
 #include "shaders/shader_program_type.h"
 
@@ -53,6 +54,8 @@ private:
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
 
     std::vector<std::unique_ptr<Model>> models;
+
+    std::unique_ptr<Model> arrow_model;
 
     QMatrix4x4 projection;
     QMatrix4x4 view;
@@ -133,6 +136,11 @@ private:
      * @brief Paint all instances of models to the screen
      */
     void paint_models();
+
+    /**
+     * @brief Paint axis gizmos
+     */
+    void paint_gizmos();
 
     /**
      * @brief Load OpenGL shaders
