@@ -45,7 +45,7 @@ private:
     std::string description;
     std::string filename;
 
-    std::unique_ptr<Symmetry> symmetry;
+    std::shared_ptr<Symmetry> symmetry;
 
 public:
     /**
@@ -117,6 +117,13 @@ public:
      * @return const std::string
      */
     const std::string get_description_filename() const;
+
+    /**
+     * @brief Get the Symmetry object of the structure
+     *
+     * @return const std::shared_ptr<Symmetry>
+     */
+    const std::shared_ptr<Symmetry> get_symmetry() const;
 
     /**
      * @brief Calculate pairs of elements between which bonds are (likely) formed

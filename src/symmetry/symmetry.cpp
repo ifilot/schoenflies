@@ -98,3 +98,30 @@ void Symmetry::determine_rotor_class() {
         this->rotor_class = RotorClass::AsymmetricTop;
     }
 }
+
+/**
+ * @brief Get the principal moments of the structure
+ *
+ * @return const Eigen::Vector3d&
+ */
+const Eigen::Vector3d& Symmetry::get_principal_moments() const {
+    return this->principal_moments;
+}
+
+/**
+ * @brief Get the principal axes of the structure
+ *
+ * @return const Eigen::Matrix3d&
+ */
+const Eigen::Matrix3d& Symmetry::get_principal_axes() const {
+    return this->principal_axes;
+}
+
+/**
+ * @brief Get the rotor class of the structure
+ *
+ * @return const RotorClass
+ */
+const RotorClass Symmetry::get_rotor_class() const {
+    return this->rotor_class;
+}

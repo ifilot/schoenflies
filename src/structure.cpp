@@ -33,7 +33,7 @@ Structure::Structure(const std::string& path) {
 
     this->centre_at_com();
 
-    this->symmetry = std::make_unique<Symmetry>(this);
+    this->symmetry = std::make_shared<Symmetry>(this);
 }
 
 /**
@@ -204,6 +204,15 @@ const std::string Structure::get_description_filename() const {
         // only return filename if the description is empty
         return this->filename;
     }
+}
+
+/**
+ * @brief Get the Symmetry object of the structure
+ *
+ * @return const std::shared_ptr<Symmetry>
+ */
+const std::shared_ptr<Symmetry> Structure::get_symmetry() const {
+    return this->symmetry;
 }
 
 /**

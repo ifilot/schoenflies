@@ -47,6 +47,27 @@ public:
      */
     Symmetry(Structure* structure);
 
+    /**
+     * @brief Get the principal moments of the structure
+     *
+     * @return const Eigen::Vector3d&
+     */
+    const Eigen::Vector3d& get_principal_moments() const;
+
+    /**
+     * @brief Get the principal axes of the structure
+     *
+     * @return const Eigen::Matrix3d&
+     */
+    const Eigen::Matrix3d& get_principal_axes() const;
+
+    /**
+     * @brief Get the rotor class of the structure
+     *
+     * @return const RotorClass
+     */
+    const RotorClass get_rotor_class() const;
+
 private:
     /**
      * @brief Calculate the inertial tensor and use this to determine principal
