@@ -32,6 +32,8 @@ Structure::Structure(const std::string& path) {
     this->load_from_file(path);
 
     this->centre_at_com();
+
+    this->symmetry = std::make_unique<Symmetry>(this);
 }
 
 /**

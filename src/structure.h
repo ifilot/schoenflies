@@ -21,8 +21,8 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <iostream>
 #include <fstream>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -33,6 +33,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 #include "periodic_table/periodic_table.h"
+#include "symmetry/symmetry.h"
+
+class Symmetry;  // forward declaration
 
 class Structure {
 private:
@@ -41,6 +44,8 @@ private:
     std::vector<unsigned int> atomic_numbers;
     std::string description;
     std::string filename;
+
+    std::unique_ptr<Symmetry> symmetry;
 
 public:
     /**
