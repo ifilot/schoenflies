@@ -19,15 +19,14 @@
 #ifndef SYMMETRY_SYMMETRY_H
 #define SYMMETRY_SYMMETRY_H
 
+#include <memory>
 #include <Eigen/Dense>
 #include "../structure.h"
 #include "rotor_class.h"
 
-class Structure;  // forward declaration
-
 class Symmetry {
 private:
-    Structure* structure;
+    std::shared_ptr<Structure> structure;
 
     Eigen::Vector3d principal_moments;
     Eigen::Matrix3d principal_axes;
@@ -45,7 +44,7 @@ public:
      *
      * @param structure
      */
-    Symmetry(Structure* structure);
+    Symmetry(std::shared_ptr<Structure> structure);
 
     /**
      * @brief Get the principal moments of the structure

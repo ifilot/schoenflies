@@ -28,14 +28,14 @@ BOOST_AUTO_TEST_SUITE(symmetry);
 
 BOOST_AUTO_TEST_CASE(principal_axes) {
     std::string file = resolve_path("test/files/ammonia.xyz");
-    Structure struc(file);
-    std::shared_ptr<Symmetry> symmetry = struc.get_symmetry();
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
 
-    Eigen::Vector3d principal_moments = symmetry->get_principal_moments();
+    Eigen::Vector3d principal_moments = symmetry.get_principal_moments();
     Eigen::Vector3d expected_principal_moments{.624037, 1.31218, 1.93622};
     BOOST_TEST(principal_moments.isApprox(expected_principal_moments, 1e-6));
 
-    Eigen::Matrix3d principal_axes = symmetry->get_principal_axes();
+    Eigen::Matrix3d principal_axes = symmetry.get_principal_axes();
     Eigen::Matrix3d expected_principal_axes;
     expected_principal_axes << -.5, -.677895, -.538941,
                                .866025, -.391383, -.311158,
@@ -45,30 +45,34 @@ BOOST_AUTO_TEST_CASE(principal_axes) {
 
 BOOST_AUTO_TEST_CASE(rotor_asymmetric_top) {
     std::string file = resolve_path("test/files/thionyl-chloride.xyz");
-    Structure struc(file);
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
 
-    BOOST_TEST(struc.get_symmetry()->get_rotor_class() == RotorClass::AsymmetricTop);
+    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::AsymmetricTop);
 }
 
 BOOST_AUTO_TEST_CASE(rotor_symmetric_top) {
     std::string file = resolve_path("test/files/benzene.xyz");
-    Structure struc(file);
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
 
-    BOOST_TEST(struc.get_symmetry()->get_rotor_class() == RotorClass::SymmetricTop);
+    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::SymmetricTop);
 }
 
 BOOST_AUTO_TEST_CASE(rotor_linear) {
     std::string file = resolve_path("test/files/carbon-dioxide.xyz");
-    Structure struc(file);
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
 
-    BOOST_TEST(struc.get_symmetry()->get_rotor_class() == RotorClass::Linear);
+    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::Linear);
 }
 
 BOOST_AUTO_TEST_CASE(rotor_spherical_top) {
     std::string file = resolve_path("test/files/adamantane.xyz");
-    Structure struc(file);
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
 
-    BOOST_TEST(struc.get_symmetry()->get_rotor_class() == RotorClass::SphericalTop);
+    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::SphericalTop);
 }
 
 BOOST_AUTO_TEST_SUITE_END();

@@ -33,9 +33,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 #include "periodic_table/periodic_table.h"
-#include "symmetry/symmetry.h"
-
-class Symmetry;  // forward declaration
 
 class Structure {
 private:
@@ -44,8 +41,6 @@ private:
     std::vector<unsigned int> atomic_numbers;
     std::string description;
     std::string filename;
-
-    std::shared_ptr<Symmetry> symmetry;
 
 public:
     /**
@@ -117,13 +112,6 @@ public:
      * @return const std::string
      */
     const std::string get_description_filename() const;
-
-    /**
-     * @brief Get the Symmetry object of the structure
-     *
-     * @return const std::shared_ptr<Symmetry>
-     */
-    const std::shared_ptr<Symmetry> get_symmetry() const;
 
     /**
      * @brief Calculate pairs of elements between which bonds are (likely) formed

@@ -28,7 +28,7 @@ Symmetry::Symmetry() {}
  *
  * @param structure
  */
-Symmetry::Symmetry(Structure* structure) {
+Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
     this->structure = structure;
 
     this->determine_principal_axes();
