@@ -15,7 +15,7 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 set(BOOST_ALL_DYN_LINK OFF)
 
-find_package(Boost 1.67.0 COMPONENTS filesystem program_options REQUIRED)
+find_package(Boost 1.67.0 COMPONENTS filesystem program_options unit_test_framework REQUIRED)
 
 # Use GLM
 find_package(glm REQUIRED)
@@ -30,6 +30,9 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${CMAKE_BINARY_DIR}
                     ${Boost_INCLUDE_DIRS})
+
+# Add test directory
+add_subdirectory(test)
 
 # Add sources
 file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
