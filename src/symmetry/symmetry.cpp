@@ -31,5 +31,42 @@ Symmetry::Symmetry() {}
 Symmetry::Symmetry(Structure* structure) {
     this->structure = structure;
 
-    std::cout << "Symmetry object created" << std::endl;
+    this->determine_principal_axes();
+}
+
+/**
+ * @brief Calculate the inertial tensor and use this to determine principal
+ * axes and their principal moments.
+ */
+void Symmetry::determine_principal_axes() {
+    // calculate inertial tensor
+    double Ixx = 0, Iyy = 0, Izz = 0, Ixy = 0, Ixz = 0, Iyz = 0;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        float mass = PeriodicTable::get_element(this->structure->get_atomic_number(i)).mass;
+        glm::vec3 r = this->structure->get_coordinates(i);
+
+        Ixx += mass * (r.y * r.y + r.z * r.z);
+        Iyy += mass * (r.x * r.x + r.z * r.z);
+        Izz += mass * (r.x * r.x + r.y * r.y);
+
+        Ixy -= mass * r.x * r.y;
+        Ixz -= mass * r.x * r.z;
+        Iyz -= mass * r.y * r.z;
+    }
+
+    // symmetrix matrix with only real entries <=> self-adjoint matrix
+    Eigen::Matrix3d I;
+    I << Ixx, Ixy, Ixz,
+         Ixy, Iyy, Iyz,
+         Ixz, Iyz, Izz;
+
+    Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> solver(I);
+
+    if (solver.info() != Eigen::ComputationInfo::Success) {
+        throw std::runtime_error("Diagonalisation of inertial tensor did not converge.");
+    }
+
+    this->principal_moments = solver.eigenvalues();
+    this->principal_axes = solver.eigenvectors();
 }

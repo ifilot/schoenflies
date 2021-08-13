@@ -23,15 +23,19 @@ find_package(glm REQUIRED)
 # Use Qt5
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
 
+# Use Eigen
+find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+
 # Set include folders
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_BINARY_DIR})
+                    ${CMAKE_BINARY_DIR}
+                    ${Boost_INCLUDE_DIRS})
 
 # Add sources
 file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
 add_executable(schoenflies ${SOURCES})
 
 # Libraries
-target_link_libraries(schoenflies ${Boost_LIBRARIES} glm Qt5::Widgets)
+target_link_libraries(schoenflies ${Boost_LIBRARIES} glm Qt5::Widgets Eigen3::Eigen)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

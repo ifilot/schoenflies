@@ -19,13 +19,18 @@
 #ifndef SYMMETRY_SYMMETRY_H
 #define SYMMETRY_SYMMETRY_H
 
-#include <iostream>
+#include <Eigen/Dense>
+#include "../structure.h"
+#include "rotor_class.h"
 
 class Structure;  // forward declaration
 
 class Symmetry {
 private:
     Structure* structure;
+
+    Eigen::Vector3d principal_moments;
+    Eigen::Matrix3d principal_axes;
 
 public:
     /**
@@ -39,6 +44,13 @@ public:
      * @param structure
      */
     Symmetry(Structure* structure);
+
+private:
+    /**
+     * @brief Calculate the inertial tensor and use this to determine principal
+     * axes and their principal moments.
+     */
+    void determine_principal_axes();
 };
 
 #endif  // SYMMETRY_SYMMETRY_H
