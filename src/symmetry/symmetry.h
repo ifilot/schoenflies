@@ -32,6 +32,8 @@ private:
     Eigen::Vector3d principal_moments;
     Eigen::Matrix3d principal_axes;
 
+    RotorClass rotor_class;
+
 public:
     /**
      * @brief Default constructor
@@ -51,6 +53,12 @@ private:
      * axes and their principal moments.
      */
     void determine_principal_axes();
+
+    /**
+     * @brief Determine the rotor class of the structure (given by the
+     * degeneracy of the inertial moments).
+     */
+    void determine_rotor_class();
 };
 
 #endif  // SYMMETRY_SYMMETRY_H

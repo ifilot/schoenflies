@@ -32,6 +32,7 @@ Symmetry::Symmetry(Structure* structure) {
     this->structure = structure;
 
     this->determine_principal_axes();
+    this->determine_rotor_class();
 }
 
 /**
@@ -69,4 +70,31 @@ void Symmetry::determine_principal_axes() {
 
     this->principal_moments = solver.eigenvalues();
     this->principal_axes = solver.eigenvectors();
+}
+
+/**
+ * @brief Determine the rotor class of the structure (given by the
+ * degeneracy of the inertial moments).
+ */
+void Symmetry::determine_rotor_class() {
+    // TODO move tolerance to a variable/constant
+
+    // we use the fact that the eigenvalues are sorted in increasing order
+    // (from Eigen docs)
+    if ((this->principal_moments[2] - this->principal_moments[0]) / this->principal_moments[2] < .02) {
+        // all principal moments are (approximately) degenerate
+        this->rotor_class = RotorClass::SphericalTop;
+    } else if ((this->principal_moments[1] - this->principal_moments[0]) / this->principal_moments[1] < .02 ||
+               (this->principal_moments[2] - this->principal_moments[1]) / this->principal_moments[2] < .02) {
+        // two principal moments are (approximately) degenerate
+        if (this->principal_moments[0] < .02) {
+            // the lowest principal moment is (approximately) zero
+            this->rotor_class = RotorClass::Linear;
+        } else {
+            this->rotor_class = RotorClass::SymmetricTop;
+        }
+    } else {
+        // all principal moments are unique
+        this->rotor_class = RotorClass::AsymmetricTop;
+    }
 }
