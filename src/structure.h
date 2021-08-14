@@ -22,6 +22,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include <fstream>
+#include <math.h>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -36,6 +37,7 @@
 
 class Structure {
 private:
+public:
     unsigned int num_atoms;
     std::vector<glm::vec3> coordinates;
     std::vector<unsigned int> atomic_numbers;
@@ -119,6 +121,18 @@ public:
      * @return const std::vector<std::pair<unsigned int, unsigned int>>
      */
     const std::vector<std::pair<unsigned int, unsigned int>> calculate_bond_pairs() const;
+
+    /**
+     * @brief Find the coordinates of the closest atom of the element given by
+     * the provided atomic number to the provided coordinates
+     *
+     * @param coordinates coordinates around which the closest atom should be
+     * found
+     * @param atomic_number atomic number of the atom that should be found
+     * @return const glm::vec3 coordinates of the closest atom with the given
+     * atomic number
+     */
+    const glm::vec3 find_closest_coordinates(glm::vec3 coordinates, unsigned int atomic_number) const;
 
 private:
     /**

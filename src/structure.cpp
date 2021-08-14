@@ -223,3 +223,31 @@ const std::vector<std::pair<unsigned int, unsigned int>> Structure::calculate_bo
 
     return pairs;
 }
+
+/**
+ * @brief Find the coordinates of the closest atom of the element given by
+ * the provided atomic number to the provided coordinates
+ *
+ * @param coordinates coordinates around which the closest atom should be
+ * found
+ * @param atomic_number atomic number of the atom that should be found
+ * @return const glm::vec3 coordinates of the closest atom with the given
+ * atomic number
+ */
+const glm::vec3 Structure::find_closest_coordinates(glm::vec3 coordinates, unsigned int atomic_number) const {
+    float min_distance2 = INFINITY;
+    glm::vec3 closest_coordinates;
+
+    for (unsigned int i = 0; i < this->get_num_atoms(); ++i) {
+        if (this->get_atomic_number(i) != atomic_number) continue;
+
+        float distance2 = glm::distance2(this->get_coordinates(i), coordinates);
+
+        if (distance2 < min_distance2) {
+            min_distance2 = distance2;
+            closest_coordinates = this->get_coordinates(i);
+        }
+    }
+
+    return closest_coordinates;
+}
