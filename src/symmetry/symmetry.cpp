@@ -33,6 +33,7 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
 
     this->determine_principal_axes();
     this->determine_rotor_class();
+    this->find_symmetry_operations();
 }
 
 /**
@@ -96,6 +97,27 @@ void Symmetry::determine_rotor_class() {
     } else {
         // all principal moments are unique
         this->rotor_class = RotorClass::AsymmetricTop;
+    }
+}
+
+/**
+ * @brief Find all symmetry operations of the structure.
+ */
+void Symmetry::find_symmetry_operations() {
+    this->find_inversion_centre();
+}
+
+/**
+ * @brief Find an inversion centre in the structure.
+ */
+void Symmetry::find_inversion_centre() {
+    Inversion inversion;
+    inversion.do_operation(this->structure);
+
+    // TODO move tolerance to a variable/constant
+    if (inversion.get_error() < .1) {
+        // TODO add the operation to a list of operations
+        std::cout << "Inversion centre found in the structure." << std::endl;
     }
 }
 

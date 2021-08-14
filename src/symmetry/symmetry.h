@@ -19,10 +19,12 @@
 #ifndef SYMMETRY_SYMMETRY_H
 #define SYMMETRY_SYMMETRY_H
 
+#include <iostream>
 #include <memory>
 #include <Eigen/Dense>
 #include "../structure.h"
 #include "rotor_class.h"
+#include "operations/inversion.h"
 
 class Symmetry {
 private:
@@ -79,6 +81,16 @@ private:
      * degeneracy of the inertial moments).
      */
     void determine_rotor_class();
+
+    /**
+     * @brief Find all symmetry operations of the structure.
+     */
+    void find_symmetry_operations();
+
+    /**
+     * @brief Find an inversion centre in the structure.
+     */
+    void find_inversion_centre();
 };
 
 #endif  // SYMMETRY_SYMMETRY_H
