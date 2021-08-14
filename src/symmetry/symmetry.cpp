@@ -85,14 +85,16 @@ void Symmetry::determine_rotor_class() {
     if ((this->principal_moments[2] - this->principal_moments[0]) / this->principal_moments[2] < .02) {
         // all principal moments are (approximately) degenerate
         this->rotor_class = RotorClass::SphericalTop;
-    } else if ((this->principal_moments[1] - this->principal_moments[0]) / this->principal_moments[1] < .02 ||
-               (this->principal_moments[2] - this->principal_moments[1]) / this->principal_moments[2] < .02) {
-        // two principal moments are (approximately) degenerate
+    } else if ((this->principal_moments[1] - this->principal_moments[0]) / this->principal_moments[1] < .02) {
+        // the two lower principal moments are (approximately) degenerate
+        this->rotor_class = RotorClass::OblateSymmetricTop;
+    } else if ((this->principal_moments[2] - this->principal_moments[1]) / this->principal_moments[2] < .02) {
+        // the two higher principal moments are (approximately) degenerate
         if (this->principal_moments[0] < .02) {
             // the lowest principal moment is (approximately) zero
             this->rotor_class = RotorClass::Linear;
         } else {
-            this->rotor_class = RotorClass::SymmetricTop;
+            this->rotor_class = RotorClass::ProlateSymmetricTop;
         }
     } else {
         // all principal moments are unique

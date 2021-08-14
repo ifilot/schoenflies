@@ -51,12 +51,20 @@ BOOST_AUTO_TEST_CASE(rotor_asymmetric_top) {
     BOOST_TEST(symmetry.get_rotor_class() == RotorClass::AsymmetricTop);
 }
 
-BOOST_AUTO_TEST_CASE(rotor_symmetric_top) {
+BOOST_AUTO_TEST_CASE(rotor_oblate_symmetric_top) {
     std::string file = resolve_path("test/files/benzene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::SymmetricTop);
+    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::OblateSymmetricTop);
+}
+
+BOOST_AUTO_TEST_CASE(rotor_prolate_symmetric_top) {
+    std::string file = resolve_path("test/files/iron-pentacarbonyl.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    BOOST_TEST(symmetry.get_rotor_class() == RotorClass::ProlateSymmetricTop);
 }
 
 BOOST_AUTO_TEST_CASE(rotor_linear) {

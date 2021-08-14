@@ -20,10 +20,11 @@
 #define SYMMETRY_ROTOR_CLASS_H
 
 enum RotorClass {
-    AsymmetricTop,
-    SymmetricTop,
-    Linear,  // special case of symmetric top
-    SphericalTop
+    AsymmetricTop,        // I_a < I_b < I_c
+    OblateSymmetricTop,   // I_a ≈ I_b < I_c
+    ProlateSymmetricTop,  // I_a < I_b ≈ I_c
+    Linear,               // I_a << I_b ≈ I_c, special case of prolate symmetric top
+    SphericalTop          // I_a ≈ I_b ≈ I_c
 };
 
 #endif  // SYMMETRY_ROTOR_CLASS_H
