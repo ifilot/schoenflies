@@ -114,13 +114,60 @@ void Symmetry::find_symmetry_operations() {
  */
 void Symmetry::find_inversion_centre() {
     Inversion inversion;
-    inversion.do_operation(this->structure);
+    this->check_and_add_operation(inversion, this->inversions);
+}
+
+/**
+ * @brief Check whether a symmetry operation exists in the structure.
+ *
+ * @param operation the symmetry operation to check
+ * @return true if it exists
+ * @return false if it doesn't exist
+ */
+bool Symmetry::check_operation(Operation& operation) {
+    operation.do_operation(this->structure);
 
     // TODO move tolerance to a variable/constant
-    if (inversion.get_error() < .1) {
-        // TODO add the operation to a list of operations
-        std::cout << "Inversion centre found in the structure." << std::endl;
+    return operation.get_error() < .1;
+}
+
+/**
+ * @brief Add an operation to the list of operations, if it does not
+ * already exist yet.
+ *
+ * @tparam T class derived from Operation
+ * @param operation operation to add
+ * @param operations vector of operations to add to
+ */
+template <class T>
+void Symmetry::add_operation(T& operation, std::vector<T>& operations) {
+    bool found = false;
+
+    for (unsigned int i = 0; i < operations.size(); ++i) {
+        if (operation.equals(operations[i])) {
+            if (operation.get_error() < operations[i].get_error()) {
+                operations[i] = operation;
+            }
+
+            found = true;
+            break;
+        }
     }
+
+    if (!found) operations.push_back(operation);
+}
+
+/**
+ * @brief Check whether a symmetry operation exists in the structure and
+ * add it to the list of operations, if it does not already exist yet.
+ *
+ * @tparam T class derived from Operation
+ * @param operation operation to check and add
+ * @param operations vector of operations to add to
+ */
+template <class T>
+void Symmetry::check_and_add_operation(T& operation, std::vector<T>& operations) {
+    if (this->check_operation(operation)) this->add_operation(operation, operations);
 }
 
 /**

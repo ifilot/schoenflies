@@ -45,6 +45,17 @@ const float Inversion::get_distance_to_element(glm::vec3 coordinates) const {
 }
 
 /**
+ * @brief Check whether this operation equals another operation
+ *
+ * @param other other operation
+ * @return true if equal
+ * @return false if inequal
+ */
+const bool Inversion::equals(Inversion& other) const {
+    return true;  // inversions do not have any degrees of freedom
+}
+
+/**
  * @brief Get the name of a symmetry operation in plaintext
  *
  * @return const std::string

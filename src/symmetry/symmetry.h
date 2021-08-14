@@ -35,6 +35,8 @@ private:
 
     RotorClass rotor_class;
 
+    std::vector<Inversion> inversions;
+
 public:
     /**
      * @brief Default constructor
@@ -91,6 +93,37 @@ private:
      * @brief Find an inversion centre in the structure.
      */
     void find_inversion_centre();
+
+    /**
+     * @brief Check whether a symmetry operation exists in the structure.
+     *
+     * @param operation the symmetry operation to check
+     * @return true if it exists
+     * @return false if it doesn't exist
+     */
+    bool check_operation(Operation& operation);
+
+    /**
+     * @brief Add an operation to the list of operations, if it does not
+     * already exist yet.
+     *
+     * @tparam T class derived from Operation
+     * @param operation operation to add
+     * @param operations vector of operations to add to
+     */
+    template <class T>
+    void add_operation(T& operation, std::vector<T>& operations);
+
+    /**
+     * @brief Check whether a symmetry operation exists in the structure and
+     * add it to the list of operations, if it does not already exist yet.
+     *
+     * @tparam T class derived from Operation
+     * @param operation operation to check and add
+     * @param operations vector of operations to add to
+     */
+    template <class T>
+    void check_and_add_operation(T& operation, std::vector<T>& operations);
 };
 
 #endif  // SYMMETRY_SYMMETRY_H
