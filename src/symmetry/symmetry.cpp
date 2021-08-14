@@ -107,6 +107,7 @@ void Symmetry::determine_rotor_class() {
  */
 void Symmetry::find_symmetry_operations() {
     this->find_inversion_centre();
+    this->find_proper_rotational_axes();
 }
 
 /**
@@ -115,6 +116,217 @@ void Symmetry::find_symmetry_operations() {
 void Symmetry::find_inversion_centre() {
     Inversion inversion;
     this->check_and_add_operation(inversion, this->inversions);
+}
+
+/**
+ * @brief Find proper rotational axes in the structure.
+ */
+void Symmetry::find_proper_rotational_axes() {
+    if (this->get_rotor_class() == RotorClass::Linear) {
+        // only C∞ for linear structures
+        Eigen::Vector3d e_axis = this->get_principal_axes().col(0);
+        glm::vec3 axis = glm::vec3(e_axis.x(), e_axis.y(), e_axis.z());
+
+        ProperRotation rotation(ProperRotation::DEGREE_INF, axis);
+        this->check_and_add_operation(rotation, this->rotations);
+    } else {
+        this->find_proper_rotational_axes_along_principal_axes();
+        this->find_proper_rotational_axes_through_atoms();
+        this->find_proper_rotational_axes_between_atoms();
+
+        if (this->get_rotor_class() == RotorClass::SphericalTop) {
+            this->find_proper_rotational_axes_polygonal_faces();
+        }
+    }
+}
+
+/**
+ * @brief Find proper rotational axes along the principal axes of the
+ * structure.
+ */
+void Symmetry::find_proper_rotational_axes_along_principal_axes() {
+    for (unsigned int i = 0; i < 3; ++i) {
+        Eigen::Vector3d e_axis = this->get_principal_axes().col(i);
+        glm::vec3 axis(e_axis.x(), e_axis.y(), e_axis.z());
+
+        // TODO move maximum degree to a constant
+        for (unsigned int degree = 2; degree <= 8; ++degree) {
+            ProperRotation rotation(degree, axis);
+            this->check_and_add_operation(rotation, this->rotations);
+        }
+    }
+}
+
+/**
+ * @brief Find proper rotational axes through the centre of mass and an
+ * atom of the structure.
+ */
+void Symmetry::find_proper_rotational_axes_through_atoms() {
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        glm::vec3 axis = this->structure->get_coordinates(i);
+
+        if (glm::length2(axis) == 0) continue;
+        if (!this->axis_inertially_allowed(axis)) continue;
+
+        // TODO move maximum degree to a constant
+        for (unsigned int degree = 2; degree <= 8; ++degree) {
+            ProperRotation rotation(degree, axis);
+            this->check_and_add_operation(rotation, this->rotations);
+        }
+    }
+}
+
+/**
+ * @brief Find proper rotational axes through the centre of mass and the
+ * midpoints between pairs of atoms of the same element.
+ */
+void Symmetry::find_proper_rotational_axes_between_atoms() {
+    for (unsigned int i = 0; i < this->structure->get_num_atoms() - 1; ++i) {
+        for (unsigned int j = i + 1; j < this->structure->get_num_atoms(); ++j) {
+            if (this->structure->get_atomic_number(i) != this->structure->get_atomic_number(j)) continue;
+
+            // calculate midpoint between atoms i and j
+            glm::vec3 axis = .5f * (this->structure->get_coordinates(i) + this->structure->get_coordinates(j));
+
+            if (glm::length2(axis) == 0) continue;
+            if (!this->axis_inertially_allowed(axis)) continue;
+
+            // we know that this axis lies along a midpoint of atoms,
+            // therefore it must have an even degree
+            // TODO move maximum degree to a constant
+            for (unsigned int degree = 2; degree <= 8; degree += 2) {
+                ProperRotation rotation(degree, axis);
+                this->check_and_add_operation(rotation, this->rotations);
+            }
+        }
+    }
+}
+
+/**
+ * @brief Find proper rotational axes through polygonal faces for
+ * structures classified as spherical top (cubic).
+ */
+void Symmetry::find_proper_rotational_axes_polygonal_faces() {
+    // the number of C2 rotations determines how we find the remaining axes
+    std::vector<ProperRotation> C2s;
+
+    for (unsigned int i = 0; i < this->rotations.size(); ++i) {
+        if (this->rotations[i].get_degree() == 2) C2s.push_back(this->rotations[i]);
+    }
+
+    switch (C2s.size()) {
+        case 3:
+        case 9:
+            this->find_proper_rotational_axes_polygonal_faces_T_O();
+            break;
+        case 15:
+            this->find_proper_rotational_axes_polygonal_faces_I(C2s);
+            break;
+    }
+}
+
+/**
+ * @brief Find proper rotational axes through polygonal faces for
+ * structures with tetrahedral symmetry (T point group, 3 C2 rotations) and
+ * octahedral symmetry (O point group, 9 C2 rotations).
+ */
+void Symmetry::find_proper_rotational_axes_polygonal_faces_T_O() {
+    // the remaining C3 rotations are formed by combining the three principal axes
+    // we only need to enumerate half of the combinations; the other half are
+    // the same axes but in opposite directions
+    for (int i = -1; i < 2; i += 2) {  // {-1, 1}
+        for (int j = -1; j < 2; j += 2) {  // {-1, 1}
+            Eigen::Vector3d e_axis = this->get_principal_axes().col(0) * i +
+                                     this->get_principal_axes().col(1) * j +
+                                     this->get_principal_axes().col(2);
+            glm::vec3 axis(e_axis.x(), e_axis.y(), e_axis.z());
+
+            ProperRotation rotation(3, axis);
+            this->check_and_add_operation(rotation, this->rotations);
+        }
+    }
+}
+
+/**
+ * @brief Find proper rotational axes through polygonal faces for
+ * structures with icosahedral symmetry (I point group, 15 C2 rotations).
+ *
+ * @param C2s C2 rotations present in the structure
+ */
+void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperRotation> C2s) {
+    // the remaining C3 and C5 rotations are orthogonal to pairs of C2 rotations
+    // so we take cross products of pairs of C2 rotations and test for C3 and C5 symmetry
+    for (unsigned int i = 0; i < C2s.size() - 1; ++i) {
+        for (unsigned int j = i + 1; j < C2s.size(); ++j) {
+            glm::vec3 axis = glm::cross(C2s[i].get_axis(), C2s[j].get_axis());
+
+            if (glm::length2(axis) == 0) continue;
+
+            for (unsigned int degree = 3; degree <= 5; degree += 2) {  // {3, 5}
+                ProperRotation rotation(degree, axis);
+                this->check_and_add_operation(rotation, this->rotations);
+            }
+        }
+    }
+}
+
+/**
+ * @brief Check whether an axis can be a symmetry axis based on the
+ * inertial tensor.
+ *
+ * A symmetry operation must leave a molecule unchanged, which sets
+ * restrictions on whether an axis or plane can be a symmetry axis or plane
+ * based on the principal axes. Checking this early leads to increased
+ * efficiency.
+ *
+ * @param axis the axis to check
+ * @return true if axis can be a symmetry axis
+ * @return false if axis cannot be a symmetry axis
+ */
+bool Symmetry::axis_inertially_allowed(glm::vec3& axis) {
+    RotorClass rotor_class = this->get_rotor_class();
+
+    // if the structure is a spherical top, every axis is inertially allowed
+    if (rotor_class == RotorClass::SphericalTop) return true;
+
+    // if the structure is a symmetric top, the axis must either contain the
+    // nondegenerate principal axis or be orthogonal to it
+    if (rotor_class == RotorClass::OblateSymmetricTop ||
+        rotor_class == RotorClass::ProlateSymmetricTop ||
+        rotor_class == RotorClass::Linear) {
+        Eigen::Vector3d e_axis;
+        if (rotor_class == RotorClass::OblateSymmetricTop) {
+            e_axis = this->get_principal_axes().col(2);
+        } else if (rotor_class == RotorClass::ProlateSymmetricTop || rotor_class == RotorClass::Linear) {
+            e_axis = this->get_principal_axes().col(0);
+        }
+        glm::vec3 nondegenerate_axis(e_axis.x(), e_axis.y(), e_axis.z());
+
+        float dot = glm::dot(nondegenerate_axis, axis);
+
+        // TODO move tolerance to a variable/constant
+        return dot < .02 || dot > 1 - .02;
+    }
+
+    // if the structure is an asymmetric top, the axis must contain at least one
+    // of the principal axes
+    if (rotor_class == RotorClass::AsymmetricTop) {
+        float min_dot = INFINITY;
+
+        for (unsigned int i = 0; i < 3; ++i) {
+            Eigen::Vector3d e_axis = this->get_principal_axes().col(i);
+            glm::vec3 principal_axis(e_axis.x(), e_axis.y(), e_axis.z());
+
+            float dot = glm::dot(principal_axis, axis);
+
+            if (dot < min_dot) min_dot = dot;
+        }
+
+        // TODO move tolerance to a variable/constant
+        return min_dot < .02;
+    }
+
+    return false;
 }
 
 /**

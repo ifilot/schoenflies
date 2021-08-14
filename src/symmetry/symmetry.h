@@ -20,11 +20,15 @@
 #define SYMMETRY_SYMMETRY_H
 
 #include <iostream>
+#include <math.h>
 #include <memory>
+#include <vector>
 #include <Eigen/Dense>
 #include "../structure.h"
 #include "rotor_class.h"
 #include "operations/inversion.h"
+#include "operations/operation.h"
+#include "operations/proper_rotation.h"
 
 class Symmetry {
 private:
@@ -36,6 +40,7 @@ private:
     RotorClass rotor_class;
 
     std::vector<Inversion> inversions;
+    std::vector<ProperRotation> rotations;
 
 public:
     /**
@@ -93,6 +98,65 @@ private:
      * @brief Find an inversion centre in the structure.
      */
     void find_inversion_centre();
+
+    /**
+     * @brief Find proper rotational axes in the structure.
+     */
+    void find_proper_rotational_axes();
+
+    /**
+     * @brief Find proper rotational axes along the principal axes of the
+     * structure.
+     */
+    void find_proper_rotational_axes_along_principal_axes();
+
+    /**
+     * @brief Find proper rotational axes through the centre of mass and an
+     * atom of the structure.
+     */
+    void find_proper_rotational_axes_through_atoms();
+
+    /**
+     * @brief Find proper rotational axes through the centre of mass and the
+     * midpoints between pairs of atoms of the same element.
+     */
+    void find_proper_rotational_axes_between_atoms();
+
+    /**
+     * @brief Find proper rotational axes through polygonal faces for
+     * structures classified as spherical top (cubic).
+     */
+    void find_proper_rotational_axes_polygonal_faces();
+
+    /**
+     * @brief Find proper rotational axes through polygonal faces for
+     * structures with tetrahedral symmetry (T point group, 3 C2 rotations) and
+     * octahedral symmetry (O point group, 9 C2 rotations).
+     */
+    void find_proper_rotational_axes_polygonal_faces_T_O();
+
+    /**
+     * @brief Find proper rotational axes through polygonal faces for
+     * structures with icosahedral symmetry (I point group, 15 C2 rotations).
+     *
+     * @param C2s C2 rotations present in the structure
+     */
+    void find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperRotation> C2s);
+
+    /**
+     * @brief Check whether an axis can be a symmetry axis based on the
+     * inertial tensor.
+     *
+     * A symmetry operation must leave a molecule unchanged, which sets
+     * restrictions on whether an axis or plane can be a symmetry axis or plane
+     * based on the principal axes. Checking this early leads to increased
+     * efficiency.
+     *
+     * @param axis the axis to check
+     * @return true if axis can be a symmetry axis
+     * @return false if axis cannot be a symmetry axis
+     */
+    bool axis_inertially_allowed(glm::vec3& axis);
 
     /**
      * @brief Check whether a symmetry operation exists in the structure.
