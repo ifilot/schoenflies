@@ -40,7 +40,7 @@ private:
     RotorClass rotor_class;
 
     std::vector<Inversion> inversions;
-    std::vector<ProperRotation> rotations;
+    std::vector<ProperRotation> proper_rotations;
 
 public:
     /**

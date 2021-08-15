@@ -128,7 +128,7 @@ void Symmetry::find_proper_rotational_axes() {
         glm::vec3 axis = glm::vec3(e_axis.x(), e_axis.y(), e_axis.z());
 
         ProperRotation rotation(ProperRotation::DEGREE_INF, axis);
-        this->check_and_add_operation(rotation, this->rotations);
+        this->check_and_add_operation(rotation, this->proper_rotations);
     } else {
         this->find_proper_rotational_axes_along_principal_axes();
         this->find_proper_rotational_axes_through_atoms();
@@ -152,7 +152,7 @@ void Symmetry::find_proper_rotational_axes_along_principal_axes() {
         // TODO move maximum degree to a constant
         for (unsigned int degree = 2; degree <= 8; ++degree) {
             ProperRotation rotation(degree, axis);
-            this->check_and_add_operation(rotation, this->rotations);
+            this->check_and_add_operation(rotation, this->proper_rotations);
         }
     }
 }
@@ -171,7 +171,7 @@ void Symmetry::find_proper_rotational_axes_through_atoms() {
         // TODO move maximum degree to a constant
         for (unsigned int degree = 2; degree <= 8; ++degree) {
             ProperRotation rotation(degree, axis);
-            this->check_and_add_operation(rotation, this->rotations);
+            this->check_and_add_operation(rotation, this->proper_rotations);
         }
     }
 }
@@ -196,7 +196,7 @@ void Symmetry::find_proper_rotational_axes_between_atoms() {
             // TODO move maximum degree to a constant
             for (unsigned int degree = 2; degree <= 8; degree += 2) {
                 ProperRotation rotation(degree, axis);
-                this->check_and_add_operation(rotation, this->rotations);
+                this->check_and_add_operation(rotation, this->proper_rotations);
             }
         }
     }
@@ -210,8 +210,8 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces() {
     // the number of C2 rotations determines how we find the remaining axes
     std::vector<ProperRotation> C2s;
 
-    for (unsigned int i = 0; i < this->rotations.size(); ++i) {
-        if (this->rotations[i].get_degree() == 2) C2s.push_back(this->rotations[i]);
+    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        if (this->proper_rotations[i].get_degree() == 2) C2s.push_back(this->proper_rotations[i]);
     }
 
     switch (C2s.size()) {
@@ -242,7 +242,7 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_T_O() {
             glm::vec3 axis(e_axis.x(), e_axis.y(), e_axis.z());
 
             ProperRotation rotation(3, axis);
-            this->check_and_add_operation(rotation, this->rotations);
+            this->check_and_add_operation(rotation, this->proper_rotations);
         }
     }
 }
@@ -264,7 +264,7 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperR
 
             for (unsigned int degree = 3; degree <= 5; degree += 2) {  // {3, 5}
                 ProperRotation rotation(degree, axis);
-                this->check_and_add_operation(rotation, this->rotations);
+                this->check_and_add_operation(rotation, this->proper_rotations);
             }
         }
     }
