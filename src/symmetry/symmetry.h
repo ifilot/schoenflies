@@ -25,6 +25,7 @@
 #include <Eigen/Dense>
 #include "../structure.h"
 #include "rotor_class.h"
+#include "operations/improper_rotation.h"
 #include "operations/inversion.h"
 #include "operations/operation.h"
 #include "operations/proper_rotation.h"
@@ -40,6 +41,7 @@ private:
 
     std::vector<Inversion> inversions;
     std::vector<ProperRotation> proper_rotations;
+    std::vector<ImproperRotation> improper_rotations;
 
 public:
     /**
@@ -89,6 +91,14 @@ public:
      * @return const std::vector<ProperRotation>&
      */
     const std::vector<ProperRotation>& get_proper_rotations() const;
+
+    /**
+     * @brief Get the list of improper rotation operations present in the
+     * structure
+     *
+     * @return const std::vector<ImproperRotation>&
+     */
+    const std::vector<ImproperRotation>& get_improper_rotations() const;
 
 private:
     /**
@@ -156,6 +166,11 @@ private:
      * @param C2s C2 rotations present in the structure
      */
     void find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperRotation> C2s);
+
+    /**
+     * @brief Find improper rotational axes in the structure.
+     */
+    void find_improper_rotational_axes();
 
     /**
      * @brief Check whether an axis can be a symmetry axis based on the

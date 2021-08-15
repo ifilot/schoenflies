@@ -108,6 +108,7 @@ void Symmetry::determine_rotor_class() {
 void Symmetry::find_symmetry_operations() {
     this->find_inversion_centre();
     this->find_proper_rotational_axes();
+    this->find_improper_rotational_axes();
 }
 
 /**
@@ -271,6 +272,32 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperR
 }
 
 /**
+ * @brief Find improper rotational axes in the structure.
+ */
+void Symmetry::find_improper_rotational_axes() {
+    if (this->get_rotor_class() == RotorClass::Linear) {
+        // only S∞ for linear structures
+        Eigen::Vector3d e_axis = this->get_principal_axes().col(0);
+        glm::vec3 axis = glm::vec3(e_axis.x(), e_axis.y(), e_axis.z());
+
+        ImproperRotation imp_rotation(ImproperRotation::DEGREE_INF, axis);
+        this->check_and_add_operation(imp_rotation, this->improper_rotations);
+    } else {
+        // improper rotational axes are coincident with proper rotational axes, and
+        // have degree equal to either n or 2n
+        for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+            for (unsigned int degree_factor = 1; degree_factor <= 2; ++degree_factor) {  // {1, 2}
+                unsigned int degree = this->proper_rotations[i].get_degree() * degree_factor;
+                if (degree <= 2) continue;  // S1 = σ, S2 = i
+
+                ImproperRotation imp_rotation(degree, this->proper_rotations[i].get_axis());
+                this->check_and_add_operation(imp_rotation, this->improper_rotations);
+            }
+        }
+    }
+}
+
+/**
  * @brief Check whether an axis can be a symmetry axis based on the
  * inertial tensor.
  *
@@ -426,4 +453,14 @@ const std::vector<Inversion>& Symmetry::get_inversions() const {
  */
 const std::vector<ProperRotation>& Symmetry::get_proper_rotations() const {
     return this->proper_rotations;
+}
+
+/**
+ * @brief Get the list of improper rotation operations present in the
+ * structure
+ *
+ * @return const std::vector<ImproperRotation>&
+ */
+const std::vector<ImproperRotation>& Symmetry::get_improper_rotations() const {
+    return this->improper_rotations;
 }
