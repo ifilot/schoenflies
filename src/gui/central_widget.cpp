@@ -87,10 +87,22 @@ CentralWidget::CentralWidget(MainWindow* mw) {
  */
 void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->structure = structure;
+    auto symmetry = std::make_shared<Symmetry>(structure);
 
     this->gl_widget->set_structure(structure);
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
+
+    // temporarily show found symmetry operations in the text edit
+    for (unsigned int i = 0; i < symmetry->get_inversions().size(); ++i) {
+        auto inversion = symmetry->get_inversions()[i];
+        this->text_edit->append(QString("%1").arg(QString::fromStdString(inversion.get_name_html())));
+    }
+    for (unsigned int i = 0; i < symmetry->get_proper_rotations().size(); ++i) {
+        auto rotation = symmetry->get_proper_rotations()[i];
+        auto a = rotation.get_axis();
+        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
+    }
 }
 
 /**

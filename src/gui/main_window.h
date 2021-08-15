@@ -36,7 +36,6 @@
 #include <QString>
 #include "../program.h"
 #include "../structure.h"
-#include "../symmetry/symmetry.h"
 #include "central_widget.h"
 
 class CentralWidget;  // forward declaration

@@ -19,7 +19,6 @@
 #ifndef SYMMETRY_SYMMETRY_H
 #define SYMMETRY_SYMMETRY_H
 
-#include <iostream>
 #include <math.h>
 #include <memory>
 #include <vector>

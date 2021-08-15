@@ -68,7 +68,6 @@ void MainWindow::open() {
     if (filename.empty()) return;
 
     auto structure = std::make_shared<Structure>(filename);
-    auto symmetry = std::make_shared<Symmetry>(structure);
 
     statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
 
