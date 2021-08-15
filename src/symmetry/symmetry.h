@@ -29,6 +29,7 @@
 #include "operations/inversion.h"
 #include "operations/operation.h"
 #include "operations/proper_rotation.h"
+#include "operations/reflection.h"
 
 class Symmetry {
 private:
@@ -42,6 +43,7 @@ private:
     std::vector<Inversion> inversions;
     std::vector<ProperRotation> proper_rotations;
     std::vector<ImproperRotation> improper_rotations;
+    std::vector<Reflection> reflections;
 
 public:
     /**
@@ -99,6 +101,13 @@ public:
      * @return const std::vector<ImproperRotation>&
      */
     const std::vector<ImproperRotation>& get_improper_rotations() const;
+
+    /**
+     * @brief Get the list of reflection operations present in the structure
+     *
+     * @return const std::vector<Reflection>&
+     */
+    const std::vector<Reflection>& get_reflections() const;
 
 private:
     /**
@@ -171,6 +180,32 @@ private:
      * @brief Find improper rotational axes in the structure.
      */
     void find_improper_rotational_axes();
+
+    /**
+     * @brief Find reflection planes in the structure.
+     */
+    void find_reflection_planes();
+
+    /**
+     * @brief Find reflection planes which are normal to the principal axes of
+     * the structure.
+     */
+    void find_reflection_planes_normal_to_principal_axes();
+
+    /**
+     * @brief Find reflection planes which are normal to proper rotational
+     * axes.
+     *
+     * @param only_C2s whether to only search normal to C2 rotational axes (in
+     * case of octahedral and icosahedral symmetry)
+     */
+    void find_reflection_planes_normal_to_proper_rotational_axes(bool only_C2s);
+
+    /**
+     * @brief Find reflection planes which pass through midpoints between pairs
+     * of atoms of the same element.
+     */
+    void find_reflection_planes_in_midpoints();
 
     /**
      * @brief Check whether an axis can be a symmetry axis based on the

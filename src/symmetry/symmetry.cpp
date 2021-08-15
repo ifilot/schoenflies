@@ -109,6 +109,7 @@ void Symmetry::find_symmetry_operations() {
     this->find_inversion_centre();
     this->find_proper_rotational_axes();
     this->find_improper_rotational_axes();
+    this->find_reflection_planes();
 }
 
 /**
@@ -298,6 +299,89 @@ void Symmetry::find_improper_rotational_axes() {
 }
 
 /**
+ * @brief Find reflection planes in the structure.
+ */
+void Symmetry::find_reflection_planes() {
+    // infinite reflection planes (∞ σv) in C∞v and D∞d are not tracked here
+    if (this->get_rotor_class() == RotorClass::Linear) return;
+
+    // if octahedral or icosahedral symmetry, we can limit the reflection plane
+    // search to only include planes with normals coinciding with C2 rotational
+    // axes
+    bool octahedral_or_icosahedral = false;
+
+    if (this->get_rotor_class() == RotorClass::SphericalTop) {
+        unsigned int num_C2s = 0;
+        for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+            if (this->proper_rotations[i].get_degree() == 2) num_C2s++;
+        }
+
+        if (num_C2s == 9 || num_C2s == 15) octahedral_or_icosahedral = true;
+    }
+
+    if (!octahedral_or_icosahedral) this->find_reflection_planes_normal_to_principal_axes();
+    this->find_reflection_planes_normal_to_proper_rotational_axes(octahedral_or_icosahedral);
+    if (!octahedral_or_icosahedral) this->find_reflection_planes_in_midpoints();
+}
+
+/**
+ * @brief Find reflection planes which are normal to the principal axes of
+ * the structure.
+ */
+void Symmetry::find_reflection_planes_normal_to_principal_axes() {
+    for (unsigned int i = 0; i < 3; ++i) {
+        Eigen::Vector3d e_axis = this->get_principal_axes().col(i);
+        glm::vec3 normal(e_axis.x(), e_axis.y(), e_axis.z());
+
+        Reflection reflection(normal);
+        this->check_and_add_operation(reflection, this->reflections);
+    }
+}
+
+/**
+ * @brief Find reflection planes which are normal to proper rotational
+ * axes.
+ *
+ * @param only_C2s whether to only search normal to C2 rotational axes (in
+ * case of octahedral and icosahedral symmetry)
+ */
+void Symmetry::find_reflection_planes_normal_to_proper_rotational_axes(bool only_C2s) {
+    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        ProperRotation& rotation = this->proper_rotations[i];
+        if (only_C2s && rotation.get_degree() != 2) continue;
+
+        Reflection reflection(rotation.get_axis());
+        this->check_and_add_operation(reflection, this->reflections);
+    }
+}
+
+/**
+ * @brief Find reflection planes which pass through midpoints between pairs
+ * of atoms of the same element.
+ */
+void Symmetry::find_reflection_planes_in_midpoints() {
+    for (unsigned int i = 0; i < this->structure->get_num_atoms() - 1; ++i) {
+        for (unsigned int j = i + 1; j < this->structure->get_num_atoms(); ++j) {
+            if (this->structure->get_atomic_number(i) != this->structure->get_atomic_number(j)) continue;
+
+            // calculate midpoint between atoms i and j
+            glm::vec3 midpoint = .5f * (this->structure->get_coordinates(i) + this->structure->get_coordinates(j));
+
+            // calculate normal for reflection plane, which is in the plane
+            // formed by i and j and perpendicular to the midpoint vector
+            glm::vec3 axis = glm::cross(this->structure->get_coordinates(i), this->structure->get_coordinates(j));
+            glm::vec3 normal = glm::cross(midpoint, axis);
+
+            if (glm::length2(normal) == 0) continue;
+            if (!this->axis_inertially_allowed(normal)) continue;
+
+            Reflection reflection(normal);
+            this->check_and_add_operation(reflection, this->reflections);
+        }
+    }
+}
+
+/**
  * @brief Check whether an axis can be a symmetry axis based on the
  * inertial tensor.
  *
@@ -463,4 +547,13 @@ const std::vector<ProperRotation>& Symmetry::get_proper_rotations() const {
  */
 const std::vector<ImproperRotation>& Symmetry::get_improper_rotations() const {
     return this->improper_rotations;
+}
+
+/**
+ * @brief Get the list of reflection operations present in the structure
+ *
+ * @return const std::vector<Reflection>&
+ */
+const std::vector<Reflection>& Symmetry::get_reflections() const {
+    return this->reflections;
 }

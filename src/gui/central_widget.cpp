@@ -108,6 +108,11 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
         auto a = rotation.get_axis();
         this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
     }
+    for (unsigned int i = 0; i < symmetry->get_reflections().size(); ++i) {
+        auto reflection = symmetry->get_reflections()[i];
+        auto n = reflection.get_normal();
+        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(reflection.get_name_html()), QString::number(n.x), QString::number(n.y), QString::number(n.z)));
+    }
 }
 
 /**
