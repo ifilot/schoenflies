@@ -408,3 +408,22 @@ const Eigen::Matrix3d& Symmetry::get_principal_axes() const {
 const RotorClass Symmetry::get_rotor_class() const {
     return this->rotor_class;
 }
+
+/**
+ * @brief Get the list of inversion operations present in the structure
+ *
+ * @return const std::vector<Inversion>&
+ */
+const std::vector<Inversion>& Symmetry::get_inversions() const {
+    return this->inversions;
+}
+
+/**
+ * @brief Get the list of proper rotation operations present in the
+ * structure
+ *
+ * @return const std::vector<ProperRotation>&
+ */
+const std::vector<ProperRotation>& Symmetry::get_proper_rotations() const {
+    return this->proper_rotations;
+}

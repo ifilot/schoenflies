@@ -76,6 +76,21 @@ public:
      */
     const RotorClass get_rotor_class() const;
 
+    /**
+     * @brief Get the list of inversion operations present in the structure
+     *
+     * @return const std::vector<Inversion>&
+     */
+    const std::vector<Inversion>& get_inversions() const;
+
+    /**
+     * @brief Get the list of proper rotation operations present in the
+     * structure
+     *
+     * @return const std::vector<ProperRotation>&
+     */
+    const std::vector<ProperRotation>& get_proper_rotations() const;
+
 private:
     /**
      * @brief Calculate the inertial tensor and use this to determine principal
