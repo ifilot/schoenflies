@@ -32,14 +32,14 @@ BOOST_AUTO_TEST_CASE(principal_axes) {
     Symmetry symmetry(struc);
 
     Eigen::Vector3d principal_moments = symmetry.get_principal_moments();
-    Eigen::Vector3d expected_principal_moments{.624037, 1.31218, 1.93622};
-    BOOST_TEST(principal_moments.isApprox(expected_principal_moments, 1e-6));
+    Eigen::Vector3d expected_principal_moments{1.65324, 1.65324, 2.62436};
+    BOOST_TEST(principal_moments.isApprox(expected_principal_moments, 1e-5));
 
     Eigen::Matrix3d principal_axes = symmetry.get_principal_axes();
     Eigen::Matrix3d expected_principal_axes;
-    expected_principal_axes << -.5, -.677895, -.538941,
-                               .866025, -.391383, -.311158,
-                               0, .622316, -.782766;
+    expected_principal_axes << 1, 0, 0,
+                               0, 1, 0,
+                               0, 0, 1;
     BOOST_TEST(principal_axes.isApprox(expected_principal_axes, 1e-6));
 }
 
