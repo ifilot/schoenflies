@@ -19,6 +19,7 @@
 #ifndef SYMMETRY_SYMMETRY_H
 #define SYMMETRY_SYMMETRY_H
 
+#include <limits>
 #include <math.h>
 #include <memory>
 #include <vector>
@@ -30,6 +31,8 @@
 #include "operations/operation.h"
 #include "operations/proper_rotation.h"
 #include "operations/reflection.h"
+#include "point_groups/point_group.h"
+#include "point_groups/point_groups.h"
 
 class Symmetry {
 private:
@@ -44,6 +47,8 @@ private:
     std::vector<ProperRotation> proper_rotations;
     std::vector<ImproperRotation> improper_rotations;
     std::vector<Reflection> reflections;
+
+    PointGroup point_group;
 
 public:
     /**
@@ -108,6 +113,13 @@ public:
      * @return const std::vector<Reflection>&
      */
     const std::vector<Reflection>& get_reflections() const;
+
+    /**
+     * @brief Get the point group of the structure
+     *
+     * @return const PointGroup&
+     */
+    const PointGroup& get_point_group() const;
 
 private:
     /**
@@ -206,6 +218,12 @@ private:
      * of atoms of the same element.
      */
     void find_reflection_planes_in_midpoints();
+
+    /**
+     * @brief Find the point group with the highest match to the found symmetry
+     * operations.
+     */
+    void find_point_group();
 
     /**
      * @brief Check whether an axis can be a symmetry axis based on the

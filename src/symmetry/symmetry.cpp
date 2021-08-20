@@ -34,6 +34,7 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
     this->determine_principal_axes();
     this->determine_rotor_class();
     this->find_symmetry_operations();
+    this->find_point_group();
 }
 
 /**
@@ -382,6 +383,29 @@ void Symmetry::find_reflection_planes_in_midpoints() {
 }
 
 /**
+ * @brief Find the point group with the highest match to the found symmetry
+ * operations.
+ */
+void Symmetry::find_point_group() {
+    std::vector<PointGroup> point_groups = PointGroups::point_groups;
+
+    int min_diff = INT_MAX;
+    unsigned int best_group_index;
+
+    for (unsigned int i = 0; i < point_groups.size(); ++i) {
+        PointGroup& point_group = point_groups[i];
+        int diff = point_group.compare_to_symmetry_operations(this->inversions, this->proper_rotations, this->improper_rotations, this->reflections);
+
+        if (diff >= 0 && diff < min_diff) {
+            min_diff = diff;
+            best_group_index = i;
+        }
+    }
+
+    this->point_group = point_groups[best_group_index];
+}
+
+/**
  * @brief Check whether an axis can be a symmetry axis based on the
  * inertial tensor.
  *
@@ -556,4 +580,13 @@ const std::vector<ImproperRotation>& Symmetry::get_improper_rotations() const {
  */
 const std::vector<Reflection>& Symmetry::get_reflections() const {
     return this->reflections;
+}
+
+/**
+ * @brief Get the point group of the structure
+ *
+ * @return const PointGroup&
+ */
+const PointGroup& Symmetry::get_point_group() const {
+    return this->point_group;
 }
