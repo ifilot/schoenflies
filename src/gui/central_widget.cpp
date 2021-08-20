@@ -116,6 +116,9 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
 
     auto point_group = symmetry->get_point_group();
     this->text_edit->append(QString("Point group: %1").arg(QString::fromStdString(point_group.get_name_html())));
+
+    auto z = symmetry->get_z_axis();
+    this->text_edit->append(QString("z axis (%1, %2, %3)").arg(QString::number(z.x), QString::number(z.y), QString::number(z.z)));
 }
 
 /**
