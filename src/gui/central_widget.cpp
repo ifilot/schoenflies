@@ -113,6 +113,9 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
         auto n = reflection.get_normal();
         this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(reflection.get_name_html()), QString::number(n.x), QString::number(n.y), QString::number(n.z)));
     }
+
+    auto point_group = symmetry->get_point_group();
+    this->text_edit->append(QString("Point group: %1").arg(QString::fromStdString(point_group.get_name_html())));
 }
 
 /**
