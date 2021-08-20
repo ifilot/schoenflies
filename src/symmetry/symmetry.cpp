@@ -35,7 +35,7 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
     this->determine_rotor_class();
     this->find_symmetry_operations();
     this->find_point_group();
-    this->find_z_axis();
+    this->find_cartesian_axes();
 }
 
 /**
@@ -410,6 +410,45 @@ void Symmetry::find_point_group() {
 }
 
 /**
+ * @brief Find the Cartesian axes of the structure, according to molecular
+ * symmetry conventions.
+ */
+void Symmetry::find_cartesian_axes() {
+    if (this->get_rotor_class() == RotorClass::SphericalTop || this->get_proper_rotations().size() == 0) {
+        // if the structure is a spherical top or nonaxial, use the principal axes
+        this->assign_principal_axes_to_cartesian_xz_axes();
+    } else {
+        this->find_z_axis();
+
+        if (this->structure->get_num_atoms() >= 3) {
+            // planes in 3D require 3 points to be defined
+            glm::vec3 plane_normal = this->find_plane_normal();
+            bool is_planar = this->structure_is_planar(plane_normal);
+
+            if (is_planar) {
+                this->find_x_axis_planar(plane_normal);
+            } else {
+                this->find_x_axis_not_planar();
+            }
+        } else {
+            this->pick_arbitrary_x_axis();
+        }
+    }
+
+    this->orthonormalise_xz_axes();
+    this->find_y_axis();
+}
+
+/**
+ * @brief Assign two of the principal axes of the structure (from the
+ * inertial tensor) to the Cartesian x and z axes.
+ */
+void Symmetry::assign_principal_axes_to_cartesian_xz_axes() {
+    this->z_axis = glm::column(this->principal_axes, 0);
+    this->x_axis = glm::column(this->principal_axes, 1);
+}
+
+/**
  * @brief Find the z axis (principal axis) of the structure.
  */
 void Symmetry::find_z_axis() {
@@ -448,7 +487,7 @@ void Symmetry::find_z_axis() {
         unsigned int num_intersections = 0;
 
         for (unsigned int j = 0; j < this->structure->get_num_atoms(); ++j) {
-            float dot = glm::dot(possible_z_axes[i], glm::normalize(this->structure->get_coordinates(j)));
+            float dot = std::abs(glm::dot(possible_z_axes[i], glm::normalize(this->structure->get_coordinates(j))));
             // TODO move tolerance to a variable/constant
             if (dot > 1 - .02) num_intersections++;
         }
@@ -481,7 +520,7 @@ void Symmetry::find_z_axis() {
 
         for (unsigned int j = 0; j < 3; ++j) {
             glm::vec3 principal_axis = glm::column(this->get_principal_axes(), j);
-            float diff = 1 - glm::dot(possible_z_axes2[i], principal_axis);
+            float diff = 1 - std::abs(glm::dot(possible_z_axes2[i], principal_axis));
 
             if (diff < this_axis_min_diff) this_axis_min_diff = diff;
         }
@@ -493,6 +532,169 @@ void Symmetry::find_z_axis() {
     }
 
     this->z_axis = possible_z_axes2[most_parallel_idx];
+}
+
+/**
+ * @brief Find the best-fitting plane through all atoms using a singular
+ * value decomposition.
+ *
+ * @return glm::vec3 best-fitting plane
+ */
+glm::vec3 Symmetry::find_plane_normal() {
+    if (this->structure->get_num_atoms() < 3) {
+        throw std::runtime_error("Planes can only be found for structures with at least 3 atoms.");
+    }
+
+    // implementation based on https://math.stackexchange.com/a/99317
+
+    // set up 3xN matrix of atom coordinates
+    Eigen::MatrixXf coordinates(3, this->structure->get_num_atoms());
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        glm::vec3 atom_coordinates = this->structure->get_coordinates(i);
+        coordinates(0, i) = atom_coordinates.x;
+        coordinates(1, i) = atom_coordinates.y;
+        coordinates(2, i) = atom_coordinates.z;
+    }
+
+    // compute SVD with thin left singular vector (U)
+    Eigen::BDCSVD<Eigen::MatrixXf> svd(coordinates, Eigen::DecompositionOptions::ComputeThinU);
+
+    // the normal of the plane is the left singular vector corresponding to the
+    // least singular value. singular values are always sorted in decreasing
+    // order (from Eigen docs), so we are looking for the rightmost column
+    // (column 2, as U is a 3x3 matrix).
+    Eigen::VectorXf e_normal = svd.matrixU().col(2);
+
+    // convert normal to GLM vector
+    glm::vec3 normal{e_normal.x(), e_normal.y(), e_normal.z()};
+
+    return normal;
+}
+
+/**
+ * @brief Determine whether the structure is planar by comparing the
+ * positions of the atoms to the best-fitting plane.
+ *
+ * @param plane_normal best-fitting plane
+ * @return true if structure is planar
+ * @return false if structure is not planar
+ */
+bool Symmetry::structure_is_planar(glm::vec3& plane_normal) {
+    float sum_dot = 0;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        // because the best-fitting plane goes through the origin and the
+        // normal is a unit vector, the distance between this plane and an atom
+        // is equal to the (absolute) dot product
+        sum_dot += std::abs(glm::dot(plane_normal, this->structure->get_coordinates(i)));
+    }
+
+    // TODO make tolerance variable/constant
+    return sum_dot / this->structure->get_num_atoms() < .02;
+}
+
+/**
+ * @brief Find the x axis of the structure under the assumption that the
+ * structure is planar.
+ */
+void Symmetry::find_x_axis_planar(glm::vec3& plane_normal) {
+    // TODO make tolerance variable/constant
+    if (glm::dot(plane_normal, this->z_axis) > 1 - .02) {
+        // z axis is parallel to plane normal -> perpendicular to plane
+        // -> x axis lies in plane and passes through the greatest number of atoms
+        glm::vec3 x_axis;
+        unsigned int max_num_intersections = 0;
+        for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+            glm::vec3 axis = glm::normalize(this->structure->get_coordinates(i));
+
+            // check if axis lies in plane (is possible x axis), continue otherwise
+            // TODO make tolerance variable/constant
+            if (glm::abs(glm::dot(axis, plane_normal)) > .02) continue;
+
+            unsigned int num_intersections = 0;
+            for (unsigned int j = 0; j < this->structure->get_num_atoms(); ++j) {
+                float dot = glm::abs(glm::dot(axis, glm::normalize(this->structure->get_coordinates(j))));
+                if (dot > 1 - .02) num_intersections++;
+            }
+
+            if (num_intersections > max_num_intersections) {
+                max_num_intersections = num_intersections;
+                x_axis = axis;
+            }
+        }
+
+        this->x_axis = x_axis;
+    } else {
+        // z axis lies in plane
+        // -> x axis is perpendicular to plane -> parallel to plane normal
+        this->x_axis = plane_normal;
+    }
+}
+
+/**
+ * @brief Find the x axis of the structure under the assumption that the
+ * structure is not planar.
+ */
+void Symmetry::find_x_axis_not_planar() {
+    // the xz plane should contain as many atoms as possible, so we try all
+    // possible xz planes given a fixed z axis and check the number of atoms in
+    // each plane.
+    glm::vec3 x_axis;
+    unsigned int max_num_intersections = 0;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        glm::vec3 axis = glm::normalize(this->structure->get_coordinates(i));
+        // TODO make tolerance variable/constant
+        if (glm::length2(axis) < .02) continue;  // atom is in origin
+        if (glm::abs(glm::dot(this->z_axis, axis)) > 1 - .02) continue;  // atom is on z axis
+
+        glm::vec3 plane_normal = glm::normalize(glm::cross(this->z_axis, axis));
+
+        unsigned int num_intersections = 0;
+        for (unsigned int j = 0; j < this->structure->get_num_atoms(); ++j) {
+            float dot = glm::abs(glm::dot(plane_normal, glm::normalize(this->structure->get_coordinates(j))));
+            if (dot < .02) num_intersections++;
+        }
+
+        if (num_intersections > max_num_intersections) {
+            max_num_intersections = num_intersections;
+            x_axis = axis;
+        }
+    }
+
+    this->x_axis = x_axis;
+}
+
+/**
+ * @brief Pick an arbitrary x axis for the structure if it is linear.
+ */
+void Symmetry::pick_arbitrary_x_axis() {
+    if (std::abs(this->z_axis.y) < .01 || std::abs(this->z_axis.z) < .01) {
+        this->x_axis = glm::vec3(1, 0, 0);
+    } else {
+        this->x_axis = glm::vec3(0, 1, 0);
+    }
+}
+
+/**
+ * @brief Orthonormalise the x axis with respect to the z axis of the
+ * structure using the Gram-Schmidt procedure.
+ */
+void Symmetry::orthonormalise_xz_axes() {
+    // the z axis remains fixed
+    this->z_axis = glm::normalize(this->z_axis);
+
+    // Gram-Schmidt
+    this->x_axis = glm::normalize(this->x_axis - glm::dot(this->z_axis, this->x_axis) * this->z_axis);
+}
+
+/**
+ * @brief Find the y axis of the structure using the x and z axes.
+ */
+void Symmetry::find_y_axis() {
+    // right-handed coordinate system
+    this->y_axis = glm::cross(this->z_axis, this->x_axis);
 }
 
 /**
@@ -623,9 +825,25 @@ const glm::mat3x3& Symmetry::get_principal_axes() const {
 }
 
 /**
- * @brief Get the z axis of the structure
+ * @brief Get the x axis of the structure
  *
- * Returns a NAN vector if no z axis exists (nonaxial or cubic symmetries).
+ * @return const glm::vec3&
+ */
+const glm::vec3& Symmetry::get_x_axis() const {
+    return this->x_axis;
+}
+
+/**
+ * @brief Get the y axis of the structure
+ *
+ * @return const glm::vec3&
+ */
+const glm::vec3& Symmetry::get_y_axis() const {
+    return this->y_axis;
+}
+
+/**
+ * @brief Get the z axis of the structure
  *
  * @return const glm::vec3&
  */

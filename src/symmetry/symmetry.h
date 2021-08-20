@@ -44,6 +44,8 @@ private:
     glm::vec3 principal_moments;
     glm::mat3x3 principal_axes;
 
+    glm::vec3 x_axis{NAN};
+    glm::vec3 y_axis{NAN};
     glm::vec3 z_axis{NAN};
 
     RotorClass rotor_class;
@@ -83,12 +85,23 @@ public:
     const glm::mat3x3& get_principal_axes() const;
 
     /**
+     * @brief Get the x axis of the structure
+     *
+     * @return const glm::vec3&
+     */
+    const glm::vec3& get_x_axis() const;
+
+    /**
+     * @brief Get the y axis of the structure
+     *
+     * @return const glm::vec3&
+     */
+    const glm::vec3& get_y_axis() const;
+
+    /**
      * @brief Get the z axis of the structure
      *
-     * Returns a NAN vector if no z axis exists (nonaxial or cubic symmetries).
-     * symmetries).
-     *
-     * @return const glm::vec3
+     * @return const glm::vec3&
      */
     const glm::vec3& get_z_axis() const;
 
@@ -241,9 +254,69 @@ private:
     void find_point_group();
 
     /**
+     * @brief Find the Cartesian axes of the structure, according to molecular
+     * symmetry conventions.
+     */
+    void find_cartesian_axes();
+
+    /**
+     * @brief Assign two of the principal axes of the structure (from the
+     * inertial tensor) to the Cartesian x and z axes.
+     */
+    void assign_principal_axes_to_cartesian_xz_axes();
+
+    /**
      * @brief Find the z axis (principal axis) of the structure.
      */
     void find_z_axis();
+
+    /**
+     * @brief Find the best-fitting plane through all atoms using a singular
+     * value decomposition.
+     *
+     * @return glm::vec3 best-fitting plane
+     */
+    glm::vec3 find_plane_normal();
+
+    /**
+     * @brief Determine whether the structure is planar by comparing the
+     * positions of the atoms to the best-fitting plane.
+     *
+     * @param plane_normal best-fitting plane
+     * @return true if structure is planar
+     * @return false if structure is not planar
+     */
+    bool structure_is_planar(glm::vec3& plane_normal);
+
+    /**
+     * @brief Find the x axis of the structure under the assumption that the
+     * structure is planar.
+     *
+     * @param plane_normal best-fitting plane
+     */
+    void find_x_axis_planar(glm::vec3& plane_normal);
+
+    /**
+     * @brief Find the x axis of the structure under the assumption that the
+     * structure is not planar.
+     */
+    void find_x_axis_not_planar();
+
+    /**
+     * @brief Pick an arbitrary x axis for the structure if it is linear.
+     */
+    void pick_arbitrary_x_axis();
+
+    /**
+     * @brief Orthonormalise the x axis with respect to the z axis of the
+     * structure using the Gram-Schmidt procedure.
+     */
+    void orthonormalise_xz_axes();
+
+    /**
+     * @brief Find the y axis of the structure using the x and z axes.
+     */
+    void find_y_axis();
 
     /**
      * @brief Check whether an axis can be a symmetry axis based on the
