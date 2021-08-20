@@ -17,8 +17,10 @@
  */
 
 #include <memory>
+#include <vector>
 #include <boost/test/unit_test.hpp>
-#include <Eigen/Dense>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_access.hpp>
 #include "../src/structure.h"
 #include "../src/symmetry/rotor_class.h"
 #include "../src/symmetry/symmetry.h"
@@ -31,16 +33,19 @@ BOOST_AUTO_TEST_CASE(principal_axes) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    Eigen::Vector3d principal_moments = symmetry.get_principal_moments();
-    Eigen::Vector3d expected_principal_moments{1.65324, 1.65324, 2.62436};
-    BOOST_TEST(principal_moments.isApprox(expected_principal_moments, 1e-5));
+    glm::vec3 principal_moments = symmetry.get_principal_moments();
+    glm::vec3 expected_principal_moments{1.65324, 1.65324, 2.62436};
+    BOOST_TEST(glm::all(glm::epsilonEqual(principal_moments, expected_principal_moments, 1e-5f)));
 
-    Eigen::Matrix3d principal_axes = symmetry.get_principal_axes();
-    Eigen::Matrix3d expected_principal_axes;
-    expected_principal_axes << 1, 0, 0,
-                               0, 1, 0,
-                               0, 0, 1;
-    BOOST_TEST(principal_axes.isApprox(expected_principal_axes, 1e-6));
+    glm::mat3x3 principal_axes = symmetry.get_principal_axes();
+    glm::mat3x3 expected_principal_axes{
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+    };
+    for (unsigned int i = 0; i < 3; ++i) {
+        BOOST_TEST(glm::all(glm::epsilonEqual(glm::column(principal_axes, i), glm::column(expected_principal_axes, i), 1e-6f)));
+    }
 }
 
 BOOST_AUTO_TEST_CASE(rotor_asymmetric_top) {

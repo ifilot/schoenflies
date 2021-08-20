@@ -24,6 +24,8 @@
 #include <memory>
 #include <vector>
 #include <Eigen/Dense>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_access.hpp>
 #include "../structure.h"
 #include "rotor_class.h"
 #include "operations/improper_rotation.h"
@@ -38,8 +40,8 @@ class Symmetry {
 private:
     std::shared_ptr<Structure> structure;
 
-    Eigen::Vector3d principal_moments;
-    Eigen::Matrix3d principal_axes;
+    glm::vec3 principal_moments;
+    glm::mat3x3 principal_axes;
 
     RotorClass rotor_class;
 
@@ -66,16 +68,16 @@ public:
     /**
      * @brief Get the principal moments of the structure
      *
-     * @return const Eigen::Vector3d&
+     * @return const glm::vec3&
      */
-    const Eigen::Vector3d& get_principal_moments() const;
+    const glm::vec3& get_principal_moments() const;
 
     /**
      * @brief Get the principal axes of the structure
      *
-     * @return const Eigen::Matrix3d&
+     * @return const glm::mat3x3&
      */
-    const Eigen::Matrix3d& get_principal_axes() const;
+    const glm::mat3x3& get_principal_axes() const;
 
     /**
      * @brief Get the rotor class of the structure

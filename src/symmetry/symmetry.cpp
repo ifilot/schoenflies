@@ -70,8 +70,17 @@ void Symmetry::determine_principal_axes() {
         throw std::runtime_error("Diagonalisation of inertial tensor did not converge.");
     }
 
-    this->principal_moments = solver.eigenvalues();
-    this->principal_axes = solver.eigenvectors();
+    auto& principal_moments = solver.eigenvalues();
+    auto& principal_axes = solver.eigenvectors();
+
+    // convert Eigen objects to GLM objects
+    for (unsigned int i = 0; i < 3; ++i) {
+        for (unsigned int j = 0; j < 3; ++j) {
+            this->principal_axes[i][j] = principal_axes(j, i);
+        }
+
+        this->principal_moments[i] = principal_moments(i);
+    }
 }
 
 /**
@@ -127,8 +136,7 @@ void Symmetry::find_inversion_centre() {
 void Symmetry::find_proper_rotational_axes() {
     if (this->get_rotor_class() == RotorClass::Linear) {
         // only C∞ for linear structures
-        Eigen::Vector3d e_axis = this->get_principal_axes().col(0);
-        glm::vec3 axis = glm::vec3(e_axis.x(), e_axis.y(), e_axis.z());
+        glm::vec3 axis = glm::column(this->get_principal_axes(), 0);
 
         ProperRotation rotation(ProperRotation::DEGREE_INF, axis);
         this->check_and_add_operation(rotation, this->proper_rotations);
@@ -149,8 +157,7 @@ void Symmetry::find_proper_rotational_axes() {
  */
 void Symmetry::find_proper_rotational_axes_along_principal_axes() {
     for (unsigned int i = 0; i < 3; ++i) {
-        Eigen::Vector3d e_axis = this->get_principal_axes().col(i);
-        glm::vec3 axis(e_axis.x(), e_axis.y(), e_axis.z());
+        glm::vec3 axis = glm::column(this->get_principal_axes(), i);
 
         // TODO move maximum degree to a constant
         for (unsigned int degree = 2; degree <= 8; ++degree) {
@@ -239,10 +246,9 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_T_O() {
     // the same axes but in opposite directions
     for (int i = -1; i < 2; i += 2) {  // {-1, 1}
         for (int j = -1; j < 2; j += 2) {  // {-1, 1}
-            Eigen::Vector3d e_axis = this->get_principal_axes().col(0) * i +
-                                     this->get_principal_axes().col(1) * j +
-                                     this->get_principal_axes().col(2);
-            glm::vec3 axis(e_axis.x(), e_axis.y(), e_axis.z());
+            glm::vec3 axis = glm::column(this->get_principal_axes(), 0) * (float) i +
+                             glm::column(this->get_principal_axes(), 1) * (float) j +
+                             glm::column(this->get_principal_axes(), 2);
 
             ProperRotation rotation(3, axis);
             this->check_and_add_operation(rotation, this->proper_rotations);
@@ -279,8 +285,7 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperR
 void Symmetry::find_improper_rotational_axes() {
     if (this->get_rotor_class() == RotorClass::Linear) {
         // only S∞ for linear structures
-        Eigen::Vector3d e_axis = this->get_principal_axes().col(0);
-        glm::vec3 axis = glm::vec3(e_axis.x(), e_axis.y(), e_axis.z());
+        glm::vec3 axis = glm::column(this->get_principal_axes(), 0);
 
         ImproperRotation imp_rotation(ImproperRotation::DEGREE_INF, axis);
         this->check_and_add_operation(imp_rotation, this->improper_rotations);
@@ -331,9 +336,7 @@ void Symmetry::find_reflection_planes() {
  */
 void Symmetry::find_reflection_planes_normal_to_principal_axes() {
     for (unsigned int i = 0; i < 3; ++i) {
-        Eigen::Vector3d e_axis = this->get_principal_axes().col(i);
-        glm::vec3 normal(e_axis.x(), e_axis.y(), e_axis.z());
-
+        glm::vec3 normal = glm::column(this->get_principal_axes(), i);
         Reflection reflection(normal);
         this->check_and_add_operation(reflection, this->reflections);
     }
@@ -429,13 +432,12 @@ bool Symmetry::axis_inertially_allowed(glm::vec3& axis) {
     if (rotor_class == RotorClass::OblateSymmetricTop ||
         rotor_class == RotorClass::ProlateSymmetricTop ||
         rotor_class == RotorClass::Linear) {
-        Eigen::Vector3d e_axis;
+        glm::vec3 nondegenerate_axis;
         if (rotor_class == RotorClass::OblateSymmetricTop) {
-            e_axis = this->get_principal_axes().col(2);
+            nondegenerate_axis = glm::column(this->get_principal_axes(), 2);
         } else if (rotor_class == RotorClass::ProlateSymmetricTop || rotor_class == RotorClass::Linear) {
-            e_axis = this->get_principal_axes().col(0);
+            nondegenerate_axis = glm::column(this->get_principal_axes(), 0);
         }
-        glm::vec3 nondegenerate_axis(e_axis.x(), e_axis.y(), e_axis.z());
 
         float dot = glm::dot(nondegenerate_axis, axis);
 
@@ -449,9 +451,7 @@ bool Symmetry::axis_inertially_allowed(glm::vec3& axis) {
         float min_dot = INFINITY;
 
         for (unsigned int i = 0; i < 3; ++i) {
-            Eigen::Vector3d e_axis = this->get_principal_axes().col(i);
-            glm::vec3 principal_axis(e_axis.x(), e_axis.y(), e_axis.z());
-
+            glm::vec3 principal_axis = glm::column(this->get_principal_axes(), i);
             float dot = glm::dot(principal_axis, axis);
 
             if (dot < min_dot) min_dot = dot;
@@ -520,18 +520,18 @@ void Symmetry::check_and_add_operation(T& operation, std::vector<T>& operations)
 /**
  * @brief Get the principal moments of the structure
  *
- * @return const Eigen::Vector3d&
+ * @return const glm::vec3&
  */
-const Eigen::Vector3d& Symmetry::get_principal_moments() const {
+const glm::vec3& Symmetry::get_principal_moments() const {
     return this->principal_moments;
 }
 
 /**
  * @brief Get the principal axes of the structure
  *
- * @return const Eigen::Matrix3d&
+ * @return const glm::mat3x3&
  */
-const Eigen::Matrix3d& Symmetry::get_principal_axes() const {
+const glm::mat3x3& Symmetry::get_principal_axes() const {
     return this->principal_axes;
 }
 
