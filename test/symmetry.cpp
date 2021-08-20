@@ -88,4 +88,31 @@ BOOST_AUTO_TEST_CASE(rotor_spherical_top) {
     BOOST_TEST(symmetry.get_rotor_class() == RotorClass::SphericalTop);
 }
 
+BOOST_AUTO_TEST_CASE(z_axis_benzene) {
+    std::string file = resolve_path("test/files/benzene.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    glm::vec3 expected_z_axis{0, 0, 1};
+    BOOST_TEST(glm::all(glm::epsilonEqual(symmetry.get_z_axis(), expected_z_axis, 1e-6f)));
+}
+
+BOOST_AUTO_TEST_CASE(z_axis_cyclooctatetraene) {
+    std::string file = resolve_path("test/files/cyclooctatetraene.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    glm::vec3 expected_z_axis{0, 0, 1};
+    BOOST_TEST(glm::all(glm::epsilonEqual(symmetry.get_z_axis(), expected_z_axis, 1e-6f)));
+}
+
+BOOST_AUTO_TEST_CASE(z_axis_sulfur_hexafluoride) {
+    std::string file = resolve_path("test/files/sulfur-hexafluoride.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    // sulfur hexafluoride is a cubic structure
+    BOOST_TEST(glm::all(glm::isnan(symmetry.get_z_axis())));
+}
+
 BOOST_AUTO_TEST_SUITE_END();
