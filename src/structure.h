@@ -37,7 +37,6 @@
 
 class Structure {
 private:
-public:
     unsigned int num_atoms;
     std::vector<glm::vec3> coordinates;
     std::vector<unsigned int> atomic_numbers;
