@@ -88,22 +88,97 @@ BOOST_AUTO_TEST_CASE(rotor_spherical_top) {
     BOOST_TEST(symmetry.get_rotor_class() == RotorClass::SphericalTop);
 }
 
-BOOST_AUTO_TEST_CASE(z_axis_benzene) {
+BOOST_AUTO_TEST_CASE(axes_benzene) {
     std::string file = resolve_path("test/files/benzene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    glm::vec3 expected_z_axis{0, 0, 1};
-    BOOST_TEST(glm::all(glm::epsilonEqual(symmetry.get_z_axis(), expected_z_axis, 1e-6f)));
+    std::vector<glm::vec3> expected_axes{
+        {0, 1, 0},
+        {-1, 0, 0},
+        {0, 0, 1}
+    };
+    std::vector<glm::vec3> axes{symmetry.get_x_axis(), symmetry.get_y_axis(), symmetry.get_z_axis()};
+    for (unsigned int i = 0; i < 3; ++i) {
+        BOOST_TEST(glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-6f)));
+    }
 }
 
-BOOST_AUTO_TEST_CASE(z_axis_cyclooctatetraene) {
-    std::string file = resolve_path("test/files/cyclooctatetraene.xyz");
+BOOST_AUTO_TEST_CASE(axes_boric_acid) {
+    std::string file = resolve_path("test/files/boric-acid.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    std::vector<glm::vec3> expected_axes{
+        {.007302, .999973, 0},
+        {-.999973, .007302, 0},
+        {0, 0, 1}
+    };
+    std::vector<glm::vec3> axes{symmetry.get_x_axis(), symmetry.get_y_axis(), symmetry.get_z_axis()};
+    for (unsigned int i = 0; i < 3; ++i) {
+        BOOST_TEST(glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-6f)));
+    }
+}
+
+BOOST_AUTO_TEST_CASE(axes_carbon_dioxide) {
+    std::string file = resolve_path("test/files/carbon-dioxide.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
     glm::vec3 expected_z_axis{0, 0, 1};
-    BOOST_TEST(glm::all(glm::epsilonEqual(symmetry.get_z_axis(), expected_z_axis, 1e-6f)));
+    BOOST_TEST(glm::all(glm::epsilonEqual(expected_z_axis, symmetry.get_z_axis(), 1e-6f)));
+
+    // exact x and y axes are irrelevant, as long as they are orthonormal
+    BOOST_TEST(glm::abs(glm::dot(symmetry.get_x_axis(), symmetry.get_y_axis())) < 1e-6f);
+    BOOST_TEST(glm::abs(glm::dot(symmetry.get_x_axis(), symmetry.get_z_axis())) < 1e-6f);
+}
+
+BOOST_AUTO_TEST_CASE(axes_cyclooctatetraene) {
+    std::string file = resolve_path("test/files/cyclooctatetraene.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    std::vector<glm::vec3> expected_axes{
+        {.390958, .920408, 0},
+        {-.920408, .390958, 0},
+        {0, 0, 1}
+    };
+    std::vector<glm::vec3> axes{symmetry.get_x_axis(), symmetry.get_y_axis(), symmetry.get_z_axis()};
+    for (unsigned int i = 0; i < 3; ++i) {
+        BOOST_TEST(glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-6f)));
+    }
+}
+
+BOOST_AUTO_TEST_CASE(axes_ferrocene_eclipsed) {
+    std::string file = resolve_path("test/files/ferrocene-eclipsed.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    std::vector<glm::vec3> expected_axes{
+        {0, 1, 0},
+        {1, 0, 0},
+        {0, 0, -1}
+    };
+    std::vector<glm::vec3> axes{symmetry.get_x_axis(), symmetry.get_y_axis(), symmetry.get_z_axis()};
+    for (unsigned int i = 0; i < 3; ++i) {
+        BOOST_TEST(glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-6f)));
+    }
+}
+
+BOOST_AUTO_TEST_CASE(axes_water) {
+    std::string file = resolve_path("test/files/water.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    Symmetry symmetry(struc);
+
+    std::vector<glm::vec3> expected_axes{
+        {-1, 0, 0},
+        {0, -1, 0},
+        {0, 0, 1}
+    };
+    std::vector<glm::vec3> axes{symmetry.get_x_axis(), symmetry.get_y_axis(), symmetry.get_z_axis()};
+    for (unsigned int i = 0; i < 3; ++i) {
+        BOOST_TEST(glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-6f)));
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END();
