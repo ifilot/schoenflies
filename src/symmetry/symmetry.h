@@ -22,6 +22,7 @@
 #include <limits>
 #include <math.h>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 #include <Eigen/Dense>
 #include <glm/glm.hpp>
@@ -42,6 +43,8 @@ private:
 
     glm::vec3 principal_moments;
     glm::mat3x3 principal_axes;
+
+    glm::vec3 z_axis{NAN};
 
     RotorClass rotor_class;
 
@@ -78,6 +81,16 @@ public:
      * @return const glm::mat3x3&
      */
     const glm::mat3x3& get_principal_axes() const;
+
+    /**
+     * @brief Get the z axis of the structure
+     *
+     * Returns a NAN vector if no z axis exists (nonaxial or cubic symmetries).
+     * symmetries).
+     *
+     * @return const glm::vec3
+     */
+    const glm::vec3& get_z_axis() const;
 
     /**
      * @brief Get the rotor class of the structure
@@ -226,6 +239,11 @@ private:
      * operations.
      */
     void find_point_group();
+
+    /**
+     * @brief Find the z axis (principal axis) of the structure.
+     */
+    void find_z_axis();
 
     /**
      * @brief Check whether an axis can be a symmetry axis based on the

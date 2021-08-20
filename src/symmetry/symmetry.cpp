@@ -35,6 +35,7 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
     this->determine_rotor_class();
     this->find_symmetry_operations();
     this->find_point_group();
+    this->find_z_axis();
 }
 
 /**
@@ -409,6 +410,92 @@ void Symmetry::find_point_group() {
 }
 
 /**
+ * @brief Find the z axis (principal axis) of the structure.
+ */
+void Symmetry::find_z_axis() {
+    // if the structure is a spherical top, there is no difference between axes
+    if (this->get_rotor_class() == RotorClass::SphericalTop) return;
+
+    // search for z axes based on highest degree of rotational axes
+    std::vector<glm::vec3> possible_z_axes;
+
+    // find highest degree
+    unsigned int max_degree = 0;
+    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        if (this->proper_rotations[i].get_degree() > max_degree) {
+            max_degree = this->proper_rotations[i].get_degree();
+        }
+    }
+
+    // find rotational axes with this degree
+    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        if (this->proper_rotations[i].get_degree() == max_degree) {
+            possible_z_axes.push_back(this->proper_rotations[i].get_axis());
+        }
+    }
+
+    if (possible_z_axes.size() == 1) {
+        // only one possibility
+        this->z_axis = possible_z_axes[0];
+        return;
+    }
+
+    // multiple possibilities, so find the axis intersecting with the highest
+    // number of atoms
+    std::vector<unsigned int> num_intersections_per_axis;
+    unsigned int max_num_intersections = 0;
+    for (unsigned int i = 0; i < possible_z_axes.size(); ++i) {
+        unsigned int num_intersections = 0;
+
+        for (unsigned int j = 0; j < this->structure->get_num_atoms(); ++j) {
+            float dot = glm::dot(possible_z_axes[i], glm::normalize(this->structure->get_coordinates(j)));
+            // TODO move tolerance to a variable/constant
+            if (dot > 1 - .02) num_intersections++;
+        }
+
+        num_intersections_per_axis.push_back(num_intersections);
+        if (num_intersections > max_num_intersections) max_num_intersections = num_intersections;
+    }
+
+    // find rotational axes with the maximum number of intersections
+    std::vector<glm::vec3> possible_z_axes2;
+
+    for (unsigned int i = 0; i < possible_z_axes.size(); ++i) {
+        if (num_intersections_per_axis[i] == max_num_intersections) {
+            possible_z_axes2.push_back(possible_z_axes[i]);
+        }
+    }
+
+    if (possible_z_axes2.size() == 1) {
+        // only one possibility
+        this->z_axis = possible_z_axes2[0];
+        return;
+    } else if (possible_z_axes2.size() == 0) return;  // no possibilities
+
+    // finally, prefer the axis that is most parallel with a principal axis
+    unsigned int most_parallel_idx;
+    float min_diff = INFINITY;
+
+    for (unsigned int i = 0; i < possible_z_axes2.size(); ++i) {
+        float this_axis_min_diff = INFINITY;
+
+        for (unsigned int j = 0; j < 3; ++j) {
+            glm::vec3 principal_axis = glm::column(this->get_principal_axes(), j);
+            float diff = 1 - glm::dot(possible_z_axes2[i], principal_axis);
+
+            if (diff < this_axis_min_diff) this_axis_min_diff = diff;
+        }
+
+        if (this_axis_min_diff < min_diff) {
+            most_parallel_idx = i;
+            min_diff = this_axis_min_diff;
+        }
+    }
+
+    this->z_axis = possible_z_axes2[most_parallel_idx];
+}
+
+/**
  * @brief Check whether an axis can be a symmetry axis based on the
  * inertial tensor.
  *
@@ -533,6 +620,17 @@ const glm::vec3& Symmetry::get_principal_moments() const {
  */
 const glm::mat3x3& Symmetry::get_principal_axes() const {
     return this->principal_axes;
+}
+
+/**
+ * @brief Get the z axis of the structure
+ *
+ * Returns a NAN vector if no z axis exists (nonaxial or cubic symmetries).
+ *
+ * @return const glm::vec3&
+ */
+const glm::vec3& Symmetry::get_z_axis() const {
+    return this->z_axis;
 }
 
 /**
