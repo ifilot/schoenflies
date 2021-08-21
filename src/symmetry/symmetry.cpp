@@ -852,6 +852,15 @@ const glm::vec3& Symmetry::get_z_axis() const {
 }
 
 /**
+ * @brief Get the cartesian axes of the structure
+ *
+ * @return const glm::mat3x3
+ */
+const glm::mat3x3 Symmetry::get_cartesian_axes() const {
+    return glm::mat3x3(this->x_axis, this->y_axis, this->z_axis);
+}
+
+/**
  * @brief Get the rotor class of the structure
  *
  * @return const RotorClass

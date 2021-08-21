@@ -29,6 +29,8 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
 
     this->camera_position = QVector3D(0.0, -10.0f, 0.0);
 
+    this->structure_rotation.setToIdentity();
+
     this->models.push_back(Geometry::sphere());
     this->models.push_back(Geometry::cylinder());
 
@@ -42,6 +44,7 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
  */
 void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->remove_model_instances();
+    this->structure_rotation.setToIdentity();
 
     for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
         Element el = PeriodicTable::get_element(structure->get_atomic_number(i));
@@ -80,6 +83,24 @@ void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
         this->models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
         this->models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
     }
+
+    this->update();
+}
+
+/**
+ * @brief Set the rotation of the structure in the GL widget to correctly
+ * rotate to Cartesian axes
+ *
+ * @param cartesian_axes matrix of unit vectors along which the Cartesian
+ * axes should lie
+ */
+void GLWidget::set_structure_rotation(glm::mat3x3 cartesian_axes) {
+    // the inverse of the Cartesian axes gives us the rotation matrix to convert.
+    // we transpose this because the QMatrix4x4 constructor assumes the values
+    // to be in row-major order, while GLM stores them in column-major order
+    glm::mat4x4 structure_rotation = glm::transpose(glm::mat4x4(glm::inverse(cartesian_axes)));
+
+    this->structure_rotation = QMatrix4x4(glm::value_ptr(structure_rotation));
 
     this->update();
 }
@@ -223,7 +244,7 @@ void GLWidget::paint_models() {
             // build model matrix (scale -> rotation -> translation)
             this->model.setToIdentity();
             this->model.translate(-this->camera_translation);
-            this->model *= this->arcball_rotation * this->rotation_matrix;
+            this->model *= this->arcball_rotation * this->rotation_matrix * this->structure_rotation;
             this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
             this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
             this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);

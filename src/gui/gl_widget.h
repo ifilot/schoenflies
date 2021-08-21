@@ -65,6 +65,8 @@ private:
     QVector3D camera_position;
     QVector3D camera_translation;
 
+    QMatrix4x4 structure_rotation;
+
     QMatrix4x4 arcball_rotation;  // temporary rotation while dragging mouse
     bool arcball_rotating = false;  // whether arcball rotation is active
     QPoint mouse_position;  // at start of arcball rotation
@@ -83,6 +85,15 @@ public:
      * @param structure
      */
     void set_structure(std::shared_ptr<Structure> structure);
+
+    /**
+     * @brief Set the rotation of the structure in the GL widget to correctly
+     * rotate to Cartesian axes
+     *
+     * @param cartesian_axes matrix of unit vectors along which the Cartesian
+     * axes should lie
+     */
+    void set_structure_rotation(glm::mat3x3 cartesian_axes);
 
 protected:
     /**
