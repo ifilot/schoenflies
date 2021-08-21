@@ -24,24 +24,6 @@
 Operation::Operation() {}
 
 /**
- * @brief Construct a new Operation object
- *
- * @param element symmetry element to which this operation belongs
- */
-Operation::Operation(Element element) {
-    this->element = element;
-}
-
-/**
- * @brief Get the symmetry element to which this operation belongs
- *
- * @return const Element
- */
-const Operation::Element Operation::get_element() const {
-    return this->element;
-}
-
-/**
  * @brief Get the error of this symmetry operation
  *
  * @return const float

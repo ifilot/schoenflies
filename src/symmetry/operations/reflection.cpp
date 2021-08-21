@@ -23,7 +23,7 @@
  *
  * @param normal vector perpendicular to reflection plane
  */
-Reflection::Reflection(glm::vec3 normal): Operation(Element::Reflection) {
+Reflection::Reflection(glm::vec3 normal) {
     this->normal = glm::normalize(normal);
 
     // precompute reflection matrix

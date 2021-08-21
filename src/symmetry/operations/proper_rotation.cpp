@@ -24,7 +24,7 @@
  * @param degree degree of the rotation
  * @param axis rotational axis of the operation
  */
-ProperRotation::ProperRotation(unsigned int degree, glm::vec3 axis): Operation(Element::ProperRotation) {
+ProperRotation::ProperRotation(unsigned int degree, glm::vec3 axis) {
     this->degree = degree;
     this->angle = 2 * M_PI / degree;
     this->axis = glm::normalize(axis);

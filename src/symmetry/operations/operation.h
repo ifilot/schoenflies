@@ -29,16 +29,7 @@
 #include "../../structure.h"
 
 class Operation {
-public:
-    enum Element {
-        ProperRotation,
-        Inversion,
-        ImproperRotation,
-        Reflection
-    };
-
 protected:
-    Element element;
     float error = NAN;
 
 public:
@@ -46,20 +37,6 @@ public:
      * @brief Default constructor
      */
     Operation();
-
-    /**
-     * @brief Construct a new Operation object
-     *
-     * @param element symmetry element to which this operation belongs
-     */
-    Operation(Element element);
-
-    /**
-     * @brief Get the symmetry element to which this operation belongs
-     *
-     * @return const Element
-     */
-    const Element get_element() const;
 
     /**
      * @brief Get the error of this symmetry operation

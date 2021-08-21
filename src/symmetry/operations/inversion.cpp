@@ -21,7 +21,7 @@
 /**
  * @brief Construct a new Inversion object
  */
-Inversion::Inversion(): Operation(Element::Inversion) {}
+Inversion::Inversion() {}
 
 /**
  * @brief Perform the symmetry operation on a single atom
