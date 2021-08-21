@@ -21,7 +21,9 @@
 /**
  * @brief Construct a new Inversion object
  */
-Inversion::Inversion() {}
+Inversion::Inversion() {
+    this->set_label(OperationLabel(OperationLabel::Element::Inversion));
+}
 
 /**
  * @brief Perform the symmetry operation on a single atom
@@ -53,22 +55,4 @@ const float Inversion::get_distance_to_element(glm::vec3 coordinates) const {
  */
 const bool Inversion::equals(Inversion& other) const {
     return true;  // inversions do not have any degrees of freedom
-}
-
-/**
- * @brief Get the name of a symmetry operation in plaintext
- *
- * @return const std::string
- */
-const std::string Inversion::get_name() const {
-    return "i inversion";
-}
-
-/**
- * @brief Get the name of a symmetry operation in HTML formatting
- *
- * @return const std::string
- */
-const std::string Inversion::get_name_html() const {
-    return "<i>i</i> inversion";
 }

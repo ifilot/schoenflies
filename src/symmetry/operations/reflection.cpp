@@ -24,6 +24,8 @@
  * @param normal vector perpendicular to reflection plane
  */
 Reflection::Reflection(glm::vec3 normal) {
+    this->set_label(OperationLabel(OperationLabel::Element::Reflection));
+
     this->normal = glm::normalize(normal);
 
     // precompute reflection matrix
@@ -74,24 +76,6 @@ const float Reflection::get_distance_to_element(glm::vec3 coordinates) const {
 const bool Reflection::equals(Reflection& other) const {
     // TODO move tolerance to constant or variable
     return 1 - std::abs(glm::dot(this->get_normal(), other.get_normal())) < .01;
-}
-
-/**
- * @brief Get the name of a symmetry operation in plaintext
- *
- * @return const std::string
- */
-const std::string Reflection::get_name() const {
-    return "σ reflection";
-}
-
-/**
- * @brief Get the name of a symmetry operation in HTML formatting
- *
- * @return const std::string
- */
-const std::string Reflection::get_name_html() const {
-    return "<i>σ</i> reflection";
 }
 
 /**

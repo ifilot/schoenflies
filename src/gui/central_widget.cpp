@@ -97,22 +97,22 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     // temporarily show found symmetry operations in the text edit
     for (unsigned int i = 0; i < symmetry->get_inversions().size(); ++i) {
         auto inversion = symmetry->get_inversions()[i];
-        this->text_edit->append(QString("%1").arg(QString::fromStdString(inversion.get_name_html())));
+        this->text_edit->append(QString("%1").arg(QString::fromStdString(inversion.get_label().get_name_html())));
     }
     for (unsigned int i = 0; i < symmetry->get_proper_rotations().size(); ++i) {
         auto rotation = symmetry->get_proper_rotations()[i];
         auto a = rotation.get_axis();
-        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
+        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_label().get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
     }
     for (unsigned int i = 0; i < symmetry->get_improper_rotations().size(); ++i) {
         auto rotation = symmetry->get_improper_rotations()[i];
         auto a = rotation.get_axis();
-        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
+        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_label().get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
     }
     for (unsigned int i = 0; i < symmetry->get_reflections().size(); ++i) {
         auto reflection = symmetry->get_reflections()[i];
         auto n = reflection.get_normal();
-        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(reflection.get_name_html()), QString::number(n.x), QString::number(n.y), QString::number(n.z)));
+        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(reflection.get_label().get_name_html()), QString::number(n.x), QString::number(n.y), QString::number(n.z)));
     }
 
     auto point_group = symmetry->get_point_group();

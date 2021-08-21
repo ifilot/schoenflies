@@ -23,6 +23,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "operation.h"
+#include "operation_label.h"
 
 class ProperRotation: public Operation {
 public:
@@ -69,27 +70,6 @@ public:
      * @return false if inequal
      */
     const bool equals(ProperRotation& other) const;
-
-    /**
-     * @brief Get the name of a symmetry operation in plaintext
-     *
-     * @return const std::string
-     */
-    const std::string get_name() const override;
-
-    /**
-     * @brief Get the name of a symmetry operation in HTML formatting
-     *
-     * @return const std::string
-     */
-    const std::string get_name_html() const override;
-
-    /**
-     * @brief Get the degree of the operation as a string
-     *
-     * @return const std::string
-     */
-    const std::string get_degree_str() const;
 
     /**
      * @brief Get the degree of the operation as an integer

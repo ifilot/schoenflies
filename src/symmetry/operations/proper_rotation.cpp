@@ -25,6 +25,8 @@
  * @param axis rotational axis of the operation
  */
 ProperRotation::ProperRotation(unsigned int degree, glm::vec3 axis) {
+    this->set_label(OperationLabel(OperationLabel::Element::ProperRotation, degree));
+
     this->degree = degree;
     this->angle = 2 * M_PI / degree;
     this->axis = glm::normalize(axis);
@@ -85,33 +87,6 @@ const bool ProperRotation::equals(ProperRotation& other) const {
     // TODO move tolerance to constant or variable
     return this->get_degree() == other.get_degree() &&
         1 - std::abs(glm::dot(this->get_axis(), other.get_axis())) < .01;
-}
-
-/**
- * @brief Get the name of a symmetry operation in plaintext
- *
- * @return const std::string
- */
-const std::string ProperRotation::get_name() const {
-    return "C" + this->get_degree_str() + " rotation";
-}
-
-/**
- * @brief Get the name of a symmetry operation in HTML formatting
- *
- * @return const std::string
- */
-const std::string ProperRotation::get_name_html() const {
-    return "<i>C</i><sub>" + this->get_degree_str() + "</sub> rotation";
-}
-
-/**
- * @brief Get the degree of the operation as a string
- *
- * @return const std::string
- */
-const std::string ProperRotation::get_degree_str() const {
-    return (this->degree == DEGREE_INF) ? "∞" : std::to_string(this->degree);
 }
 
 /**

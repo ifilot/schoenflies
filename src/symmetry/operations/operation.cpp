@@ -24,6 +24,24 @@
 Operation::Operation() {}
 
 /**
+ * @brief Get the label of this symmetry operation
+ *
+ * @return const OperationLabel&
+ */
+const OperationLabel& Operation::get_label() const {
+    return this->label;
+}
+
+/**
+ * @brief Set the label of this symmetry operation
+ *
+ * @param label
+ */
+void Operation::set_label(OperationLabel label) {
+    this->label = label;
+}
+
+/**
  * @brief Get the error of this symmetry operation
  *
  * @return const float

@@ -25,6 +25,8 @@
  * @param axis rotational axis of the operation
  */
 ImproperRotation::ImproperRotation(unsigned int degree, glm::vec3 axis) {
+    this->set_label(OperationLabel(OperationLabel::Element::ImproperRotation, degree));
+
     this->degree = degree;
     this->angle = 2 * M_PI / degree;
     this->axis = glm::normalize(axis);
@@ -106,33 +108,6 @@ const bool ImproperRotation::equals(ImproperRotation& other) const {
     // TODO move tolerance to constant or variable
     return this->get_degree() == other.get_degree() &&
         1 - std::abs(glm::dot(this->get_axis(), other.get_axis())) < .01;
-}
-
-/**
- * @brief Get the name of a symmetry operation in plaintext
- *
- * @return const std::string
- */
-const std::string ImproperRotation::get_name() const {
-    return "S" + this->get_degree_str() + " improper rotation";
-}
-
-/**
- * @brief Get the name of a symmetry operation in HTML formatting
- *
- * @return const std::string
- */
-const std::string ImproperRotation::get_name_html() const {
-    return "<i>S</i><sub>" + this->get_degree_str() + "</sub> improper rotation";
-}
-
-/**
- * @brief Get the degree of the operation as a string
- *
- * @return const std::string
- */
-const std::string ImproperRotation::get_degree_str() const {
-    return (this->degree == DEGREE_INF) ? "∞" : std::to_string(this->degree);
 }
 
 /**

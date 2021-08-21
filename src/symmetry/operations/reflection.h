@@ -23,6 +23,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "operation.h"
+#include "operation_label.h"
 
 class Reflection: public Operation {
 private:
@@ -63,20 +64,6 @@ public:
      * @return false if inequal
      */
     const bool equals(Reflection& other) const;
-
-    /**
-     * @brief Get the name of a symmetry operation in plaintext
-     *
-     * @return const std::string
-     */
-    const std::string get_name() const override;
-
-    /**
-     * @brief Get the name of a symmetry operation in HTML formatting
-     *
-     * @return const std::string
-     */
-    const std::string get_name_html() const override;
 
     /**
      * @brief Get the normal of the operation

@@ -27,9 +27,12 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "../../structure.h"
+#include "operation_label.h"
 
 class Operation {
 protected:
+    OperationLabel label;
+
     float error = NAN;
 
 public:
@@ -37,6 +40,20 @@ public:
      * @brief Default constructor
      */
     Operation();
+
+    /**
+     * @brief Get the label of this symmetry operation
+     *
+     * @return const OperationLabel&
+     */
+    const OperationLabel& get_label() const;
+
+    /**
+     * @brief Set the label of this symmetry operation
+     *
+     * @param label
+     */
+    void set_label(OperationLabel label);
 
     /**
      * @brief Get the error of this symmetry operation
@@ -68,20 +85,6 @@ public:
      * @return const float distance
      */
     virtual const float get_distance_to_element(glm::vec3 coordinates) const = 0;
-
-    /**
-     * @brief Get the name of a symmetry operation in plaintext
-     *
-     * @return const std::string
-     */
-    virtual const std::string get_name() const = 0;
-
-    /**
-     * @brief Get the name of a symmetry operation in HTML formatting
-     *
-     * @return const std::string
-     */
-    virtual const std::string get_name_html() const = 0;
 };
 
 #endif  // SYMMETRY_OPERATIONS_OPERATION_H
