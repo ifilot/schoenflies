@@ -20,7 +20,13 @@
 #define SYMMETRY_POINT_GROUPS_POINT_GROUPS_H
 
 #include <vector>
+#include "../operations/improper_rotation.h"
+#include "../operations/proper_rotation.h"
 #include "point_group.h"
+#include "point_group_label.h"
+
+typedef PointGroupLabel Label;
+typedef PointGroupLabel::Class Class;
 
 class PointGroups final {
 public:

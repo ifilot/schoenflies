@@ -27,42 +27,11 @@
 #include "../operations/inversion.h"
 #include "../operations/proper_rotation.h"
 #include "../operations/reflection.h"
+#include "point_group_label.h"
 
 class PointGroup {
-public:
-    /**
-     * @brief Classes of point groups; combine with an order in the four lower
-     * bits (0-15) to form a point group.
-     */
-    enum Class: unsigned char {
-        // classes with order
-        C  = 0 << 4,   // cyclic groups
-        Ch = 1 << 4,   // reflection groups
-        Cv = 2 << 4,   // pyramidal groups
-        S  = 3 << 4,   // improper rotation groups
-        D  = 4 << 4,   // dihedral groups
-        Dh = 5 << 4,   // prismatic groups
-        Dd = 6 << 4,   // antiprismatic groups
-
-        // classes without order
-        T  = 7 << 4,   // chiral tetrahedral symmetry
-        Td = 8 << 4,   // achiral tetrahedral symmetry
-        Th = 9 << 4,   // pyritohedral symmetry
-        O  = 10 << 4,  // chiral octahedral symmetry
-        Oh = 11 << 4,  // achiral octahedral symmetry
-        I  = 12 << 4,  // chiral icosahedral symmetry
-        Ih = 13 << 4,  // achiral icosahedral symmetry
-
-        // special cases; use these without an order!
-        // note: these cases will not be returned with get_class()
-        Cs = Ch | 1,   // Cs = C1h
-        Ci = S | 2,    // Ci = S2
-        Cinfv = Cv,    // linear; we use an order of 0 to indicate infinity
-        Dinfh = Dh     // linear
-    };
-
 private:
-    unsigned char identifier;
+    PointGroupLabel label;
 
     unsigned int num_inversions;
     std::unordered_map<unsigned int, unsigned int> num_proper_rotations;
@@ -82,14 +51,14 @@ public:
      * with the same degree around the same axis, e.g. C_3 and C_3^2) are only
      * counted once.
      *
-     * @param identifier point group identifier
+     * @param label point group label
      * @param num_inversions number of inversions in this point group
      * @param num_proper_rotations number of proper rotations per degree in this point group
      * @param num_improper_rotations number of improper rotations per degree in this point group
      * @param num_reflections number of reflections in this point group
      */
     PointGroup(
-        unsigned char identifier,
+        PointGroupLabel label,
         unsigned int num_inversions,
         std::unordered_map<unsigned int, unsigned int> num_proper_rotations,
         std::unordered_map<unsigned int, unsigned int> num_improper_rotations,
@@ -115,44 +84,11 @@ public:
     ) const;
 
     /**
-     * @brief Get the identifier of the point group
+     * @brief Get the label of the point group
      *
-     * @return const unsigned char
+     * @return const PointGroupLabel&
      */
-    const unsigned char get_identifier() const;
-
-    /**
-     * @brief Get the class of the point group
-     *
-     * Returns Ch for Cs, returns S for Ci.
-     *
-     * @return const Class
-     */
-    const Class get_class() const;
-
-    /**
-     * @brief Get the order of the point group
-     *
-     * Returns 0 when the order is not defined (T, Td, Th, O, Oh, I, Ih) or
-     * infinity (C∞v, D∞h). Returns 1 for Cs, returns 2 for Ci.
-     *
-     * @return const unsigned int
-     */
-    const unsigned int get_order() const;
-
-    /**
-     * @brief Get the name of the point group in plaintext
-     *
-     * @return const std::string
-     */
-    const std::string get_name() const;
-
-    /**
-     * @brief Get the name of the point group in HTML formatting
-     *
-     * @return const std::string
-     */
-    const std::string get_name_html() const;
+    const PointGroupLabel& get_label() const;
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUP_H
