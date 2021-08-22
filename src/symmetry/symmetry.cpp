@@ -705,6 +705,7 @@ void Symmetry::find_y_axis() {
 void Symmetry::label_symmetry_operations() {
     // inversions and improper rotational axes don't need labelling
     this->label_proper_rotational_axes();
+    this->label_reflection_planes();
 }
 
 /**
@@ -780,6 +781,138 @@ void Symmetry::label_proper_rotational_axes_octahedral() {
 
         if (!parallel_with_principal_axis) {
             operation_label.set_prime(OperationLabel::Prime::Single);
+        }
+    }
+}
+
+/**
+ * @brief Label the reflection planes.
+ */
+void Symmetry::label_reflection_planes() {
+    // reflection planes only need additional labels in some point groups
+    switch (this->point_group.get_label().get_class()) {
+        case PointGroupLabel::Class::Cv:
+        case PointGroupLabel::Class::Ch:
+        case PointGroupLabel::Class::Cs:
+        case PointGroupLabel::Class::Dh:
+        case PointGroupLabel::Class::Dd:
+            this->label_reflection_planes_cyclic_dihedral();
+            break;
+        case PointGroupLabel::Class::Td:
+        case PointGroupLabel::Class::Th:
+            this->label_reflection_planes_tetrahedral();
+            break;
+        case PointGroupLabel::Class::Oh:
+            this->label_reflection_planes_octahedral();
+            break;
+        default:
+            // other point group classes either have reflection planes without
+            // additional label (Ih), or no reflection planes at all
+            break;
+    }
+}
+
+/**
+ * @brief Label the reflection planes for cyclic and dihedral point groups.
+ */
+void Symmetry::label_reflection_planes_cyclic_dihedral() {
+    PointGroupLabel point_group_label = this->point_group.get_label();
+
+    for (unsigned int i = 0; i < this->reflections.size(); ++i) {
+        Reflection& reflection = this->reflections[i];
+        OperationLabel& operation_label = reflection.get_label();
+
+        // normal parallel with z axis is σv
+        // TODO make tolerance constant/variable
+        if (std::abs(glm::dot(reflection.get_normal(), this->z_axis)) > 1 - .02) {
+            operation_label.set_plane(OperationLabel::Plane::Horizontal);
+            continue;
+        }
+
+        // Dd point groups only have σd
+        if (point_group_label.get_class() == PointGroupLabel::Class::Dd) {
+            operation_label.set_plane(OperationLabel::Plane::Dihedral);
+            continue;
+        }
+
+        // point groups with odd n only have σh and σv -> others are all σv
+        if (point_group_label.get_order() % 2 == 1) {
+            operation_label.set_plane(OperationLabel::Plane::Vertical);
+            continue;
+        }
+
+        // even n: angle between y axis and normal (xz plane and reflection plane)
+        // of σv is integer multiple of 360°/n
+        double theta_y = std::acos(glm::dot(reflection.get_normal(), this->y_axis));
+        double divisor = 2 * M_PI / point_group_label.get_order();
+        double remainder = std::fmod(theta_y, divisor);
+
+        if (remainder <= .25 * divisor || remainder > .75 * divisor) {
+            // approximately integer multiple
+            operation_label.set_plane(OperationLabel::Plane::Vertical);
+        } else {
+            // approximately half-integer multiple
+            if (point_group_label.get_order() == 2) {
+                // C2v and D2h use σv' instead of σd as there are no axes to bisect
+                operation_label.set_plane(OperationLabel::Plane::Vertical);
+                operation_label.set_prime(OperationLabel::Prime::Single);
+            } else {
+                operation_label.set_plane(OperationLabel::Plane::Dihedral);
+            }
+        }
+    }
+}
+
+/**
+ * @brief Label the reflection planes for tetrahedral point groups.
+ */
+void Symmetry::label_reflection_planes_tetrahedral() {
+    // all planes in tetrahedral point groups have the same label,
+    // depending on the point group
+    OperationLabel::Plane plane;
+
+    switch (this->point_group.get_label().get_class()) {
+        case PointGroupLabel::Class::Td:
+            plane = OperationLabel::Plane::Dihedral;
+            break;
+        case PointGroupLabel::Class::Th:
+            plane = OperationLabel::Plane::Horizontal;
+            break;
+        default:
+            throw std::runtime_error("Unexpected point group class encountered.");
+    }
+
+    for (unsigned int i = 0; i < this->reflections.size(); ++i) {
+        Reflection& reflection = this->reflections[i];
+        reflection.get_label().set_plane(plane);
+    }
+}
+
+/**
+ * @brief Label the reflection planes for octahedral point groups.
+ */
+void Symmetry::label_reflection_planes_octahedral() {
+    for (unsigned int i = 0; i < this->reflections.size(); ++i) {
+        Reflection& reflection = this->reflections[i];
+        OperationLabel& operation_label = reflection.get_label();
+
+        // planes parallel with principal axes (= normal parallel to another
+        // principal axis) are σh
+        bool parallel_with_principal_axis = false;
+        for (unsigned int j = 0; j < 3; ++j) {
+            glm::vec3 principal_axis = glm::column(this->get_principal_axes(), j);
+
+            // TODO make tolerance constant/variable
+            if (std::abs(glm::dot(reflection.get_normal(), principal_axis)) > 1 - .02) {
+                parallel_with_principal_axis = true;
+                break;
+            }
+        }
+
+        if (parallel_with_principal_axis) {
+            operation_label.set_plane(OperationLabel::Plane::Horizontal);
+        } else {
+            operation_label.set_plane(OperationLabel::Plane::Dihedral);
         }
     }
 }

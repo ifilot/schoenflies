@@ -350,6 +350,26 @@ private:
     void label_proper_rotational_axes_octahedral();
 
     /**
+     * @brief Label the reflection planes.
+     */
+    void label_reflection_planes();
+
+    /**
+     * @brief Label the reflection planes for cyclic and dihedral point groups.
+     */
+    void label_reflection_planes_cyclic_dihedral();
+
+    /**
+     * @brief Label the reflection planes for tetrahedral point groups.
+     */
+    void label_reflection_planes_tetrahedral();
+
+    /**
+     * @brief Label the reflection planes for octahedral point groups.
+     */
+    void label_reflection_planes_octahedral();
+
+    /**
      * @brief Check whether an axis can be a symmetry axis based on the
      * inertial tensor.
      *
