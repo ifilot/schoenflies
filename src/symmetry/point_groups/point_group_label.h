@@ -102,6 +102,44 @@ public:
      * @return const std::string
      */
     const std::string get_name_html() const;
+
+    /**
+     * @brief Return whether the point group is a cyclic point group
+     * (C, Ch, Cv, S)
+     */
+    const bool is_cyclic() const;
+
+    /**
+     * @brief Return whether the point group is a dihedral point group
+     * (D, Dh, Dd)
+     */
+    const bool is_dihedral() const;
+
+    /**
+     * @brief Return whether the point group is polyhedral
+     * (T, Td, Th, O, Oh, I, Ih)
+     */
+    const bool is_polyhedral() const;
+
+    /**
+     * @brief Return whether the point group is tetrahedral (T, Td, Th)
+     */
+    const bool is_tetrahedral() const;
+
+    /**
+     * @brief Return whether the point group is octahedral (O, Oh)
+     */
+    const bool is_octahedral() const;
+
+    /**
+     * @brief Return whether the point group is icosahedral (I, Ih)
+     */
+    const bool is_icosahedral() const;
+
+    /**
+     * @brief Return whether the point group is linear (C∞v, D∞h)
+     */
+    const bool is_linear() const;
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUP_LABEL_H

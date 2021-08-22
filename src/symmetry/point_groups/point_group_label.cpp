@@ -161,3 +161,74 @@ const std::string PointGroupLabel::get_name_html() const {
             throw std::runtime_error("Unexpected point group class encountered.");
     }
 }
+
+/**
+ * @brief Return whether the point group is a cyclic point group
+ * (C, Ch, Cv, S)
+ */
+const bool PointGroupLabel::is_cyclic() const {
+    return
+        this->point_group_class == Class::C ||
+        this->point_group_class == Class::Ch ||
+        this->point_group_class == Class::Cv ||
+        this->point_group_class == Class::S ||
+        this->point_group_class == Class::Cs ||
+        this->point_group_class == Class::Ci;
+}
+
+/**
+ * @brief Return whether the point group is a dihedral point group
+ * (D, Dh, Dd)
+ */
+const bool PointGroupLabel::is_dihedral() const {
+    return
+        this->point_group_class == Class::D ||
+        this->point_group_class == Class::Dh ||
+        this->point_group_class == Class::Dd;
+}
+
+/**
+ * @brief Return whether the point group is polyhedral
+ * (T, Td, Th, O, Oh, I, Ih)
+ */
+const bool PointGroupLabel::is_polyhedral() const {
+    return
+        this->point_group_class == Class::T ||
+        this->point_group_class == Class::Td ||
+        this->point_group_class == Class::Th ||
+        this->point_group_class == Class::O ||
+        this->point_group_class == Class::Oh ||
+        this->point_group_class == Class::I ||
+        this->point_group_class == Class::Ih;
+}
+
+/**
+ * @brief Return whether the point group is tetrahedral (T, Td, Th)
+ */
+const bool PointGroupLabel::is_tetrahedral() const {
+    return
+        this->point_group_class == Class::T ||
+        this->point_group_class == Class::Td ||
+        this->point_group_class == Class::Th;
+}
+
+/**
+ * @brief Return whether the point group is octahedral (O, Oh)
+ */
+const bool PointGroupLabel::is_octahedral() const {
+    return this->point_group_class == Class::O || this->point_group_class == Class::Oh;
+}
+
+/**
+ * @brief Return whether the point group is icosahedral (I, Ih)
+ */
+const bool PointGroupLabel::is_icosahedral() const {
+    return this->point_group_class == Class::I || this->point_group_class == Class::Ih;
+}
+
+/**
+ * @brief Return whether the point group is linear (C∞v, D∞h)
+ */
+const bool PointGroupLabel::is_linear() const {
+    return this->point_group_class == Class::Cinfv || this->point_group_class == Class::Dinfh;
+}
