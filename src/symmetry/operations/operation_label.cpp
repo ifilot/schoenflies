@@ -127,12 +127,30 @@ OperationLabel::OperationLabel(Element element, Plane plane, Prime prime) {
 }
 
 /**
+ * @brief Get the plane of this symmetry operation
+ *
+ * @return const Plane
+ */
+const OperationLabel::Plane OperationLabel::get_plane() const {
+    return this->plane;
+}
+
+/**
  * @brief Set the plane of this symmetry operation
  *
  * @param plane
  */
 void OperationLabel::set_plane(Plane plane) {
     this->plane = plane;
+}
+
+/**
+ * @brief Get the prime of this symmetry operation
+ *
+ * @return const Prime
+ */
+const OperationLabel::Prime OperationLabel::get_prime() const {
+    return this->prime;
 }
 
 /**
