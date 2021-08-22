@@ -127,6 +127,24 @@ OperationLabel::OperationLabel(Element element, Plane plane, Prime prime) {
 }
 
 /**
+ * @brief Set the plane of this symmetry operation
+ *
+ * @param plane
+ */
+void OperationLabel::set_plane(Plane plane) {
+    this->plane = plane;
+}
+
+/**
+ * @brief Set the prime of this symmetry operation
+ *
+ * @param prime
+ */
+void OperationLabel::set_prime(Prime prime) {
+    this->prime = prime;
+}
+
+/**
  * @brief Get the name of this symmetry operation in plaintext
  *
  * @return const std::string

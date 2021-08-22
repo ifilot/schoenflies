@@ -130,6 +130,20 @@ public:
     OperationLabel(Element element, Plane plane, Prime prime);
 
     /**
+     * @brief Set the plane of this symmetry operation
+     *
+     * @param plane
+     */
+    void set_plane(Plane plane);
+
+    /**
+     * @brief Set the prime of this symmetry operation
+     *
+     * @param prime
+     */
+    void set_prime(Prime prime);
+
+    /**
      * @brief Get the name of this symmetry operation in plaintext
      *
      * @return const std::string

@@ -44,9 +44,9 @@ public:
     /**
      * @brief Get the label of this symmetry operation
      *
-     * @return const OperationLabel&
+     * @return OperationLabel&
      */
-    const OperationLabel& get_label() const;
+    OperationLabel& get_label();
 
     /**
      * @brief Set the label of this symmetry operation
