@@ -36,6 +36,7 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
     this->find_symmetry_operations();
     this->find_point_group();
     this->find_cartesian_axes();
+    this->label_symmetry_operations();
 }
 
 /**
@@ -695,6 +696,92 @@ void Symmetry::orthonormalise_xz_axes() {
 void Symmetry::find_y_axis() {
     // right-handed coordinate system
     this->y_axis = glm::cross(this->z_axis, this->x_axis);
+}
+
+/**
+ * @brief Label the symmetry operations based on the point group and their
+ * orientations with respect to the Cartesian axes.
+ */
+void Symmetry::label_symmetry_operations() {
+    // inversions and improper rotational axes don't need labelling
+    this->label_proper_rotational_axes();
+}
+
+/**
+ * @brief Label the proper rotational axes.
+ */
+void Symmetry::label_proper_rotational_axes() {
+    // proper rotational axes only need additional labels in dihedral and octahedral point groups
+    if (this->point_group.get_label().is_dihedral()) this->label_proper_rotational_axes_dihedral();
+    if (this->point_group.get_label().is_octahedral()) this->label_proper_rotational_axes_octahedral();
+}
+
+/**
+ * @brief Label the proper rotational axes for dihedral point groups.
+ */
+void Symmetry::label_proper_rotational_axes_dihedral() {
+    PointGroupLabel point_group_label = this->point_group.get_label();
+
+    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        ProperRotation& rotation = this->proper_rotations[i];
+        OperationLabel& operation_label = rotation.get_label();
+
+        // only C2 axes can have an additional label
+        if (rotation.get_degree() != 2) continue;
+
+        // C2 parallel with z axis has no additional label
+        // TODO make tolerance constant/variable
+        if (std::abs(glm::dot(rotation.get_axis(), this->z_axis)) > 1 - .02) continue;
+
+        if (point_group_label.get_class() == PointGroupLabel::Class::Dd ||
+            point_group_label.get_order() % 2 == 1) {
+            // Dd point groups and D/Dh point groups with odd n only have C2 and C2'
+            operation_label.set_prime(OperationLabel::Prime::Single);
+            continue;
+        }
+
+        // D/Dh point groups with even n: angle between x axis and C2' is integer multiple of 360°/n
+        double theta_x = std::acos(glm::dot(rotation.get_axis(), this->x_axis));
+        double divisor = 2 * M_PI / point_group_label.get_order();
+        double remainder = std::fmod(theta_x, divisor);
+
+        if (remainder <= .25 * divisor | remainder > .75 * divisor) {
+            // approximately integer multiple
+            operation_label.set_prime(OperationLabel::Prime::Single);
+        } else {
+            // approximately half-integer multiple
+            operation_label.set_prime(OperationLabel::Prime::Double);
+        }
+    }
+}
+
+/**
+ * @brief Label the proper rotational axes for octahedral point groups.
+ */
+void Symmetry::label_proper_rotational_axes_octahedral() {
+    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        ProperRotation& rotation = this->proper_rotations[i];
+        OperationLabel& operation_label = rotation.get_label();
+
+        // only C2 axes can have an additional label
+        if (rotation.get_degree() != 2) continue;
+
+        // C2s parallel with principal axes have no additional label
+        bool parallel_with_principal_axis = false;
+        for (unsigned int j = 0; j < 3; ++j) {
+            glm::vec3 principal_axis = glm::column(this->get_principal_axes(), j);
+
+            // TODO make tolerance constant/variable
+            if (std::abs(glm::dot(rotation.get_axis(), principal_axis)) > 1 - .02) {
+                parallel_with_principal_axis = true;
+                break;
+            }
+        }
+
+        if (!parallel_with_principal_axis) {
+            operation_label.set_prime(OperationLabel::Prime::Single);
+        }
+    }
 }
 
 /**

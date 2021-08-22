@@ -19,6 +19,7 @@
 #ifndef SYMMETRY_SYMMETRY_H
 #define SYMMETRY_SYMMETRY_H
 
+#include <cmath>
 #include <limits>
 #include <math.h>
 #include <memory>
@@ -32,9 +33,11 @@
 #include "operations/improper_rotation.h"
 #include "operations/inversion.h"
 #include "operations/operation.h"
+#include "operations/operation_label.h"
 #include "operations/proper_rotation.h"
 #include "operations/reflection.h"
 #include "point_groups/point_group.h"
+#include "point_groups/point_group_label.h"
 #include "point_groups/point_groups.h"
 
 class Symmetry {
@@ -324,6 +327,27 @@ private:
      * @brief Find the y axis of the structure using the x and z axes.
      */
     void find_y_axis();
+
+    /**
+     * @brief Label the symmetry operations based on the point group and their
+     * orientations with respect to the Cartesian axes.
+     */
+    void label_symmetry_operations();
+
+    /**
+     * @brief Label the proper rotational axes.
+     */
+    void label_proper_rotational_axes();
+
+    /**
+     * @brief Label the proper rotational axes for dihedral point groups.
+     */
+    void label_proper_rotational_axes_dihedral();
+
+    /**
+     * @brief Label the proper rotational axes for octahedral point groups.
+     */
+    void label_proper_rotational_axes_octahedral();
 
     /**
      * @brief Check whether an axis can be a symmetry axis based on the
