@@ -21,7 +21,8 @@
 #include <glm/glm.hpp>
 #include "../src/structure.h"
 #include "../src/symmetry/symmetry.h"
-#include "../src/symmetry/operations/proper_rotation.h"
+#include "../src/symmetry/operations/operation.h"
+#include "../src/symmetry/operations/operation_label.h"
 #include "utils.h"
 
 BOOST_AUTO_TEST_SUITE(proper_rotation);
@@ -30,23 +31,23 @@ BOOST_AUTO_TEST_CASE(water) {
     std::string file = resolve_path("test/files/water.xyz");
     auto struc = std::make_shared<Structure>(file);
 
-    ProperRotation rotation_x(2, glm::vec3(1, 0, 0));
+    Operation rotation_x(OperationLabel::Element::ProperRotation, 2, glm::vec3(1, 0, 0));
     rotation_x.do_operation(struc);
 
     BOOST_TEST(rotation_x.get_error() > 1);  // no C2(x)
 
-    ProperRotation rotation_y(2, glm::vec3(0, 1, 0));
+    Operation rotation_y(OperationLabel::Element::ProperRotation, 2, glm::vec3(0, 1, 0));
     rotation_y.do_operation(struc);
 
     BOOST_TEST(rotation_y.get_error() > 1);  // no C2(y)
 
-    ProperRotation rotation_z(2, glm::vec3(0, 0, 1));
+    Operation rotation_z(OperationLabel::Element::ProperRotation, 2, glm::vec3(0, 0, 1));
     rotation_z.do_operation(struc);
 
     BOOST_TEST(rotation_z.get_error() < 1e-7);  // C2(z)
 
     for (unsigned int degree = 3; degree <= 8; ++degree) {
-        ProperRotation rotation_n(degree, glm::vec3(0, 0, 1));
+        Operation rotation_n(OperationLabel::Element::ProperRotation, degree, glm::vec3(0, 0, 1));
         rotation_n.do_operation(struc);
 
         BOOST_TEST(rotation_n.get_error() > .5);  // no higher-degree rotations exist
@@ -60,7 +61,7 @@ BOOST_AUTO_TEST_CASE(adamantane) {
     auto proper_rotations = symmetry.get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0;
-    for (ProperRotation& rotation : proper_rotations) {
+    for (Operation& rotation : proper_rotations) {
         if (rotation.get_degree() == 2) num_C2s++;
         if (rotation.get_degree() == 3) num_C3s++;
     }
@@ -77,7 +78,7 @@ BOOST_AUTO_TEST_CASE(benzene) {
     auto proper_rotations = symmetry.get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0, num_C6s = 0;
-    for (ProperRotation& rotation : proper_rotations) {
+    for (Operation& rotation : proper_rotations) {
         if (rotation.get_degree() == 2) num_C2s++;
         if (rotation.get_degree() == 3) num_C3s++;
         if (rotation.get_degree() == 6) num_C6s++;
@@ -96,7 +97,7 @@ BOOST_AUTO_TEST_CASE(dodecahydrododecaborate) {
     auto proper_rotations = symmetry.get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0, num_C5s = 0;
-    for (ProperRotation& rotation : proper_rotations) {
+    for (Operation& rotation : proper_rotations) {
         if (rotation.get_degree() == 2) num_C2s++;
         if (rotation.get_degree() == 3) num_C3s++;
         if (rotation.get_degree() == 5) num_C5s++;
@@ -143,7 +144,7 @@ BOOST_AUTO_TEST_CASE(hydrogen_chloride) {
     auto proper_rotations = symmetry.get_proper_rotations();
 
     BOOST_TEST(proper_rotations.size() == 1);
-    BOOST_TEST(proper_rotations[0].get_degree() == 0);  // 0 == ProperRotation::DEGREE_INF
+    BOOST_TEST(proper_rotations[0].get_degree() == 0);  // 0 == Operation::DEGREE_INF
 }
 
 BOOST_AUTO_TEST_CASE(sulfur_hexafluoride) {
@@ -153,7 +154,7 @@ BOOST_AUTO_TEST_CASE(sulfur_hexafluoride) {
     auto proper_rotations = symmetry.get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0, num_C4s = 0;
-    for (ProperRotation& rotation : proper_rotations) {
+    for (Operation& rotation : proper_rotations) {
         if (rotation.get_degree() == 2) num_C2s++;
         if (rotation.get_degree() == 3) num_C3s++;
         if (rotation.get_degree() == 4) num_C4s++;
@@ -172,7 +173,7 @@ BOOST_AUTO_TEST_CASE(tropylium) {
     auto proper_rotations = symmetry.get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C7s = 0;
-    for (ProperRotation& rotation : proper_rotations) {
+    for (Operation& rotation : proper_rotations) {
         if (rotation.get_degree() == 2) num_C2s++;
         if (rotation.get_degree() == 7) num_C7s++;
     }

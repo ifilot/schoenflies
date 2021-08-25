@@ -30,12 +30,8 @@
 #include <glm/gtc/matrix_access.hpp>
 #include "../structure.h"
 #include "rotor_class.h"
-#include "operations/improper_rotation.h"
-#include "operations/inversion.h"
 #include "operations/operation.h"
 #include "operations/operation_label.h"
-#include "operations/proper_rotation.h"
-#include "operations/reflection.h"
 #include "point_groups/point_group.h"
 #include "point_groups/point_group_label.h"
 #include "point_groups/point_groups.h"
@@ -53,10 +49,7 @@ private:
 
     RotorClass rotor_class;
 
-    std::vector<Inversion> inversions;
-    std::vector<ProperRotation> proper_rotations;
-    std::vector<ImproperRotation> improper_rotations;
-    std::vector<Reflection> reflections;
+    std::vector<Operation> operations;
 
     PointGroup point_group;
 
@@ -123,34 +116,41 @@ public:
     const RotorClass get_rotor_class() const;
 
     /**
+     * @brief Get the list of operations present in the structure
+     *
+     * @return const std::vector<Operation>
+     */
+    const std::vector<Operation>& get_operations() const;
+
+    /**
      * @brief Get the list of inversion operations present in the structure
      *
-     * @return const std::vector<Inversion>&
+     * @return const std::vector<Operation>
      */
-    const std::vector<Inversion>& get_inversions() const;
+    const std::vector<Operation> get_inversions();
 
     /**
      * @brief Get the list of proper rotation operations present in the
      * structure
      *
-     * @return const std::vector<ProperRotation>&
+     * @return const std::vector<Operation>
      */
-    const std::vector<ProperRotation>& get_proper_rotations() const;
+    const std::vector<Operation> get_proper_rotations();
 
     /**
      * @brief Get the list of improper rotation operations present in the
      * structure
      *
-     * @return const std::vector<ImproperRotation>&
+     * @return const std::vector<Operation>
      */
-    const std::vector<ImproperRotation>& get_improper_rotations() const;
+    const std::vector<Operation> get_improper_rotations();
 
     /**
      * @brief Get the list of reflection operations present in the structure
      *
-     * @return const std::vector<Reflection>&
+     * @return const std::vector<Operation>
      */
-    const std::vector<Reflection>& get_reflections() const;
+    const std::vector<Operation> get_reflections();
 
     /**
      * @brief Get the point group of the structure
@@ -224,7 +224,7 @@ private:
      *
      * @param C2s C2 rotations present in the structure
      */
-    void find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperRotation> C2s);
+    void find_proper_rotational_axes_polygonal_faces_I(std::vector<Operation> C2s);
 
     /**
      * @brief Find improper rotational axes in the structure.
@@ -397,23 +397,17 @@ private:
      * @brief Add an operation to the list of operations, if it does not
      * already exist yet.
      *
-     * @tparam T class derived from Operation
      * @param operation operation to add
-     * @param operations vector of operations to add to
      */
-    template <class T>
-    void add_operation(T& operation, std::vector<T>& operations);
+    void add_operation(Operation& operation);
 
     /**
      * @brief Check whether a symmetry operation exists in the structure and
      * add it to the list of operations, if it does not already exist yet.
      *
-     * @tparam T class derived from Operation
      * @param operation operation to check and add
-     * @param operations vector of operations to add to
      */
-    template <class T>
-    void check_and_add_operation(T& operation, std::vector<T>& operations);
+    void check_and_add_operation(Operation& operation);
 };
 
 #endif  // SYMMETRY_SYMMETRY_H

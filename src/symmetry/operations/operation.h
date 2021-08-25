@@ -30,9 +30,16 @@
 #include "operation_label.h"
 
 class Operation {
-protected:
+public:
+    static const unsigned int DEGREE_INF = 0;
+
+private:
     OperationLabel label;
 
+    unsigned int degree;
+    glm::vec3 axis;
+
+    glm::mat3x3 matrix;
     float error = NAN;
 
 public:
@@ -40,6 +47,30 @@ public:
      * @brief Default constructor
      */
     Operation();
+
+    /**
+     * @brief Construct a new Operation object (inversion)
+     *
+     * @param element symmetry element to which this operation belongs
+     */
+    Operation(OperationLabel::Element element);
+
+    /**
+     * @brief Construct a new Operation object (reflection)
+     *
+     * @param element symmetry element to which this operation belongs
+     * @param normal plane normal of this operation
+     */
+    Operation(OperationLabel::Element element, glm::vec3 normal);
+
+    /**
+     * @brief Construct a new Operation object (proper/improper rotation)
+     *
+     * @param element symmetry element to which this operation belongs
+     * @param degree degree of the rotation
+     * @param axis rotation axis of this operation
+     */
+    Operation(OperationLabel::Element element, unsigned int degree, glm::vec3 axis);
 
     /**
      * @brief Get the label of this symmetry operation
@@ -63,6 +94,29 @@ public:
     const float get_error() const;
 
     /**
+     * @brief Get the degree of the operation as an integer
+     *
+     * @return const unsigned int
+     */
+    const unsigned int get_degree() const;
+
+    /**
+     * @brief Get the axis of the operation
+     *
+     * @return const glm::vec3
+     */
+    const glm::vec3 get_axis() const;
+
+    /**
+     * @brief Check whether this operation equals another operation
+     *
+     * @param other other operation
+     * @return true if equal
+     * @return false if inequal
+     */
+    const bool operator==(Operation& other) const;
+
+    /**
      * @brief Perform the symmetry operation and set the error value
      *
      * @param structure structure on which to perform the operation
@@ -75,16 +129,78 @@ public:
      * @param coordinates coordinates of the atom
      * @return const glm::vec3 coordinates after performing the operation
      */
-    virtual const glm::vec3 do_atom_operation(glm::vec3 coordinates) const = 0;
+    const glm::vec3 do_atom_operation(glm::vec3 coordinates) const;
 
     /**
      * @brief Get the distance from the provided coordinates to the symmetry
-     * element to which this operation belongs.
+     * element to which this operation belongs
      *
      * @param coordinates coordinates from which to determine distance
      * @return const float distance
      */
-    virtual const float get_distance_to_element(glm::vec3 coordinates) const = 0;
+    const float get_distance_to_element(glm::vec3 coordinates) const;
+
+private:
+    /**
+     * @brief Calculate the operation matrix for this symmetry operation
+     *
+     * @return glm::mat3x3
+     */
+    const glm::mat3x3 calculate_matrix() const;
+
+    /**
+     * @brief Calculate the operation matrix for an inversion
+     *
+     * @return glm::mat3x3
+     */
+    const glm::mat3x3 calculate_matrix_inversion() const;
+
+    /**
+     * @brief Calculate the operation matrix for a proper rotation
+     *
+     * @return glm::mat3x3
+     */
+    const glm::mat3x3 calculate_matrix_proper_rotation() const;
+
+    /**
+     * @brief Calculate the operation matrix for a reflection
+     *
+     * @return glm::mat3x3
+     */
+    const glm::mat3x3 calculate_matrix_reflection() const;
+
+    /**
+     * @brief Calculate the operation matrix for an improper rotation
+     *
+     * @return glm::mat3x3
+     */
+    const glm::mat3x3 calculate_matrix_improper_rotation() const;
+
+    /**
+     * @brief Get the distance from the provided coordinates to an inversion
+     * centre
+     *
+     * @param coordinates coordinates from which to determine distance
+     * @return const float distance
+     */
+    const float get_distance_to_inversion(glm::vec3 coordinates) const;
+
+    /**
+     * @brief Get the distance from the provided coordinates to a rotation axis
+     *
+     * @param coordinates coordinates from which to determine distance
+     * @return const float distance
+     */
+    const float get_distance_to_rotation(glm::vec3 coordinates) const;
+
+    /**
+     * @brief Get the distance from the provided coordinates to a reflection
+     * plane
+     *
+     * @param coordinates coordinates from which to determine distance
+     * @return const float distance
+     */
+    const float get_distance_to_reflection(glm::vec3 coordinates) const;
 };
 
 #endif  // SYMMETRY_OPERATIONS_OPERATION_H

@@ -128,8 +128,8 @@ void Symmetry::find_symmetry_operations() {
  * @brief Find an inversion centre in the structure.
  */
 void Symmetry::find_inversion_centre() {
-    Inversion inversion;
-    this->check_and_add_operation(inversion, this->inversions);
+    Operation inversion(OperationLabel::Element::Inversion);
+    this->check_and_add_operation(inversion);
 }
 
 /**
@@ -140,8 +140,8 @@ void Symmetry::find_proper_rotational_axes() {
         // only C∞ for linear structures
         glm::vec3 axis = glm::column(this->get_principal_axes(), 0);
 
-        ProperRotation rotation(ProperRotation::DEGREE_INF, axis);
-        this->check_and_add_operation(rotation, this->proper_rotations);
+        Operation rotation(OperationLabel::Element::ProperRotation, Operation::DEGREE_INF, axis);
+        this->check_and_add_operation(rotation);
     } else {
         this->find_proper_rotational_axes_along_principal_axes();
         this->find_proper_rotational_axes_through_atoms();
@@ -163,8 +163,8 @@ void Symmetry::find_proper_rotational_axes_along_principal_axes() {
 
         // TODO move maximum degree to a constant
         for (unsigned int degree = 2; degree <= 8; ++degree) {
-            ProperRotation rotation(degree, axis);
-            this->check_and_add_operation(rotation, this->proper_rotations);
+            Operation rotation(OperationLabel::Element::ProperRotation, degree, axis);
+            this->check_and_add_operation(rotation);
         }
     }
 }
@@ -182,8 +182,8 @@ void Symmetry::find_proper_rotational_axes_through_atoms() {
 
         // TODO move maximum degree to a constant
         for (unsigned int degree = 2; degree <= 8; ++degree) {
-            ProperRotation rotation(degree, axis);
-            this->check_and_add_operation(rotation, this->proper_rotations);
+            Operation rotation(OperationLabel::Element::ProperRotation, degree, axis);
+            this->check_and_add_operation(rotation);
         }
     }
 }
@@ -207,8 +207,8 @@ void Symmetry::find_proper_rotational_axes_between_atoms() {
             // therefore it must have an even degree
             // TODO move maximum degree to a constant
             for (unsigned int degree = 2; degree <= 8; degree += 2) {
-                ProperRotation rotation(degree, axis);
-                this->check_and_add_operation(rotation, this->proper_rotations);
+                Operation rotation(OperationLabel::Element::ProperRotation, degree, axis);
+                this->check_and_add_operation(rotation);
             }
         }
     }
@@ -220,10 +220,15 @@ void Symmetry::find_proper_rotational_axes_between_atoms() {
  */
 void Symmetry::find_proper_rotational_axes_polygonal_faces() {
     // the number of C2 rotations determines how we find the remaining axes
-    std::vector<ProperRotation> C2s;
+    std::vector<Operation> C2s;
 
-    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-        if (this->proper_rotations[i].get_degree() == 2) C2s.push_back(this->proper_rotations[i]);
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
+
+        if (operation.get_label().get_element() == OperationLabel::Element::ProperRotation &&
+            operation.get_degree() == 2) {
+            C2s.push_back(operation);
+        }
     }
 
     switch (C2s.size()) {
@@ -252,8 +257,8 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_T_O() {
                              glm::column(this->get_principal_axes(), 1) * (float) j +
                              glm::column(this->get_principal_axes(), 2);
 
-            ProperRotation rotation(3, axis);
-            this->check_and_add_operation(rotation, this->proper_rotations);
+            Operation rotation(OperationLabel::Element::ProperRotation, 3, axis);
+            this->check_and_add_operation(rotation);
         }
     }
 }
@@ -264,7 +269,7 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_T_O() {
  *
  * @param C2s C2 rotations present in the structure
  */
-void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperRotation> C2s) {
+void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<Operation> C2s) {
     // the remaining C3 and C5 rotations are orthogonal to pairs of C2 rotations
     // so we take cross products of pairs of C2 rotations and test for C3 and C5 symmetry
     for (unsigned int i = 0; i < C2s.size() - 1; ++i) {
@@ -274,8 +279,8 @@ void Symmetry::find_proper_rotational_axes_polygonal_faces_I(std::vector<ProperR
             if (glm::length2(axis) == 0) continue;
 
             for (unsigned int degree = 3; degree <= 5; degree += 2) {  // {3, 5}
-                ProperRotation rotation(degree, axis);
-                this->check_and_add_operation(rotation, this->proper_rotations);
+                Operation rotation(OperationLabel::Element::ProperRotation, degree, axis);
+                this->check_and_add_operation(rotation);
             }
         }
     }
@@ -289,18 +294,21 @@ void Symmetry::find_improper_rotational_axes() {
         // only S∞ for linear structures
         glm::vec3 axis = glm::column(this->get_principal_axes(), 0);
 
-        ImproperRotation imp_rotation(ImproperRotation::DEGREE_INF, axis);
-        this->check_and_add_operation(imp_rotation, this->improper_rotations);
+        Operation imp_rotation(OperationLabel::Element::ImproperRotation, Operation::DEGREE_INF, axis);
+        this->check_and_add_operation(imp_rotation);
     } else {
         // improper rotational axes are coincident with proper rotational axes, and
         // have degree equal to either n or 2n
-        for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
+        for (unsigned int i = 0; i < this->operations.size(); ++i) {
+            if (this->operations[i].get_label().get_element() != OperationLabel::Element::ProperRotation) continue;
+
             for (unsigned int degree_factor = 1; degree_factor <= 2; ++degree_factor) {  // {1, 2}
-                unsigned int degree = this->proper_rotations[i].get_degree() * degree_factor;
+                unsigned int degree = this->operations[i].get_degree() * degree_factor;
                 if (degree <= 2) continue;  // S1 = σ, S2 = i
 
-                ImproperRotation imp_rotation(degree, this->proper_rotations[i].get_axis());
-                this->check_and_add_operation(imp_rotation, this->improper_rotations);
+                Operation imp_rotation(OperationLabel::Element::ImproperRotation,
+                                       degree, this->operations[i].get_axis());
+                this->check_and_add_operation(imp_rotation);
             }
         }
     }
@@ -320,8 +328,13 @@ void Symmetry::find_reflection_planes() {
 
     if (this->get_rotor_class() == RotorClass::SphericalTop) {
         unsigned int num_C2s = 0;
-        for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-            if (this->proper_rotations[i].get_degree() == 2) num_C2s++;
+        for (unsigned int i = 0; i < this->operations.size(); ++i) {
+            Operation& operation = this->operations[i];
+
+            if (operation.get_label().get_element() == OperationLabel::Element::ProperRotation &&
+                operation.get_degree() == 2) {
+                num_C2s++;
+            }
         }
 
         if (num_C2s == 9 || num_C2s == 15) octahedral_or_icosahedral = true;
@@ -339,8 +352,8 @@ void Symmetry::find_reflection_planes() {
 void Symmetry::find_reflection_planes_normal_to_principal_axes() {
     for (unsigned int i = 0; i < 3; ++i) {
         glm::vec3 normal = glm::column(this->get_principal_axes(), i);
-        Reflection reflection(normal);
-        this->check_and_add_operation(reflection, this->reflections);
+        Operation reflection(OperationLabel::Element::Reflection, normal);
+        this->check_and_add_operation(reflection);
     }
 }
 
@@ -352,12 +365,14 @@ void Symmetry::find_reflection_planes_normal_to_principal_axes() {
  * case of octahedral and icosahedral symmetry)
  */
 void Symmetry::find_reflection_planes_normal_to_proper_rotational_axes(bool only_C2s) {
-    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-        ProperRotation& rotation = this->proper_rotations[i];
-        if (only_C2s && rotation.get_degree() != 2) continue;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
 
-        Reflection reflection(rotation.get_axis());
-        this->check_and_add_operation(reflection, this->reflections);
+        if (operation.get_label().get_element() != OperationLabel::Element::ProperRotation ||
+            (only_C2s && operation.get_degree() != 2)) continue;
+
+        Operation reflection(OperationLabel::Element::Reflection, operation.get_axis());
+        this->check_and_add_operation(reflection);
     }
 }
 
@@ -381,8 +396,8 @@ void Symmetry::find_reflection_planes_in_midpoints() {
             if (glm::length2(normal) == 0) continue;
             if (!this->axis_inertially_allowed(normal)) continue;
 
-            Reflection reflection(normal);
-            this->check_and_add_operation(reflection, this->reflections);
+            Operation reflection(OperationLabel::Element::Reflection, normal);
+            this->check_and_add_operation(reflection);
         }
     }
 }
@@ -399,7 +414,7 @@ void Symmetry::find_point_group() {
 
     for (unsigned int i = 0; i < point_groups.size(); ++i) {
         PointGroup& point_group = point_groups[i];
-        int diff = point_group.compare_to_symmetry_operations(this->inversions, this->proper_rotations, this->improper_rotations, this->reflections);
+        int diff = point_group.compare_to_symmetry_operations(this->operations);
 
         if (diff >= 0 && diff < min_diff) {
             min_diff = diff;
@@ -415,7 +430,13 @@ void Symmetry::find_point_group() {
  * symmetry conventions.
  */
 void Symmetry::find_cartesian_axes() {
-    if (this->get_rotor_class() == RotorClass::SphericalTop || this->get_proper_rotations().size() == 0) {
+    unsigned int num_rotations = 0;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::ProperRotation)
+            num_rotations++;
+    }
+
+    if (this->get_rotor_class() == RotorClass::SphericalTop || num_rotations == 0) {
         // if the structure is a spherical top or nonaxial, use the principal axes
         this->assign_principal_axes_to_cartesian_xz_axes();
     } else {
@@ -461,16 +482,18 @@ void Symmetry::find_z_axis() {
 
     // find highest degree
     unsigned int max_degree = 0;
-    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-        if (this->proper_rotations[i].get_degree() > max_degree) {
-            max_degree = this->proper_rotations[i].get_degree();
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::ProperRotation &&
+            this->operations[i].get_degree() > max_degree) {
+            max_degree = this->operations[i].get_degree();
         }
     }
 
     // find rotational axes with this degree
-    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-        if (this->proper_rotations[i].get_degree() == max_degree) {
-            possible_z_axes.push_back(this->proper_rotations[i].get_axis());
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::ProperRotation &&
+            this->operations[i].get_degree() == max_degree) {
+            possible_z_axes.push_back(this->operations[i].get_axis());
         }
     }
 
@@ -723,16 +746,18 @@ void Symmetry::label_proper_rotational_axes() {
 void Symmetry::label_proper_rotational_axes_dihedral() {
     PointGroupLabel point_group_label = this->point_group.get_label();
 
-    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-        ProperRotation& rotation = this->proper_rotations[i];
-        OperationLabel& operation_label = rotation.get_label();
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
+        OperationLabel& operation_label = operation.get_label();
+
+        if (operation_label.get_element() != OperationLabel::Element::ProperRotation) continue;
 
         // only C2 axes can have an additional label
-        if (rotation.get_degree() != 2) continue;
+        if (operation.get_degree() != 2) continue;
 
         // C2 parallel with z axis has no additional label
         // TODO make tolerance constant/variable
-        if (std::abs(glm::dot(rotation.get_axis(), this->z_axis)) > 1 - .02) continue;
+        if (std::abs(glm::dot(operation.get_axis(), this->z_axis)) > 1 - .02) continue;
 
         if (point_group_label.get_class() == PointGroupLabel::Class::Dd ||
             point_group_label.get_order() % 2 == 1) {
@@ -742,7 +767,7 @@ void Symmetry::label_proper_rotational_axes_dihedral() {
         }
 
         // D/Dh point groups with even n: angle between x axis and C2' is integer multiple of 360°/n
-        double theta_x = std::acos(glm::dot(rotation.get_axis(), this->x_axis));
+        double theta_x = std::acos(glm::dot(operation.get_axis(), this->x_axis));
         double divisor = 2 * M_PI / point_group_label.get_order();
         double remainder = std::fmod(theta_x, divisor);
 
@@ -760,12 +785,14 @@ void Symmetry::label_proper_rotational_axes_dihedral() {
  * @brief Label the proper rotational axes for octahedral point groups.
  */
 void Symmetry::label_proper_rotational_axes_octahedral() {
-    for (unsigned int i = 0; i < this->proper_rotations.size(); ++i) {
-        ProperRotation& rotation = this->proper_rotations[i];
-        OperationLabel& operation_label = rotation.get_label();
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
+        OperationLabel& operation_label = operation.get_label();
+
+        if (operation_label.get_element() != OperationLabel::Element::ProperRotation) continue;
 
         // only C2 axes can have an additional label
-        if (rotation.get_degree() != 2) continue;
+        if (operation.get_degree() != 2) continue;
 
         // C2s parallel with principal axes have no additional label
         bool parallel_with_principal_axis = false;
@@ -773,7 +800,7 @@ void Symmetry::label_proper_rotational_axes_octahedral() {
             glm::vec3 principal_axis = glm::column(this->get_principal_axes(), j);
 
             // TODO make tolerance constant/variable
-            if (std::abs(glm::dot(rotation.get_axis(), principal_axis)) > 1 - .02) {
+            if (std::abs(glm::dot(operation.get_axis(), principal_axis)) > 1 - .02) {
                 parallel_with_principal_axis = true;
                 break;
             }
@@ -818,13 +845,15 @@ void Symmetry::label_reflection_planes() {
 void Symmetry::label_reflection_planes_cyclic_dihedral() {
     PointGroupLabel point_group_label = this->point_group.get_label();
 
-    for (unsigned int i = 0; i < this->reflections.size(); ++i) {
-        Reflection& reflection = this->reflections[i];
-        OperationLabel& operation_label = reflection.get_label();
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
+        OperationLabel& operation_label = operation.get_label();
+
+        if (operation_label.get_element() != OperationLabel::Element::Reflection) continue;
 
         // normal parallel with z axis is σv
         // TODO make tolerance constant/variable
-        if (std::abs(glm::dot(reflection.get_normal(), this->z_axis)) > 1 - .02) {
+        if (std::abs(glm::dot(operation.get_axis(), this->z_axis)) > 1 - .02) {
             operation_label.set_plane(OperationLabel::Plane::Horizontal);
             continue;
         }
@@ -843,7 +872,7 @@ void Symmetry::label_reflection_planes_cyclic_dihedral() {
 
         // even n: angle between y axis and normal (xz plane and reflection plane)
         // of σv is integer multiple of 360°/n
-        double theta_y = std::acos(glm::dot(reflection.get_normal(), this->y_axis));
+        double theta_y = std::acos(glm::dot(operation.get_axis(), this->y_axis));
         double divisor = 2 * M_PI / point_group_label.get_order();
         double remainder = std::fmod(theta_y, divisor);
 
@@ -882,9 +911,10 @@ void Symmetry::label_reflection_planes_tetrahedral() {
             throw std::runtime_error("Unexpected point group class encountered.");
     }
 
-    for (unsigned int i = 0; i < this->reflections.size(); ++i) {
-        Reflection& reflection = this->reflections[i];
-        reflection.get_label().set_plane(plane);
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
+        if (operation.get_label().get_element() != OperationLabel::Element::Reflection) continue;
+        operation.get_label().set_plane(plane);
     }
 }
 
@@ -892,9 +922,11 @@ void Symmetry::label_reflection_planes_tetrahedral() {
  * @brief Label the reflection planes for octahedral point groups.
  */
 void Symmetry::label_reflection_planes_octahedral() {
-    for (unsigned int i = 0; i < this->reflections.size(); ++i) {
-        Reflection& reflection = this->reflections[i];
-        OperationLabel& operation_label = reflection.get_label();
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        Operation& operation = this->operations[i];
+        OperationLabel& operation_label = operation.get_label();
+
+        if (operation_label.get_element() != OperationLabel::Element::Reflection) continue;
 
         // planes parallel with principal axes (= normal parallel to another
         // principal axis) are σh
@@ -903,7 +935,7 @@ void Symmetry::label_reflection_planes_octahedral() {
             glm::vec3 principal_axis = glm::column(this->get_principal_axes(), j);
 
             // TODO make tolerance constant/variable
-            if (std::abs(glm::dot(reflection.get_normal(), principal_axis)) > 1 - .02) {
+            if (std::abs(glm::dot(operation.get_axis(), principal_axis)) > 1 - .02) {
                 parallel_with_principal_axis = true;
                 break;
             }
@@ -991,18 +1023,15 @@ bool Symmetry::check_operation(Operation& operation) {
  * @brief Add an operation to the list of operations, if it does not
  * already exist yet.
  *
- * @tparam T class derived from Operation
  * @param operation operation to add
- * @param operations vector of operations to add to
  */
-template <class T>
-void Symmetry::add_operation(T& operation, std::vector<T>& operations) {
+void Symmetry::add_operation(Operation& operation) {
     bool found = false;
 
-    for (unsigned int i = 0; i < operations.size(); ++i) {
-        if (operation.equals(operations[i])) {
-            if (operation.get_error() < operations[i].get_error()) {
-                operations[i] = operation;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (operation == this->operations[i]) {
+            if (operation.get_error() < this->operations[i].get_error()) {
+                this->operations[i] = operation;
             }
 
             found = true;
@@ -1010,20 +1039,17 @@ void Symmetry::add_operation(T& operation, std::vector<T>& operations) {
         }
     }
 
-    if (!found) operations.push_back(operation);
+    if (!found) this->operations.push_back(operation);
 }
 
 /**
  * @brief Check whether a symmetry operation exists in the structure and
  * add it to the list of operations, if it does not already exist yet.
  *
- * @tparam T class derived from Operation
  * @param operation operation to check and add
- * @param operations vector of operations to add to
  */
-template <class T>
-void Symmetry::check_and_add_operation(T& operation, std::vector<T>& operations) {
-    if (this->check_operation(operation)) this->add_operation(operation, operations);
+void Symmetry::check_and_add_operation(Operation& operation) {
+    if (this->check_operation(operation)) this->add_operation(operation);
 }
 
 /**
@@ -1090,41 +1116,70 @@ const RotorClass Symmetry::get_rotor_class() const {
 }
 
 /**
+ * @brief Get the list of operations present in the structure
+ *
+ * @return const std::vector<Operation>&
+ */
+const std::vector<Operation>& Symmetry::get_operations() const {
+    return this->operations;
+}
+
+/**
  * @brief Get the list of inversion operations present in the structure
  *
- * @return const std::vector<Inversion>&
+ * @return const std::vector<Operation>
  */
-const std::vector<Inversion>& Symmetry::get_inversions() const {
-    return this->inversions;
+const std::vector<Operation> Symmetry::get_inversions() {
+    std::vector<Operation> inversions;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::Inversion)
+            inversions.push_back(this->operations[i]);
+    }
+    return inversions;
 }
 
 /**
  * @brief Get the list of proper rotation operations present in the
  * structure
  *
- * @return const std::vector<ProperRotation>&
+ * @return const std::vector<Operation>
  */
-const std::vector<ProperRotation>& Symmetry::get_proper_rotations() const {
-    return this->proper_rotations;
+const std::vector<Operation> Symmetry::get_proper_rotations() {
+    std::vector<Operation> proper_rotations;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::ProperRotation)
+            proper_rotations.push_back(this->operations[i]);
+    }
+    return proper_rotations;
 }
 
 /**
  * @brief Get the list of improper rotation operations present in the
  * structure
  *
- * @return const std::vector<ImproperRotation>&
+ * @return const std::vector<Operation>
  */
-const std::vector<ImproperRotation>& Symmetry::get_improper_rotations() const {
-    return this->improper_rotations;
+const std::vector<Operation> Symmetry::get_improper_rotations() {
+    std::vector<Operation> improper_rotations;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::ImproperRotation)
+            improper_rotations.push_back(this->operations[i]);
+    }
+    return improper_rotations;
 }
 
 /**
  * @brief Get the list of reflection operations present in the structure
  *
- * @return const std::vector<Reflection>&
+ * @return const std::vector<Operation>
  */
-const std::vector<Reflection>& Symmetry::get_reflections() const {
-    return this->reflections;
+const std::vector<Operation> Symmetry::get_reflections() {
+    std::vector<Operation> reflections;
+    for (unsigned int i = 0; i < this->operations.size(); ++i) {
+        if (this->operations[i].get_label().get_element() == OperationLabel::Element::Reflection)
+            reflections.push_back(this->operations[i]);
+    }
+    return reflections;
 }
 
 /**

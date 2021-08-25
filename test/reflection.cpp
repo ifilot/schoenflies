@@ -23,7 +23,8 @@
 #include <glm/gtc/epsilon.hpp>
 #include "../src/structure.h"
 #include "../src/symmetry/symmetry.h"
-#include "../src/symmetry/operations/reflection.h"
+#include "../src/symmetry/operations/operation.h"
+#include "../src/symmetry/operations/operation_label.h"
 #include "utils.h"
 
 BOOST_AUTO_TEST_SUITE(reflection)
@@ -60,7 +61,7 @@ BOOST_AUTO_TEST_CASE(cubane) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_normal(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
         }
     }
 
@@ -96,7 +97,7 @@ BOOST_AUTO_TEST_CASE(ferrocene_eclipsed) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_normal(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
         }
     }
 
@@ -123,7 +124,7 @@ BOOST_AUTO_TEST_CASE(methane) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_normal(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
         }
     }
 
@@ -148,7 +149,7 @@ BOOST_AUTO_TEST_CASE(octasulfur) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_normal(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
         }
     }
 
@@ -173,7 +174,7 @@ BOOST_AUTO_TEST_CASE(pentaborane_9) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_normal(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
         }
     }
 
@@ -187,7 +188,7 @@ BOOST_AUTO_TEST_CASE(thionyl_chloride) {
     auto reflections = symmetry.get_reflections();
 
     BOOST_TEST(reflections.size() == 1);
-    BOOST_TEST(glm::all(glm::epsilonEqual(reflections[0].get_normal(), glm::vec3(0, 0, 1), 1e-8f)));
+    BOOST_TEST(glm::all(glm::epsilonEqual(reflections[0].get_axis(), glm::vec3(0, 0, 1), 1e-8f)));
 }
 
 BOOST_AUTO_TEST_CASE(trans_azobenzene) {
@@ -197,7 +198,7 @@ BOOST_AUTO_TEST_CASE(trans_azobenzene) {
     auto reflections = symmetry.get_reflections();
 
     BOOST_TEST(reflections.size() == 1);
-    BOOST_TEST(glm::all(glm::epsilonEqual(reflections[0].get_normal(), glm::vec3(0, 0, 1), 1e-8f)));
+    BOOST_TEST(glm::all(glm::epsilonEqual(reflections[0].get_axis(), glm::vec3(0, 0, 1), 1e-8f)));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

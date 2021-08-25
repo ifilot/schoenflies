@@ -23,10 +23,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include "../operations/improper_rotation.h"
-#include "../operations/inversion.h"
-#include "../operations/proper_rotation.h"
-#include "../operations/reflection.h"
+#include "../operations/operation.h"
+#include "../operations/operation_label.h"
 #include "point_group_label.h"
 
 class PointGroup {
@@ -68,20 +66,12 @@ public:
     /**
      * @brief Compare this point group to a list of found symmetry operations
      *
-     * @param inversions list of found inversions
-     * @param proper_rotations list of found proper rotations
-     * @param improper_rotations list of found improper rotations
-     * @param reflections list of found reflections
+     * @param operations list of found operations
      * @return const int -1 if not all symmetry operations in this point group
      * were found, or a positive number indicating the number of symmetry
      * operations found but not in the point group
      */
-    const unsigned int compare_to_symmetry_operations(
-        std::vector<Inversion>& inversions,
-        std::vector<ProperRotation>& proper_rotations,
-        std::vector<ImproperRotation>& improper_rotations,
-        std::vector<Reflection>& reflections
-    ) const;
+    const unsigned int compare_to_symmetry_operations(std::vector<Operation>& operations) const;
 
     /**
      * @brief Get the label of the point group

@@ -61,22 +61,24 @@ PointGroup::PointGroup(
  * were found, or a positive number indicating the number of symmetry
  * operations found but not in the point group
  */
-const unsigned int PointGroup::compare_to_symmetry_operations(
-    std::vector<Inversion>& inversions,
-    std::vector<ProperRotation>& proper_rotations,
-    std::vector<ImproperRotation>& improper_rotations,
-    std::vector<Reflection>& reflections
-) const {
+const unsigned int PointGroup::compare_to_symmetry_operations(std::vector<Operation>& operations) const {
     // initialise num_remaining as total of all operations
     // we then subtract all operations that were found in the point group
-    unsigned int num_remaining = inversions.size() + proper_rotations.size() +
-                                 improper_rotations.size() + reflections.size();
+    unsigned int num_remaining = operations.size();
 
     // first, check inversions and reflections, as these do not have degrees
-    if (inversions.size() < this->num_inversions) return -1;
+    unsigned int num_inversions = 0, num_reflections = 0;
+    for (unsigned int i = 0; i < operations.size(); ++i) {
+        OperationLabel::Element element = operations[i].get_label().get_element();
+
+        if (element == OperationLabel::Element::Inversion) num_inversions++;
+        if (element == OperationLabel::Element::Reflection) num_reflections++;
+    }
+
+    if (num_inversions < this->num_inversions) return -1;
     num_remaining -= this->num_inversions;
 
-    if (reflections.size() < this->num_reflections) return -1;
+    if (num_reflections < this->num_reflections) return -1;
     num_remaining -= this->num_reflections;
 
     // then, check rotations
@@ -85,8 +87,9 @@ const unsigned int PointGroup::compare_to_symmetry_operations(
         unsigned int num = num_proper_rotation.second;
 
         unsigned int num_found = 0;
-        for (unsigned int i = 0; i < proper_rotations.size(); ++i) {
-            if (proper_rotations[i].get_degree() == degree) num_found++;
+        for (unsigned int i = 0; i < operations.size(); ++i) {
+            if (operations[i].get_label().get_element() != OperationLabel::Element::ProperRotation) continue;
+            if (operations[i].get_degree() == degree) num_found++;
         }
 
         if (num_found < num) return -1;
@@ -98,8 +101,9 @@ const unsigned int PointGroup::compare_to_symmetry_operations(
         unsigned int num = num_improper_rotation.second;
 
         unsigned int num_found = 0;
-        for (unsigned int i = 0; i < improper_rotations.size(); ++i) {
-            if (improper_rotations[i].get_degree() == degree) num_found++;
+        for (unsigned int i = 0; i < operations.size(); ++i) {
+            if (operations[i].get_label().get_element() != OperationLabel::Element::ImproperRotation) continue;
+            if (operations[i].get_degree() == degree) num_found++;
         }
 
         if (num_found < num) return -1;

@@ -130,6 +130,13 @@ public:
     OperationLabel(Element element, Plane plane, Prime prime);
 
     /**
+     * @brief Get the element of this symmetry operation
+     *
+     * @return const Element
+     */
+    const Element get_element() const;
+
+    /**
      * @brief Get the plane of this symmetry operation
      *
      * @return const Plane

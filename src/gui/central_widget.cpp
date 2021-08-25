@@ -111,7 +111,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     }
     for (unsigned int i = 0; i < symmetry->get_reflections().size(); ++i) {
         auto reflection = symmetry->get_reflections()[i];
-        auto n = reflection.get_normal();
+        auto n = reflection.get_axis();
         this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(reflection.get_label().get_name_html()), QString::number(n.x), QString::number(n.y), QString::number(n.z)));
     }
 

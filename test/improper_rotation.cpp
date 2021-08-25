@@ -21,7 +21,8 @@
 #include <glm/glm.hpp>
 #include "../src/structure.h"
 #include "../src/symmetry/symmetry.h"
-#include "../src/symmetry/operations/improper_rotation.h"
+#include "../src/symmetry/operations/operation.h"
+#include "../src/symmetry/operations/operation_label.h"
 #include "utils.h"
 
 BOOST_AUTO_TEST_SUITE(improper_rotation)
@@ -30,24 +31,24 @@ BOOST_AUTO_TEST_CASE(boric_acid) {
     std::string file = resolve_path("test/files/boric-acid.xyz");
     auto struc = std::make_shared<Structure>(file);
 
-    ImproperRotation rotation_x(3, glm::vec3(1, 0, 0));
+    Operation rotation_x(OperationLabel::Element::ImproperRotation, 3, glm::vec3(1, 0, 0));
     rotation_x.do_operation(struc);
 
     BOOST_TEST(rotation_x.get_error() > 1);  // no S3(x)
 
-    ImproperRotation rotation_y(3, glm::vec3(0, 1, 0));
+    Operation rotation_y(OperationLabel::Element::ImproperRotation, 3, glm::vec3(0, 1, 0));
     rotation_y.do_operation(struc);
 
     BOOST_TEST(rotation_y.get_error() > 1);  // no S3(y)
 
-    ImproperRotation rotation_z(3, glm::vec3(0, 0, 1));
+    Operation rotation_z(OperationLabel::Element::ImproperRotation, 3, glm::vec3(0, 0, 1));
     rotation_z.do_operation(struc);
 
     BOOST_TEST(rotation_z.get_error() < 1e-6);  // S3(z)
 
     for (unsigned int degree = 2; degree <= 8; ++degree) {
         if (degree == 3) continue;
-        ImproperRotation rotation_n(degree, glm::vec3(0, 0, 1));
+        Operation rotation_n(OperationLabel::Element::ImproperRotation, degree, glm::vec3(0, 0, 1));
         rotation_n.do_operation(struc);
 
         BOOST_TEST(rotation_n.get_error() > .5);  // no other-degree rotations exist
@@ -61,7 +62,7 @@ BOOST_AUTO_TEST_CASE(carbon_dioxide) {
     auto improper_rotations = symmetry.get_improper_rotations();
 
     BOOST_TEST(improper_rotations.size() == 1);
-    BOOST_TEST(improper_rotations[0].get_degree() == 0);  // 0 == ImproperRotation::DEGREE_INF
+    BOOST_TEST(improper_rotations[0].get_degree() == 0);  // 0 == Operation::DEGREE_INF
 }
 
 BOOST_AUTO_TEST_CASE(coronene) {
@@ -71,7 +72,7 @@ BOOST_AUTO_TEST_CASE(coronene) {
     auto improper_rotations = symmetry.get_improper_rotations();
 
     unsigned int num_S3s = 0, num_S6s = 0;
-    for (ImproperRotation& rotation : improper_rotations) {
+    for (Operation& rotation : improper_rotations) {
         if (rotation.get_degree() == 3) num_S3s++;
         if (rotation.get_degree() == 6) num_S6s++;
     }
@@ -88,7 +89,7 @@ BOOST_AUTO_TEST_CASE(cubane) {
     auto improper_rotations = symmetry.get_improper_rotations();
 
     unsigned int num_S4s = 0, num_S6s = 0;
-    for (ImproperRotation& rotation : improper_rotations) {
+    for (Operation& rotation : improper_rotations) {
         if (rotation.get_degree() == 4) num_S4s++;
         if (rotation.get_degree() == 6) num_S6s++;
     }
@@ -115,7 +116,7 @@ BOOST_AUTO_TEST_CASE(dodecahydrododecaborate) {
     auto improper_rotations = symmetry.get_improper_rotations();
 
     unsigned int num_S6s = 0, num_S10s = 0;
-    for (ImproperRotation& rotation : improper_rotations) {
+    for (Operation& rotation : improper_rotations) {
         if (rotation.get_degree() == 6) num_S6s++;
         if (rotation.get_degree() == 10) num_S10s++;
     }
@@ -141,7 +142,7 @@ BOOST_AUTO_TEST_CASE(methane) {
     auto improper_rotations = symmetry.get_improper_rotations();
 
     unsigned int num_S4s = 0;
-    for (ImproperRotation& rotation : improper_rotations) {
+    for (Operation& rotation : improper_rotations) {
         if (rotation.get_degree() == 4) num_S4s++;
     }
 

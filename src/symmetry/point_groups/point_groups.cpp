@@ -107,6 +107,6 @@ const std::vector<PointGroup> PointGroups::point_groups = {
     // achiral icosahedral symmetry
     {Label(Class::Ih)    , 1, {{5, 6}, {3, 10}, {2, 15}}, {{10, 6}, {6, 10}}, 15},
     // linear
-    {Label(Class::Cinfv) , 0, {{ProperRotation::DEGREE_INF, 1}}, {}, 0},
-    {Label(Class::Dinfh) , 1, {{ProperRotation::DEGREE_INF, 1}}, {{ImproperRotation::DEGREE_INF, 1}}, 0}
+    {Label(Class::Cinfv) , 0, {{Operation::DEGREE_INF, 1}}, {}, 0},
+    {Label(Class::Dinfh) , 1, {{Operation::DEGREE_INF, 1}}, {{Operation::DEGREE_INF, 1}}, 0}
 };
