@@ -38,6 +38,8 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
     this->find_point_group();
     this->find_cartesian_axes();
     this->label_symmetry_operations();
+
+    this->operation_manager->generate_point_group_operations(this->point_group);
 }
 
 /**

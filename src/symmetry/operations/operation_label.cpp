@@ -136,6 +136,33 @@ const OperationLabel::Element OperationLabel::get_element() const {
 }
 
 /**
+ * @brief Get the degree of this symmetry operation
+ *
+ * @return const unsigned int
+ */
+const unsigned int OperationLabel::get_degree() const {
+    return this->degree;
+}
+
+/**
+ * @brief Get the multiple of this symmetry operation
+ *
+ * @return const int
+ */
+const int OperationLabel::get_multiple() const {
+    return this->multiple;
+}
+
+/**
+ * @brief Set the multiple of this symmetry operation
+ *
+ * @param multiple
+ */
+void OperationLabel::set_multiple(int multiple) {
+    this->multiple = multiple;
+}
+
+/**
  * @brief Get the plane of this symmetry operation
  *
  * @return const Plane
@@ -321,4 +348,22 @@ const std::string OperationLabel::get_name_html() const {
     name += suffix;
 
     return name;
+}
+
+/**
+ * @brief Check whether this symmetry operation matches another symmetry
+ * operation
+ *
+ * This check does not take multiplicity into account.
+ *
+ * @param other other symmetry operation
+ * @return true if operations match
+ * @return false if operations don't match
+ */
+const bool OperationLabel::matches(OperationLabel& other) const {
+    return
+        this->element == other.element &&
+        this->degree == other.degree &&
+        this->plane == other.plane &&
+        this->prime == other.prime;
 }

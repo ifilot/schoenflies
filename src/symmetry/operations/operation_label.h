@@ -137,6 +137,27 @@ public:
     const Element get_element() const;
 
     /**
+     * @brief Get the degree of this symmetry operation
+     *
+     * @return const unsigned int
+     */
+    const unsigned int get_degree() const;
+
+    /**
+     * @brief Get the multiple of this symmetry operation
+     *
+     * @return const int
+     */
+    const int get_multiple() const;
+
+    /**
+     * @brief Set the multiple of this symmetry operation
+     *
+     * @param multiple
+     */
+    void set_multiple(int multiple);
+
+    /**
      * @brief Get the plane of this symmetry operation
      *
      * @return const Plane
@@ -177,6 +198,18 @@ public:
      * @return const std::string
      */
     const std::string get_name_html() const;
+
+    /**
+     * @brief Check whether this symmetry operation matches another symmetry
+     * operation
+     *
+     * This check does not take multiplicity into account.
+     *
+     * @param other other symmetry operation
+     * @return true if operations match
+     * @return false if operations don't match
+     */
+    const bool matches(OperationLabel& other) const;
 };
 
 #endif  // SYMMETRY_OPERATIONS_OPERATION_LABEL_H
