@@ -35,20 +35,27 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->models.push_back(Geometry::cylinder());
 
     this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
+
+    connect(this, SIGNAL(frameSwapped()), parent, SLOT(process_animations()));
 }
 
 /**
  * @brief Set the structure displayed in the widget
  *
  * @param structure
+ * @param animation_matrix
  */
-void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
+void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 animation_matrix) {
     this->remove_model_instances();
-    this->structure_rotation.setToIdentity();
 
     for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
         Element el = PeriodicTable::get_element(structure->get_atomic_number(i));
-        this->models[0]->add_instance(glm::vec3(el.radius), glm::mat4(1.0), structure->get_coordinates(i), glm::vec4(el.colour, 1.0f));
+        this->models[0]->add_instance(
+            glm::vec3(el.radius),
+            glm::mat4(1.0),
+            animation_matrix * structure->get_coordinates(i),
+            glm::vec4(el.colour, 1.0f)
+        );
     }
 
     auto pairs = structure->calculate_bond_pairs();
@@ -57,13 +64,16 @@ void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
         Element el_a = PeriodicTable::get_element(structure->get_atomic_number(pair.first));
         Element el_b = PeriodicTable::get_element(structure->get_atomic_number(pair.second));
 
-        glm::vec3 v = structure->get_coordinates(pair.second) - structure->get_coordinates(pair.first);
+        glm::vec3 coords_a = animation_matrix * structure->get_coordinates(pair.first);
+        glm::vec3 coords_b = animation_matrix * structure->get_coordinates(pair.second);
+
+        glm::vec3 v = coords_b - coords_a;
         glm::vec3 vn = glm::normalize(v);
         float vl = glm::length(v);
 
         float scale_factor = .5 + (el_a.radius - el_b.radius) / vl / 2;
 
-        glm::vec3 trans_a = structure->get_coordinates(pair.first);
+        glm::vec3 trans_a = coords_a;
         glm::vec3 trans_b = trans_a + scale_factor * v;
 
         glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};

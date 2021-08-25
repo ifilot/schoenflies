@@ -262,15 +262,29 @@ const float Operation::get_distance_to_reflection(glm::vec3 coordinates) const {
  * @return glm::mat3x3
  */
 const glm::mat3x3 Operation::calculate_matrix() const {
+    return this->calculate_fractional_matrix(1);
+}
+
+/**
+ * @brief Calculate a fractional operation matrix for this symmetry
+ * operation
+ *
+ * If the fraction is not 1, the operation is applied partially, used in
+ * animating the symmetry operation.
+ *
+ * @param f progress fraction of operation
+ * @return const glm::mat3x3
+ */
+const glm::mat3x3 Operation::calculate_fractional_matrix(double f) const {
     switch (this->label.get_element()) {
         case OperationLabel::Element::Inversion:
-            return this->calculate_matrix_inversion();
+            return this->calculate_matrix_inversion(f);
         case OperationLabel::Element::ProperRotation:
-            return this->calculate_matrix_proper_rotation();
+            return this->calculate_matrix_proper_rotation(f);
         case OperationLabel::Element::ImproperRotation:
-            return this->calculate_matrix_improper_rotation();
+            return this->calculate_matrix_improper_rotation(f);
         case OperationLabel::Element::Reflection:
-            return this->calculate_matrix_reflection();
+            return this->calculate_matrix_reflection(f);
         default:
             throw std::runtime_error("Unexpected symmetry element encountered.");
     }
@@ -281,8 +295,8 @@ const glm::mat3x3 Operation::calculate_matrix() const {
  *
  * @return glm::mat3x3
  */
-const glm::mat3x3 Operation::calculate_matrix_inversion() const {
-    return -glm::mat3x3(1.0f);
+const glm::mat3x3 Operation::calculate_matrix_inversion(double f) const {
+    return glm::mat3x3(1 - 2 * f);
 }
 
 /**
@@ -290,12 +304,12 @@ const glm::mat3x3 Operation::calculate_matrix_inversion() const {
  *
  * @return glm::mat3x3
  */
-const glm::mat3x3 Operation::calculate_matrix_proper_rotation() const {
+const glm::mat3x3 Operation::calculate_matrix_proper_rotation(double f) const {
     if (this->degree == DEGREE_INF) {
         return glm::mat3x3(1.0f);
     }
 
-    float angle = 2 * M_PI / this->degree;
+    float angle = 2 * M_PI / this->degree * f;
 
     float sin = std::sin(angle);
     float cos = std::cos(angle);
@@ -323,20 +337,20 @@ const glm::mat3x3 Operation::calculate_matrix_proper_rotation() const {
  *
  * @return glm::mat3x3
  */
-const glm::mat3x3 Operation::calculate_matrix_reflection() const {
+const glm::mat3x3 Operation::calculate_matrix_reflection(double f) const {
     glm::mat3x3 matrix;
 
-    matrix[0][0] = 1 - 2 * this->axis.x * this->axis.x;
-    matrix[0][1] = -2 * this->axis.x * this->axis.y;
-    matrix[0][2] = -2 * this->axis.x * this->axis.z;
+    matrix[0][0] = 1 - 2 * f * this->axis.x * this->axis.x;
+    matrix[0][1] = -2 * f * this->axis.x * this->axis.y;
+    matrix[0][2] = -2 * f * this->axis.x * this->axis.z;
 
-    matrix[1][0] = -2 * this->axis.x * this->axis.y;
-    matrix[1][1] = 1 - 2 * this->axis.y * this->axis.y;
-    matrix[1][2] = -2 * this->axis.y * this->axis.z;
+    matrix[1][0] = -2 * f * this->axis.x * this->axis.y;
+    matrix[1][1] = 1 - 2 * f * this->axis.y * this->axis.y;
+    matrix[1][2] = -2 * f * this->axis.y * this->axis.z;
 
-    matrix[2][0] = -2 * this->axis.x * this->axis.z;
-    matrix[2][1] = -2 * this->axis.y * this->axis.z;
-    matrix[2][2] = 1 - 2 * this->axis.z * this->axis.z;
+    matrix[2][0] = -2 * f * this->axis.x * this->axis.z;
+    matrix[2][1] = -2 * f * this->axis.y * this->axis.z;
+    matrix[2][2] = 1 - 2 * f * this->axis.z * this->axis.z;
 
     return matrix;
 }
@@ -346,9 +360,12 @@ const glm::mat3x3 Operation::calculate_matrix_reflection() const {
  *
  * @return glm::mat3x3
  */
-const glm::mat3x3 Operation::calculate_matrix_improper_rotation() const {
-    glm::mat3x3 rotation_matrix = this->calculate_matrix_proper_rotation();
-    glm::mat3x3 reflection_matrix = this->calculate_matrix_reflection();
+const glm::mat3x3 Operation::calculate_matrix_improper_rotation(double f) const {
+    double f_rot = (f < .5) ? 2 * f : 1;
+    double f_ref = (f > .5) ? 2 * f - 1 : 0;
+
+    glm::mat3x3 rotation_matrix = this->calculate_matrix_proper_rotation(f_rot);
+    glm::mat3x3 reflection_matrix = this->calculate_matrix_reflection(f_ref);
 
     // combine rotation and reflection
     return reflection_matrix * rotation_matrix;

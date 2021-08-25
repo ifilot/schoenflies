@@ -156,6 +156,18 @@ public:
      */
     const float get_distance_to_element(glm::vec3 coordinates) const;
 
+    /**
+     * @brief Calculate a fractional operation matrix for this symmetry
+     * operation
+     *
+     * If the fraction is not 1, the operation is applied partially, used in
+     * animating the symmetry operation.
+     *
+     * @param f progress fraction of operation
+     * @return const glm::mat3x3
+     */
+    const glm::mat3x3 calculate_fractional_matrix(double f) const;
+
 private:
     /**
      * @brief Calculate the operation matrix for this symmetry operation
@@ -167,30 +179,34 @@ private:
     /**
      * @brief Calculate the operation matrix for an inversion
      *
+     * @param f progress fraction of operation
      * @return glm::mat3x3
      */
-    const glm::mat3x3 calculate_matrix_inversion() const;
+    const glm::mat3x3 calculate_matrix_inversion(double f) const;
 
     /**
      * @brief Calculate the operation matrix for a proper rotation
      *
+     * @param f progress fraction of operation
      * @return glm::mat3x3
      */
-    const glm::mat3x3 calculate_matrix_proper_rotation() const;
+    const glm::mat3x3 calculate_matrix_proper_rotation(double f) const;
 
     /**
      * @brief Calculate the operation matrix for a reflection
      *
+     * @param f progress fraction of operation
      * @return glm::mat3x3
      */
-    const glm::mat3x3 calculate_matrix_reflection() const;
+    const glm::mat3x3 calculate_matrix_reflection(double f) const;
 
     /**
      * @brief Calculate the operation matrix for an improper rotation
      *
+     * @param f progress fraction of operation
      * @return glm::mat3x3
      */
-    const glm::mat3x3 calculate_matrix_improper_rotation() const;
+    const glm::mat3x3 calculate_matrix_improper_rotation(double f) const;
 
     /**
      * @brief Get the distance from the provided coordinates to an inversion

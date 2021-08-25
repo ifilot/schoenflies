@@ -19,6 +19,7 @@
 #ifndef GUI_CENTRAL_WIDGET_H
 #define GUI_CENTRAL_WIDGET_H
 
+#include <chrono>
 #include <memory>
 #include <QHBoxLayout>
 #include <QModelIndex>
@@ -32,6 +33,7 @@
 #include <QWidget>
 #include "../structure.h"
 #include "../symmetry/symmetry.h"
+#include "../symmetry/operations/operation.h"
 #include "../symmetry/operations/operation_manager.h"
 #include "gl_widget.h"
 #include "main_window.h"
@@ -50,6 +52,10 @@ private:
 
     std::shared_ptr<Structure> structure;
     std::shared_ptr<Symmetry> symmetry;
+
+    bool structure_animating = false;
+    std::chrono::time_point<std::chrono::high_resolution_clock> animation_start_time;
+    Operation animation_operation;
 
 public:
     /**
@@ -79,6 +85,11 @@ private slots:
      * @param index index of symmetry operation in the data model
      */
     void trigger_animation(QModelIndex index);
+
+    /**
+     * @brief Process any running animations
+     */
+    void process_animations();
 };
 
 #endif  // GUI_CENTRAL_WIDGET_H

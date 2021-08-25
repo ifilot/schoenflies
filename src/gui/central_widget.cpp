@@ -70,7 +70,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     auto symmetry = std::make_shared<Symmetry>(structure);
     this->symmetry = symmetry;
 
-    this->gl_widget->set_structure(structure);
+    this->gl_widget->set_structure(structure, glm::mat3x3(1.0f));
     this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
@@ -165,11 +165,38 @@ void CentralWidget::trigger_animation(QModelIndex index) {
     QStandardItem *item = this->model->itemFromIndex(index);
 
     if (item->data(SymmetryOperationItemDelegate::ItemDataRole::ButtonClickedRole).toBool()) {
-        QString str = item->data(0).toString();
+        unsigned int operation_index = item->data(SymmetryOperationItemDelegate::ItemDataRole::ButtonRole).toInt();
 
-        // TODO perform animation in GL widget
-        this->text_edit->setText("Triggered animation playback for " + str);
+        this->animation_operation = this->symmetry->get_operation_manager()->get_point_group_operation(operation_index);
+        this->animation_start_time = std::chrono::high_resolution_clock::now();
+        this->structure_animating = true;
 
         item->setData(false, SymmetryOperationItemDelegate::ItemDataRole::ButtonClickedRole);
+
+        this->process_animations();
     }
+}
+
+/**
+ * @brief Process any running animations
+ */
+void CentralWidget::process_animations() {
+    if (!this->structure_animating) return;
+
+    auto now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> runtime = now - this->animation_start_time;
+    double seconds = runtime.count();
+    double f = seconds / 1.0;  // TODO make animation duration variable
+
+    glm::mat3x3 animation_matrix;
+
+    if (f > 1) {
+        f = 1;
+        this->structure_animating = false;
+        animation_matrix = glm::mat3x3(1.0f);  // reset to identity matrix
+    } else {
+        animation_matrix = this->animation_operation.calculate_fractional_matrix(f);
+    }
+
+    this->gl_widget->set_structure(this->structure, animation_matrix);
 }

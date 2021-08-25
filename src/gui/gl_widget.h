@@ -83,8 +83,9 @@ public:
      * @brief Set the structure displayed in the widget
      *
      * @param structure
+     * @param animation_matrix
      */
-    void set_structure(std::shared_ptr<Structure> structure);
+    void set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 animation_matrix);
 
     /**
      * @brief Set the rotation of the structure in the GL widget to correctly
