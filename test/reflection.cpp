@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(bicyclooctane) {
     std::string file = resolve_path("test/files/bicyclooctane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 0);
 }
@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(cubane) {
     std::string file = resolve_path("test/files/cubane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 9);
 
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(dodecahydrododecaborate) {
     std::string file = resolve_path("test/files/dodecahydrododecaborate.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 15);
 }
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(ferrocene_eclipsed) {
     std::string file = resolve_path("test/files/ferrocene-eclipsed.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 6);
 
@@ -108,7 +108,7 @@ BOOST_AUTO_TEST_CASE(methane) {
     std::string file = resolve_path("test/files/methane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 6);
 
@@ -135,7 +135,7 @@ BOOST_AUTO_TEST_CASE(octasulfur) {
     std::string file = resolve_path("test/files/octasulfur.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 4);
 
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(pentaborane_9) {
     std::string file = resolve_path("test/files/pentaborane-9.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 4);
 
@@ -185,7 +185,7 @@ BOOST_AUTO_TEST_CASE(thionyl_chloride) {
     std::string file = resolve_path("test/files/thionyl-chloride.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 1);
     BOOST_TEST(glm::all(glm::epsilonEqual(reflections[0].get_axis(), glm::vec3(0, 0, 1), 1e-8f)));
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(trans_azobenzene) {
     std::string file = resolve_path("test/files/trans-azobenzene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
 
     BOOST_TEST(reflections.size() == 1);
     BOOST_TEST(glm::all(glm::epsilonEqual(reflections[0].get_axis(), glm::vec3(0, 0, 1), 1e-8f)));

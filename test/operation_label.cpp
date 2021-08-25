@@ -34,12 +34,12 @@ BOOST_AUTO_TEST_CASE(adamantane) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     for (Operation& rotation : proper_rotations) {
         BOOST_TEST(rotation.get_label().get_prime() == OperationLabel::Prime::None);
     }
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     for (Operation& reflection : reflections) {
         BOOST_TEST(reflection.get_label().get_plane() == OperationLabel::Plane::Dihedral);
     }
@@ -50,12 +50,12 @@ BOOST_AUTO_TEST_CASE(ammonia) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     for (Operation& rotation : proper_rotations) {
         BOOST_TEST(rotation.get_label().get_prime() == OperationLabel::Prime::None);
     }
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     for (Operation& reflection : reflections) {
         BOOST_TEST(reflection.get_label().get_plane() == OperationLabel::Plane::Vertical);
     }
@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE(bicyclooctane) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(biphenyl) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0, num_double_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(cyclobutadiene) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0, num_double_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -109,7 +109,7 @@ BOOST_AUTO_TEST_CASE(cyclobutadiene) {
     BOOST_TEST(num_single_prime == 2);
     BOOST_TEST(num_double_prime == 2);
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     unsigned int num_h = 0, num_v = 0, num_d = 0;
     for (Operation& reflection : reflections) {
         if (reflection.get_label().get_plane() == OperationLabel::Plane::Horizontal) num_h++;
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(diborane) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0, num_double_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(diborane) {
     BOOST_TEST(num_single_prime == 1);
     BOOST_TEST(num_double_prime == 1);
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     num_no_prime = 0; num_single_prime = 0;
     unsigned int num_h = 0, num_v = 0;
     for (Operation& reflection : reflections) {
@@ -157,12 +157,12 @@ BOOST_AUTO_TEST_CASE(dodecahydrododecaborate) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     for (Operation& rotation : proper_rotations) {
         BOOST_TEST(rotation.get_label().get_prime() == OperationLabel::Prime::None);
     }
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     for (Operation& reflection : reflections) {
         BOOST_TEST(reflection.get_label().get_plane() == OperationLabel::Plane::None);
     }
@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(ferrocene_staggered) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(ferrocene_staggered) {
     BOOST_TEST(num_no_prime == 1);
     BOOST_TEST(num_single_prime == 5);
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     num_no_prime = 0; num_single_prime = 0;
     unsigned int num_h = 0, num_v = 0;
     for (Operation& reflection : reflections) {
@@ -195,12 +195,12 @@ BOOST_AUTO_TEST_CASE(pentaborane_9) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     for (Operation& rotation : proper_rotations) {
         BOOST_TEST(rotation.get_label().get_prime() == OperationLabel::Prime::None);
     }
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     unsigned int num_v = 0, num_d = 0;
     for (Operation& reflection : reflections) {
         if (reflection.get_label().get_plane() == OperationLabel::Plane::Vertical) num_v++;
@@ -215,7 +215,7 @@ BOOST_AUTO_TEST_CASE(sulfur_hexafluoride) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE(sulfur_hexafluoride) {
     BOOST_TEST(num_no_prime == 10);
     BOOST_TEST(num_single_prime == 6);
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     unsigned int num_h = 0, num_d = 0;
     for (Operation& reflection : reflections) {
         if (reflection.get_label().get_plane() == OperationLabel::Plane::Horizontal) num_h++;
@@ -239,7 +239,7 @@ BOOST_AUTO_TEST_CASE(thionyl_chloride) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     for (Operation& reflection : reflections) {
         BOOST_TEST(reflection.get_label().get_plane() == OperationLabel::Plane::Horizontal);
     }
@@ -250,12 +250,12 @@ BOOST_AUTO_TEST_CASE(trans_azobenzene) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     for (Operation& rotation : proper_rotations) {
         BOOST_TEST(rotation.get_label().get_prime() == OperationLabel::Prime::None);
     }
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     for (Operation& reflection : reflections) {
         BOOST_TEST(reflection.get_label().get_plane() == OperationLabel::Plane::Horizontal);
     }
@@ -266,7 +266,7 @@ BOOST_AUTO_TEST_CASE(triethylamine) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     for (Operation& rotation : proper_rotations) {
         BOOST_TEST(rotation.get_label().get_prime() == OperationLabel::Prime::None);
     }
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(tropylium) {
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
 
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
     unsigned int num_no_prime = 0, num_single_prime = 0;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_label().get_prime() == OperationLabel::Prime::None) num_no_prime++;
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(tropylium) {
     BOOST_TEST(num_no_prime == 1);
     BOOST_TEST(num_single_prime == 7);
 
-    auto reflections = symmetry.get_reflections();
+    auto reflections = symmetry.get_operation_manager()->get_reflections();
     unsigned int num_h = 0, num_v = 0;
     for (Operation& reflection : reflections) {
         if (reflection.get_label().get_plane() == OperationLabel::Plane::Horizontal) num_h++;

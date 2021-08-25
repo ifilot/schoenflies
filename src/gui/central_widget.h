@@ -32,6 +32,7 @@
 #include <QWidget>
 #include "../structure.h"
 #include "../symmetry/symmetry.h"
+#include "../symmetry/operations/operation_manager.h"
 #include "gl_widget.h"
 #include "main_window.h"
 #include "symmetry_operation_item_delegate.h"

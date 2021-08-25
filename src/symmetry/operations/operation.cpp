@@ -73,6 +73,24 @@ Operation::Operation(OperationLabel::Element element, unsigned int degree, glm::
 }
 
 /**
+ * @brief Get the id of this symmetry operation
+ *
+ * @return unsigned int
+ */
+const unsigned int Operation::get_id() const {
+    return this->id;
+}
+
+/**
+ * @brief Set the id of this symmetry operation
+ *
+ * @param id
+ */
+void Operation::set_id(unsigned int id) {
+    this->id = id;
+}
+
+/**
  * @brief Get the label of this symmetry operation
  *
  * @return OperationLabel&

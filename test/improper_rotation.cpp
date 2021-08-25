@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(carbon_dioxide) {
     std::string file = resolve_path("test/files/carbon-dioxide.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     BOOST_TEST(improper_rotations.size() == 1);
     BOOST_TEST(improper_rotations[0].get_degree() == 0);  // 0 == Operation::DEGREE_INF
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(coronene) {
     std::string file = resolve_path("test/files/coronene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     unsigned int num_S3s = 0, num_S6s = 0;
     for (Operation& rotation : improper_rotations) {
@@ -86,7 +86,7 @@ BOOST_AUTO_TEST_CASE(cubane) {
     std::string file = resolve_path("test/files/cubane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     unsigned int num_S4s = 0, num_S6s = 0;
     for (Operation& rotation : improper_rotations) {
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(cyclooctatetraene) {
     std::string file = resolve_path("test/files/cyclooctatetraene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     BOOST_TEST(improper_rotations.size() == 1);
     BOOST_TEST(improper_rotations[0].get_degree() == 4);
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(dodecahydrododecaborate) {
     std::string file = resolve_path("test/files/dodecahydrododecaborate.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     unsigned int num_S6s = 0, num_S10s = 0;
     for (Operation& rotation : improper_rotations) {
@@ -130,7 +130,7 @@ BOOST_AUTO_TEST_CASE(hydrogen_chloride) {
     std::string file = resolve_path("test/files/hydrogen-chloride.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     BOOST_TEST(improper_rotations.size() == 0);
 }
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(methane) {
     std::string file = resolve_path("test/files/methane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     unsigned int num_S4s = 0;
     for (Operation& rotation : improper_rotations) {
@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(triethylamine) {
     std::string file = resolve_path("test/files/triethylamine.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     BOOST_TEST(improper_rotations.size() == 0);
 }
@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(water) {
     std::string file = resolve_path("test/files/water.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto improper_rotations = symmetry.get_improper_rotations();
+    auto improper_rotations = symmetry.get_operation_manager()->get_improper_rotations();
 
     BOOST_TEST(improper_rotations.size() == 0);
 }

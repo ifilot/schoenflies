@@ -58,7 +58,7 @@ BOOST_AUTO_TEST_CASE(adamantane) {
     std::string file = resolve_path("test/files/adamantane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0;
     for (Operation& rotation : proper_rotations) {
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(benzene) {
     std::string file = resolve_path("test/files/benzene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0, num_C6s = 0;
     for (Operation& rotation : proper_rotations) {
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(dodecahydrododecaborate) {
     std::string file = resolve_path("test/files/dodecahydrododecaborate.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0, num_C5s = 0;
     for (Operation& rotation : proper_rotations) {
@@ -113,7 +113,7 @@ BOOST_AUTO_TEST_CASE(e_hex_3_ene) {
     std::string file = resolve_path("test/files/E-hex-3-ene.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     BOOST_TEST(proper_rotations.size() == 0);
 }
@@ -122,7 +122,7 @@ BOOST_AUTO_TEST_CASE(fluorochlorobromomethane) {
     std::string file = resolve_path("test/files/fluorochlorobromomethane.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     BOOST_TEST(proper_rotations.size() == 0);
 }
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(hydrazine) {
     std::string file = resolve_path("test/files/hydrazine.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     BOOST_TEST(proper_rotations.size() == 1);
     BOOST_TEST(proper_rotations[0].get_degree() == 2);
@@ -141,7 +141,7 @@ BOOST_AUTO_TEST_CASE(hydrogen_chloride) {
     std::string file = resolve_path("test/files/hydrogen-chloride.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     BOOST_TEST(proper_rotations.size() == 1);
     BOOST_TEST(proper_rotations[0].get_degree() == 0);  // 0 == Operation::DEGREE_INF
@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(sulfur_hexafluoride) {
     std::string file = resolve_path("test/files/sulfur-hexafluoride.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C3s = 0, num_C4s = 0;
     for (Operation& rotation : proper_rotations) {
@@ -170,7 +170,7 @@ BOOST_AUTO_TEST_CASE(tropylium) {
     std::string file = resolve_path("test/files/tropylium.xyz");
     auto struc = std::make_shared<Structure>(file);
     Symmetry symmetry(struc);
-    auto proper_rotations = symmetry.get_proper_rotations();
+    auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C7s = 0;
     for (Operation& rotation : proper_rotations) {

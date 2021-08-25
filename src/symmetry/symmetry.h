@@ -32,6 +32,7 @@
 #include "rotor_class.h"
 #include "operations/operation.h"
 #include "operations/operation_label.h"
+#include "operations/operation_manager.h"
 #include "point_groups/point_group.h"
 #include "point_groups/point_group_label.h"
 #include "point_groups/point_groups.h"
@@ -39,6 +40,7 @@
 class Symmetry {
 private:
     std::shared_ptr<Structure> structure;
+    std::shared_ptr<OperationManager> operation_manager;
 
     glm::vec3 principal_moments;
     glm::mat3x3 principal_axes;
@@ -48,8 +50,6 @@ private:
     glm::vec3 z_axis{NAN};
 
     RotorClass rotor_class;
-
-    std::vector<Operation> operations;
 
     PointGroup point_group;
 
@@ -116,41 +116,11 @@ public:
     const RotorClass get_rotor_class() const;
 
     /**
-     * @brief Get the list of operations present in the structure
+     * @brief Get the operation manager object
      *
-     * @return const std::vector<Operation>
+     * @return const std::shared_ptr<OperationManager>&
      */
-    const std::vector<Operation>& get_operations() const;
-
-    /**
-     * @brief Get the list of inversion operations present in the structure
-     *
-     * @return const std::vector<Operation>
-     */
-    const std::vector<Operation> get_inversions();
-
-    /**
-     * @brief Get the list of proper rotation operations present in the
-     * structure
-     *
-     * @return const std::vector<Operation>
-     */
-    const std::vector<Operation> get_proper_rotations();
-
-    /**
-     * @brief Get the list of improper rotation operations present in the
-     * structure
-     *
-     * @return const std::vector<Operation>
-     */
-    const std::vector<Operation> get_improper_rotations();
-
-    /**
-     * @brief Get the list of reflection operations present in the structure
-     *
-     * @return const std::vector<Operation>
-     */
-    const std::vector<Operation> get_reflections();
+    const std::shared_ptr<OperationManager>& get_operation_manager() const;
 
     /**
      * @brief Get the point group of the structure
@@ -383,31 +353,6 @@ private:
      * @return false if axis cannot be a symmetry axis
      */
     bool axis_inertially_allowed(glm::vec3& axis);
-
-    /**
-     * @brief Check whether a symmetry operation exists in the structure.
-     *
-     * @param operation the symmetry operation to check
-     * @return true if it exists
-     * @return false if it doesn't exist
-     */
-    bool check_operation(Operation& operation);
-
-    /**
-     * @brief Add an operation to the list of operations, if it does not
-     * already exist yet.
-     *
-     * @param operation operation to add
-     */
-    void add_operation(Operation& operation);
-
-    /**
-     * @brief Check whether a symmetry operation exists in the structure and
-     * add it to the list of operations, if it does not already exist yet.
-     *
-     * @param operation operation to check and add
-     */
-    void check_and_add_operation(Operation& operation);
 };
 
 #endif  // SYMMETRY_SYMMETRY_H

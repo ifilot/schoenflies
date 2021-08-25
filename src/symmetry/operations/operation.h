@@ -34,6 +34,8 @@ public:
     static const unsigned int DEGREE_INF = 0;
 
 private:
+    unsigned int id;
+
     OperationLabel label;
 
     unsigned int degree;
@@ -71,6 +73,20 @@ public:
      * @param axis rotation axis of this operation
      */
     Operation(OperationLabel::Element element, unsigned int degree, glm::vec3 axis);
+
+    /**
+     * @brief Get the id of this symmetry operation
+     *
+     * @return unsigned int
+     */
+    const unsigned int get_id() const;
+
+    /**
+     * @brief Set the id of this symmetry operation
+     *
+     * @param id
+     */
+    void set_id(unsigned int id);
 
     /**
      * @brief Get the label of this symmetry operation
