@@ -49,6 +49,7 @@ private:
     QStandardItemModel *model;
 
     std::shared_ptr<Structure> structure;
+    std::shared_ptr<Symmetry> symmetry;
 
 public:
     /**
@@ -64,6 +65,12 @@ public:
      * @param structure
      */
     void set_structure(std::shared_ptr<Structure> structure);
+
+private:
+    /**
+     * @brief Update the model with symmetry operations from the structure
+     */
+    void update_operations_model();
 
 private slots:
     /**

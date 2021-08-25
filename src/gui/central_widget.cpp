@@ -88,11 +88,14 @@ CentralWidget::CentralWidget(MainWindow* mw) {
 void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->structure = structure;
     auto symmetry = std::make_shared<Symmetry>(structure);
+    this->symmetry = symmetry;
 
     this->gl_widget->set_structure(structure);
     this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
+
+    this->update_operations_model();
 
     // temporarily show found symmetry operations in the text edit
     auto operation_manager = symmetry->get_operation_manager();
@@ -128,6 +131,49 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
 
     auto z = symmetry->get_z_axis();
     this->text_edit->append(QString("z axis (%1, %2, %3)").arg(QString::number(z.x), QString::number(z.y), QString::number(z.z)));
+}
+
+void CentralWidget::update_operations_model() {
+    this->model->clear();
+    QStandardItem *root = this->model->invisibleRootItem();
+
+    const auto operation_manager = this->symmetry->get_operation_manager();
+    const auto point_group_operations_order = operation_manager->get_point_group_operations_order();
+
+    // add identity operation, which is always present but not tracked
+    root->appendRow(new QStandardItem("<i>E</i> identity"));
+
+    // add all other operations
+    for (auto operation_group : point_group_operations_order) {
+        if (operation_group.size() == 1) {
+            // add operation on top level
+            int operation_id = operation_group[0];
+            auto operation = operation_manager->get_point_group_operation(operation_id);
+
+            QStandardItem *item = new QStandardItem(QString::fromStdString(operation.get_label().get_name_html()));
+            item->setData(operation_id, SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
+
+            root->appendRow(item);
+        } else if (operation_group.size() > 1) {
+            // add operation group
+            // get name of first operation for group title
+            auto first_op = operation_manager->get_point_group_operation(operation_group[0]);
+            QString title = QString("%1s (%2)").arg(QString::fromStdString(first_op.get_label().get_name_html()),
+                                                    QString::number(operation_group.size()));
+            QStandardItem *item = new QStandardItem(title);
+
+            for (auto operation_id : operation_group) {
+                auto operation = operation_manager->get_point_group_operation(operation_id);
+
+                QStandardItem *sub_item = new QStandardItem(QString::fromStdString(operation.get_label().get_name_html()));
+                sub_item->setData(operation_id, SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
+
+                item->appendRow(sub_item);
+            }
+
+            root->appendRow(item);
+        }
+    }
 }
 
 /**
