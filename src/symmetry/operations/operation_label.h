@@ -210,6 +210,15 @@ public:
      * @return false if operations don't match
      */
     const bool matches(OperationLabel& other) const;
+
+private:
+    /**
+     * @brief Format a number for string output
+     *
+     * @param number number to format
+     * @return const std::string formatted number
+     */
+    const std::string format_number(int number) const;
 };
 
 #endif  // SYMMETRY_OPERATIONS_OPERATION_LABEL_H

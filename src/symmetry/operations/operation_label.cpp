@@ -204,8 +204,8 @@ void OperationLabel::set_prime(Prime prime) {
  * @return const std::string
  */
 const std::string OperationLabel::get_name() const {
-    std::string degree = std::to_string(this->degree);
-    std::string multiple = std::to_string(this->multiple);
+    std::string degree = this->format_number(this->degree);
+    std::string multiple = this->format_number(this->multiple);
 
     std::string symbol, suffix;
 
@@ -280,8 +280,8 @@ const std::string OperationLabel::get_name() const {
  * @return const std::string
  */
 const std::string OperationLabel::get_name_html() const {
-    std::string degree = std::to_string(this->degree);
-    std::string multiple = std::to_string(this->multiple);
+    std::string degree = this->format_number(this->degree);
+    std::string multiple = this->format_number(this->multiple);
 
     std::string symbol, suffix;
 
@@ -366,4 +366,18 @@ const bool OperationLabel::matches(OperationLabel& other) const {
         this->degree == other.degree &&
         this->plane == other.plane &&
         this->prime == other.prime;
+}
+
+/**
+ * @brief Format a number for string output
+ *
+ * @param number number to format
+ * @return const std::string formatted number
+ */
+const std::string OperationLabel::format_number(int number) const {
+    if (number < 0) {
+        return "\u2212" + std::to_string(std::abs(number));
+    } else {
+        return std::to_string(number);
+    }
 }
