@@ -55,26 +55,6 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     tree_view->setModel(this->model);
     tree_view->setItemDelegate(delegate);
 
-    // TODO temporary items to test layout
-    QStandardItem *root = this->model->invisibleRootItem();
-    QStandardItem *item, *sub_item;
-
-    item = new QStandardItem("<i>E</i> identity");
-    root->appendRow({item});
-
-    item = new QStandardItem("<i>C</i><sub>4</sub> rotations (2)");
-    sub_item = new QStandardItem("<i>C</i><sub>4</sub> rotation");
-    sub_item->setData("button", SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
-    item->appendRow({sub_item});
-    sub_item = new QStandardItem("<i>C</i><sub>4</sub><sup>&minus;1</sup> rotation");
-    sub_item->setData("button", SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
-    item->appendRow({sub_item});
-    root->appendRow({item});
-
-    item = new QStandardItem("<i>C</i><sub>2</sub> rotation");
-    item->setData("button", SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
-    root->appendRow({item});
-
     symmetry_layout->addWidget(tree_view);
 
     this->setLayout(layout);
