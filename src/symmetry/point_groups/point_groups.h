@@ -21,11 +21,16 @@
 
 #include <vector>
 #include "../operations/operation.h"
+#include "../operations/operation_label.h"
 #include "point_group.h"
 #include "point_group_label.h"
 
 typedef PointGroupLabel Label;
 typedef PointGroupLabel::Class Class;
+typedef OperationLabel O;
+typedef OperationLabel::Element E;
+typedef OperationLabel::Plane Plane;
+typedef OperationLabel::Prime Prime;
 
 class PointGroups final {
 public:

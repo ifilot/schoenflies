@@ -35,6 +35,7 @@ private:
     std::unordered_map<unsigned int, unsigned int> num_proper_rotations;
     std::unordered_map<unsigned int, unsigned int> num_improper_rotations;
     unsigned int num_reflections;
+    std::vector<OperationLabel> unique_operations;
 
 public:
     /**
@@ -54,13 +55,15 @@ public:
      * @param num_proper_rotations number of proper rotations per degree in this point group
      * @param num_improper_rotations number of improper rotations per degree in this point group
      * @param num_reflections number of reflections in this point group
+     * @param unique_operations vector of labels of unique operations in this point group
      */
     PointGroup(
         PointGroupLabel label,
         unsigned int num_inversions,
         std::unordered_map<unsigned int, unsigned int> num_proper_rotations,
         std::unordered_map<unsigned int, unsigned int> num_improper_rotations,
-        unsigned int num_reflections
+        unsigned int num_reflections,
+        std::vector<OperationLabel> unique_operations
     );
 
     /**
@@ -79,6 +82,13 @@ public:
      * @return const PointGroupLabel&
      */
     const PointGroupLabel& get_label() const;
+
+    /**
+     * @brief Get the unique operations of the point group
+     *
+     * @return const std::vector<OperationLabel>&
+     */
+    const std::vector<OperationLabel>& get_unique_operations() const;
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUP_H
