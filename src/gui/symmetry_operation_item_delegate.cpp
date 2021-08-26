@@ -67,7 +67,10 @@ void SymmetryOperationItemDelegate::paint(QPainter* painter, const QStyleOptionV
         int ellipsis_width = metric.width(ellipsis);
 #endif
 
-        while (doc.size().width() > option.rect.width() - ellipsis_width) {
+        int max_text_width = option.rect.width() - ellipsis_width;
+        if (index.data(ItemDataRole::ButtonRole).toBool()) max_text_width -= this->button_rect(option_in).width();
+
+        while (doc.size().width() > max_text_width) {
             cursor.deletePreviousChar();
             doc.adjustSize();
         }
