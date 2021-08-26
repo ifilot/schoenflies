@@ -38,6 +38,7 @@
 #include "../structure.h"
 #include "../periodic_table/element.h"
 #include "../periodic_table/periodic_table.h"
+#include "../symmetry/operations/operation.h"
 #include "models/geometry.h"
 #include "models/model.h"
 #include "models/obj_loader.h"
@@ -53,7 +54,7 @@ private:
 
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
 
-    std::vector<std::unique_ptr<Model>> models;
+    std::vector<std::unique_ptr<Model>> structure_models;
 
     std::unique_ptr<Model> arrow_model;
 
@@ -145,9 +146,9 @@ protected:
 
 private:
     /**
-     * @brief Paint all instances of models to the screen
+     * @brief Paint all instances of structure models to the screen
      */
-    void paint_models();
+    void paint_structure_models();
 
     /**
      * @brief Paint axis gizmos
@@ -178,7 +179,7 @@ private:
     /**
      * @brief Remove all instances of models
      */
-    void remove_model_instances();
+    void remove_structure_model_instances();
 
 public slots:
     /**

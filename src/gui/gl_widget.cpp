@@ -31,8 +31,8 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
 
     this->structure_rotation.setToIdentity();
 
-    this->models.push_back(Geometry::sphere());
-    this->models.push_back(Geometry::cylinder());
+    this->structure_models.push_back(Geometry::sphere());
+    this->structure_models.push_back(Geometry::cylinder());
 
     this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
 
@@ -46,11 +46,11 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
  * @param animation_matrix
  */
 void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 animation_matrix) {
-    this->remove_model_instances();
+    this->remove_structure_model_instances();
 
     for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
         Element el = PeriodicTable::get_element(structure->get_atomic_number(i));
-        this->models[0]->add_instance(
+        this->structure_models[0]->add_instance(
             glm::vec3(el.radius),
             glm::mat4(1.0),
             animation_matrix * structure->get_coordinates(i),
@@ -90,8 +90,8 @@ void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 a
             rotation = glm::rotate(glm::mat4(1.0), angle, axis_angle);
         }
 
-        this->models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
-        this->models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
+        this->structure_models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
+        this->structure_models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
     }
 
     this->update();
@@ -122,8 +122,8 @@ void GLWidget::initializeGL() {
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::cleanup);
     initializeOpenGLFunctions();
 
-    for (unsigned int i = 0; i < this->models.size(); ++i) {
-        this->models[i]->load_to_vao();
+    for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
+        this->structure_models[i]->load_to_vao();
     }
 
     this->arrow_model->load_to_vao();
@@ -148,8 +148,8 @@ void GLWidget::paintGL() {
     this->view.setToIdentity();
     this->view.lookAt(this->camera_position, look_at, QVector3D(0.0f, 0.0f, 1.0f));
 
-    // draw models
-    this->paint_models();
+    // draw structure models
+    this->paint_structure_models();
 
     // draw axes
     this->paint_gizmos();
@@ -241,14 +241,14 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
 }
 
 /**
- * @brief Paint all instances of models to the screen
+ * @brief Paint all instances of structure models to the screen
  */
-void GLWidget::paint_models() {
+void GLWidget::paint_structure_models() {
     ShaderProgram *model_shader = this->shader_program_manager->get_shader_program("model_shader");
     model_shader->bind();
 
-    for (unsigned int i = 0; i < this->models.size(); ++i) {
-        Model *model = this->models[i].get();
+    for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
+        Model *model = this->structure_models[i].get();
 
         for (const auto& instance : model->get_instances()) {
             // build model matrix (scale -> rotation -> translation)
@@ -376,11 +376,11 @@ void GLWidget::set_arcball_rotation(float angle, const QVector4D& vector) {
 }
 
 /**
- * @brief Remove all instances of models
+ * @brief Remove all instances of structure models
  */
-void GLWidget::remove_model_instances() {
-    for (unsigned int i = 0; i < this->models.size(); ++i) {
-        this->models[i]->remove_instances();
+void GLWidget::remove_structure_model_instances() {
+    for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
+        this->structure_models[i]->remove_instances();
     }
 }
 
