@@ -22,7 +22,7 @@
  * @brief Create a unique pointer to a sphere model
  *
  * @param tesselation_level detail of the sphere
- * @return Model
+ * @return std::unique_ptr<Model>
  */
 std::unique_ptr<Model> Geometry::sphere(unsigned int tesselation_level) {
     std::vector<glm::vec3> vertices = {
@@ -82,7 +82,7 @@ std::unique_ptr<Model> Geometry::sphere(unsigned int tesselation_level) {
  * @param include_caps whether to include cylinder caps
  * @param stack_count number of stacks in axial direction
  * @param slice_count number of slices in radial direction
- * @return Model
+ * @return std::unique_ptr<Model>
  */
 std::unique_ptr<Model> Geometry::cylinder(bool include_caps, unsigned int stack_count, unsigned int slice_count) {
     std::vector<glm::vec3> vertices;
@@ -180,6 +180,59 @@ std::unique_ptr<Model> Geometry::cylinder(bool include_caps, unsigned int stack_
             }
             indices.push_back(centre_idx + slice + 1);
         }
+    }
+
+    return std::make_unique<Model>(vertices, normals, indices);
+}
+
+/**
+ * @brief Create a unique pointer to a circle model
+ *
+ * @param slice_count number of slices
+ * @return std::unique_ptr<Model>
+ */
+std::unique_ptr<Model> Geometry::circle(unsigned int slice_count) {
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<unsigned int> indices;
+
+    // construct vertices and normals
+    // twice, because the circle plane needs to be visible from both sides
+    for (unsigned int i = 0; i < 2; ++i) {
+        vertices.emplace_back(0, 0, 0);
+        normals.push_back(glm::vec3(0, 0, 2 * (float) i - 1));
+
+        for (unsigned int slice = 0; slice < slice_count; ++slice) {
+            float angle = (2.0f * (float) M_PI * slice) / slice_count;
+            float x = std::sin(angle);
+            float y = std::cos(angle);
+
+            vertices.emplace_back(x, y, 0);
+            normals.push_back(glm::vec3(0, 0, 2 * (float) i - 1));
+        }
+    }
+
+    // construct indices
+    // bottom
+    for (unsigned int slice = 0; slice < slice_count; ++slice) {
+        indices.push_back(0);
+        indices.push_back(slice + 1);
+        if (slice + 1 == slice_count) {
+            indices.push_back(1);
+        } else {
+            indices.push_back(slice + 2);
+        }
+    }
+
+    // top
+    for (unsigned int slice = 0; slice < slice_count; ++slice) {
+        indices.push_back(slice_count + 1);
+        if (slice + 1 == slice_count) {
+            indices.push_back(slice_count + 1 + 1);
+        } else {
+            indices.push_back(slice_count + 1 + slice + 2);
+        }
+        indices.push_back(slice_count + 1 + slice + 1);
     }
 
     return std::make_unique<Model>(vertices, normals, indices);
