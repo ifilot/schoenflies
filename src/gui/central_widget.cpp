@@ -49,7 +49,6 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     tree_view->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::MinimumExpanding);
     tree_view->setMinimumSize(320, 50);
     tree_view->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);
-    tree_view->setSelectionMode(QTreeView::SelectionMode::NoSelection);
     tree_view->setMouseTracking(true);
     tree_view->setHeaderHidden(true);
     tree_view->setModel(this->model);
@@ -121,7 +120,7 @@ void CentralWidget::update_operations_model() {
     const auto point_group_operations_order = operation_manager->get_point_group_operations_order();
 
     // add identity operation, which is always present but not tracked
-    root->appendRow(new QStandardItem("<i>E</i> identity"));
+    root->appendRow(new QStandardItem("<span><i>E</i> identity</span>"));
 
     // add all other operations
     for (auto operation_group : point_group_operations_order) {
@@ -130,7 +129,8 @@ void CentralWidget::update_operations_model() {
             int operation_id = operation_group[0];
             auto operation = operation_manager->get_point_group_operation(operation_id);
 
-            QStandardItem *item = new QStandardItem(QString::fromStdString(operation.get_label().get_name_html()));
+            QStandardItem *item = new QStandardItem(QString("<span>%1</span>").arg(
+                QString::fromStdString(operation.get_label().get_name_html())));
             item->setData(operation_id, SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
 
             root->appendRow(item);
@@ -138,14 +138,17 @@ void CentralWidget::update_operations_model() {
             // add operation group
             // get name of first operation for group title
             auto first_op = operation_manager->get_point_group_operation(operation_group[0]);
-            QString title = QString("%1s (%2)").arg(QString::fromStdString(first_op.get_label().get_name_html()),
-                                                    QString::number(operation_group.size()));
+            QString title = QString("<span>%1s (%2)</span>").arg(
+                QString::fromStdString(first_op.get_label().get_name_html()),
+                QString::number(operation_group.size())
+            );
             QStandardItem *item = new QStandardItem(title);
 
             for (auto operation_id : operation_group) {
                 auto operation = operation_manager->get_point_group_operation(operation_id);
 
-                QStandardItem *sub_item = new QStandardItem(QString::fromStdString(operation.get_label().get_name_html()));
+                QStandardItem *sub_item = new QStandardItem(QString("<span>%1</span>").arg(
+                    QString::fromStdString(operation.get_label().get_name_html())));
                 sub_item->setData(operation_id, SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
 
                 item->appendRow(sub_item);

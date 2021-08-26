@@ -28,6 +28,7 @@
 #include <QModelIndex>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPalette>
 #include <QRect>
 #include <QSize>
 #include <QString>

@@ -43,6 +43,10 @@ void SymmetryOperationItemDelegate::paint(QPainter* painter, const QStyleOptionV
     text_option.setTextDirection(option.direction);
 
     QTextDocument doc;
+    if (option.state & QStyle::StateFlag::State_Selected) {
+        QString highlighted_text_colour = option.palette.color(QPalette::ColorRole::HighlightedText).name();
+        doc.setDefaultStyleSheet(QString("span {color: %1;}").arg(highlighted_text_colour));
+    }
     doc.setDefaultTextOption(text_option);
     doc.setHtml(option.text);
     doc.setDefaultFont(option.font);
