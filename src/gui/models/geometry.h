@@ -39,11 +39,12 @@ public:
     /**
      * @brief Create a unique pointer to a cylinder model
      *
+     * @param include_caps whether to include cylinder caps
      * @param stack_count number of stacks in axial direction
      * @param slice_count number of slices in radial direction
      * @return Model
      */
-    static std::unique_ptr<Model> cylinder(unsigned int stack_count = 2, unsigned int slice_count = 24);
+    static std::unique_ptr<Model> cylinder(bool include_caps = false, unsigned int stack_count = 2, unsigned int slice_count = 24);
 };
 
 #endif  // GUI_MODELS_GEOMETRY_H

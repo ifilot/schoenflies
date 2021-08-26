@@ -79,11 +79,12 @@ std::unique_ptr<Model> Geometry::sphere(unsigned int tesselation_level) {
 /**
  * @brief Create a unique pointer to a cylinder model
  *
+ * @param include_caps whether to include cylinder caps
  * @param stack_count number of stacks in axial direction
  * @param slice_count number of slices in radial direction
  * @return Model
  */
-std::unique_ptr<Model> Geometry::cylinder(unsigned int stack_count, unsigned int slice_count) {
+std::unique_ptr<Model> Geometry::cylinder(bool include_caps, unsigned int stack_count, unsigned int slice_count) {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<unsigned int> indices;
@@ -133,6 +134,51 @@ std::unique_ptr<Model> Geometry::cylinder(unsigned int stack_count, unsigned int
             } else {
                 indices.push_back(stack * slice_count + slice + 1);
             }
+        }
+    }
+
+    if (include_caps) {
+        // zi = 0 -> bottom cap; zi = 1 -> top cap
+        for (unsigned int zi = 0; zi < 2; ++zi) {
+            // construct vertices and normals
+            float z = (float) zi;
+
+            vertices.emplace_back(0, 0, z);
+            normals.push_back(glm::normalize(glm::vec3(0, 0, 2 * z - 1)));
+
+            for (unsigned int slice = 0; slice < slice_count; ++slice) {
+                float angle = (2.0f * (float) M_PI * slice) / slice_count;
+                float x = std::sin(angle);
+                float y = std::cos(angle);
+
+                vertices.emplace_back(x, y, z);
+                normals.push_back(glm::normalize(glm::vec3(0, 0, 2 * z - 1)));
+            }
+        }
+
+        // construct indices
+        // bottom cap
+        unsigned int centre_idx = stack_count * slice_count;
+        for (unsigned int slice = 0; slice < slice_count; ++slice) {
+            indices.push_back(centre_idx);
+            indices.push_back(centre_idx + slice + 1);
+            if (slice + 1 == slice_count) {
+                indices.push_back(centre_idx + 1);
+            } else {
+                indices.push_back(centre_idx + slice + 2);
+            }
+        }
+
+        // top cap
+        centre_idx += slice_count + 1;
+        for (unsigned int slice = 0; slice < slice_count; ++slice) {
+            indices.push_back(centre_idx);
+            if (slice + 1 == slice_count) {
+                indices.push_back(centre_idx + 1);
+            } else {
+                indices.push_back(centre_idx + slice + 2);
+            }
+            indices.push_back(centre_idx + slice + 1);
         }
     }
 
