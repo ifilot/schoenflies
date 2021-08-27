@@ -34,6 +34,11 @@ CentralWidget::CentralWidget(MainWindow* mw) {
 
     layout->addLayout(symmetry_layout, 1);
 
+    this->point_group_label = new QLabel();
+    this->point_group_label->setTextFormat(Qt::TextFormat::RichText);
+    this->point_group_label->setVisible(false);
+    symmetry_layout->addWidget(this->point_group_label);
+
     // TODO text edit is temporary
     this->text_edit = new QTextEdit();
     this->text_edit->setReadOnly(true);
@@ -80,6 +85,10 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
 
     this->send_operation_to_gl();
+
+    QString point_group_name = QString::fromStdString(symmetry->get_point_group().get_label().get_name_html());
+    this->point_group_label->setText(QString("Point group: %1").arg(point_group_name));
+    this->point_group_label->setVisible(true);
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
 

@@ -21,13 +21,16 @@
 
 #include <chrono>
 #include <memory>
+#include <Qt>
 #include <QHBoxLayout>
 #include <QItemSelection>
 #include <QItemSelectionModel>
+#include <QLabel>
 #include <QModelIndex>
 #include <QSizePolicy>
 #include <QStandardItem>
 #include <QStandardItemModel>
+#include <QString>
 #include <QTextEdit>
 #include <QTreeView>
 #include <QVBoxLayout>
@@ -49,6 +52,8 @@ class CentralWidget: public QWidget {
 private:
     GLWidget *gl_widget;
     QTextEdit *text_edit;
+
+    QLabel *point_group_label;
 
     QStandardItemModel *model;
 
