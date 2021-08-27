@@ -73,8 +73,13 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     auto symmetry = std::make_shared<Symmetry>(structure);
     this->symmetry = symmetry;
 
+    this->structure_animating = false;
+    this->operation_selected = false;
+
     this->gl_widget->set_structure(structure, glm::mat3x3(1.0f));
     this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
+
+    this->send_operation_to_gl();
 
     this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
 
