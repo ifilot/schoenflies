@@ -22,6 +22,8 @@
 #include <chrono>
 #include <memory>
 #include <QHBoxLayout>
+#include <QItemSelection>
+#include <QItemSelectionModel>
 #include <QModelIndex>
 #include <QSizePolicy>
 #include <QStandardItem>
@@ -57,6 +59,9 @@ private:
     std::chrono::time_point<std::chrono::high_resolution_clock> animation_start_time;
     Operation animation_operation;
 
+    bool operation_selected = false;
+    Operation selected_operation;
+
 public:
     /**
      * @brief Construct a new Central Widget object
@@ -78,7 +83,20 @@ private:
      */
     void update_operations_model();
 
+    /**
+     * @brief Send the operation to the GL widget
+     */
+    void send_operation_to_gl();
+
 private slots:
+    /**
+     * @brief Update the operation shown in the GL widget based on the
+     * selection from the tree view
+     *
+     * @param selected information about selected items
+     */
+    void tree_view_selection_changed(const QItemSelection& selected);
+
     /**
      * @brief Trigger the animation of a symmetry operation in the GL widget
      *

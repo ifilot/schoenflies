@@ -54,6 +54,10 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     tree_view->setModel(this->model);
     tree_view->setItemDelegate(delegate);
 
+    QItemSelectionModel *selection_model = tree_view->selectionModel();
+
+    connect(selection_model, SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(tree_view_selection_changed(const QItemSelection&)));
+
     symmetry_layout->addWidget(tree_view);
 
     this->setLayout(layout);
@@ -160,6 +164,48 @@ void CentralWidget::update_operations_model() {
 }
 
 /**
+ * @brief Send the operation to the GL widget
+ */
+void CentralWidget::send_operation_to_gl() {
+    // only update if the structure is not animating
+    if (!this->structure_animating) {
+        if (this->operation_selected) {
+            this->gl_widget->set_operation(this->selected_operation);
+        } else {
+            this->gl_widget->unset_operation();
+        }
+    }
+}
+
+/**
+ * @brief Update the operation shown in the GL widget based on the
+ * selection from the tree view
+ *
+ * @param selected information about selected items
+ */
+void CentralWidget::tree_view_selection_changed(const QItemSelection& selected) {
+    QModelIndexList indices = selected.indexes();
+    if (indices.size() < 1) {
+        this->operation_selected = false;
+        this->send_operation_to_gl();
+        return;
+    }
+
+    QStandardItem *item = this->model->itemFromIndex(indices[0]);
+
+    if (item->data(SymmetryOperationItemDelegate::ItemDataRole::ButtonRole).toBool()) {
+        unsigned int operation_index = item->data(SymmetryOperationItemDelegate::ItemDataRole::ButtonRole).toInt();
+
+        this->selected_operation = this->symmetry->get_operation_manager()->get_point_group_operation(operation_index);
+        this->operation_selected = true;
+    } else {
+        this->operation_selected = false;
+    }
+
+    this->send_operation_to_gl();
+}
+
+/**
  * @brief Trigger the animation of a symmetry operation in the GL widget
  *
  * @param index index of symmetry operation in the data model
@@ -197,6 +243,7 @@ void CentralWidget::process_animations() {
         f = 1;
         this->structure_animating = false;
         animation_matrix = glm::mat3x3(1.0f);  // reset to identity matrix
+        this->send_operation_to_gl();  // update operation if it has changed
     } else {
         animation_matrix = this->animation_operation.calculate_fractional_matrix(f);
     }

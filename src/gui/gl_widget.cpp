@@ -34,6 +34,10 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->structure_models.push_back(Geometry::sphere());
     this->structure_models.push_back(Geometry::cylinder());
 
+    this->operation_models.push_back(Geometry::sphere());
+    this->operation_models.push_back(Geometry::cylinder(true));
+    this->operation_models.push_back(Geometry::circle());
+
     this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
 
     connect(this, SIGNAL(frameSwapped()), parent, SLOT(process_animations()));
@@ -110,6 +114,61 @@ void GLWidget::set_structure_rotation(glm::mat3x3 cartesian_axes) {
 }
 
 /**
+ * @brief Set the operation displayed in the widget
+ *
+ * @param operation
+ */
+void GLWidget::set_operation(Operation operation) {
+    this->unset_operation();
+
+    OperationLabel::Element element = operation.get_label().get_element();
+    glm::vec3 colour = operation.get_label().get_colour();
+    glm::mat4x4 rotation = this->rotation_matrix_from_axis_vector(operation.get_axis());
+
+    if (element == OperationLabel::Element::Inversion) {
+        this->operation_models[0]->add_instance(
+            glm::vec3(0.25),
+            glm::mat4(1.0),
+            glm::vec3(0.0),
+            glm::vec4(colour, 1.0)
+        );
+    }
+
+    if (element == OperationLabel::Element::ProperRotation ||
+        element == OperationLabel::Element::ImproperRotation) {
+        this->operation_models[1]->add_instance(
+            glm::vec3(0.04f, 0.04f, 2 * this->structure_span + 0.4),
+            rotation,
+            -(this->structure_span + 0.2f) * operation.get_axis(),
+            glm::vec4(colour, 1.0)
+        );
+    }
+
+    if (element == OperationLabel::Element::Reflection ||
+        element == OperationLabel::Element::ImproperRotation) {
+        this->operation_models[2]->add_instance(
+            glm::vec3(this->structure_span + 0.2),
+            rotation,
+            glm::vec3(0.0),
+            glm::vec4(colour, 0.5)
+        );
+    }
+
+    this->update();
+}
+
+/**
+ * @brief Unset the operation displayed in the widget
+ */
+void GLWidget::unset_operation() {
+    for (unsigned int i = 0; i < this->operation_models.size(); ++i) {
+        this->operation_models[i]->remove_instances();
+    }
+
+    this->update();
+}
+
+/**
  * @brief Initialise OpenGL environment
  */
 void GLWidget::initializeGL() {
@@ -118,6 +177,10 @@ void GLWidget::initializeGL() {
 
     for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
         this->structure_models[i]->load_to_vao();
+    }
+
+    for (unsigned int i = 0; i < this->operation_models.size(); ++i) {
+        this->operation_models[i]->load_to_vao();
     }
 
     this->arrow_model->load_to_vao();
@@ -136,6 +199,9 @@ void GLWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+    glBlendEquation(GL_FUNC_ADD);
 
     // set camera
     QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
@@ -144,6 +210,9 @@ void GLWidget::paintGL() {
 
     // draw structure models
     this->paint_structure_models();
+
+    // draw operation models
+    this->paint_operation_models();
 
     // draw axes
     this->paint_gizmos();
@@ -243,6 +312,40 @@ void GLWidget::paint_structure_models() {
 
     for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
         Model *model = this->structure_models[i].get();
+
+        for (const auto& instance : model->get_instances()) {
+            // build model matrix (scale -> rotation -> translation)
+            this->model.setToIdentity();
+            this->model.translate(-this->camera_translation);
+            this->model *= this->arcball_rotation * this->rotation_matrix * this->structure_rotation;
+            this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
+            this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
+            this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);
+
+            this->mvp = this->projection * this->view * this->model;
+
+            model_shader->set_uniform("mvp", this->mvp);
+            model_shader->set_uniform("view", this->view);
+            model_shader->set_uniform("model", this->model);
+            model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+            model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
+
+            model->draw();
+        }
+    }
+
+    model_shader->release();
+}
+
+/**
+ * @brief Paint all instances of operation models to the screen
+ */
+void GLWidget::paint_operation_models() {
+    ShaderProgram *model_shader = this->shader_program_manager->get_shader_program("model_shader");
+    model_shader->bind();
+
+    for (unsigned int i = 0; i < this->operation_models.size(); ++i) {
+        Model *model = this->operation_models[i].get();
 
         for (const auto& instance : model->get_instances()) {
             // build model matrix (scale -> rotation -> translation)

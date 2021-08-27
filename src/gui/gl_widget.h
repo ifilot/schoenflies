@@ -39,6 +39,7 @@
 #include "../periodic_table/element.h"
 #include "../periodic_table/periodic_table.h"
 #include "../symmetry/operations/operation.h"
+#include "../symmetry/operations/operation_label.h"
 #include "models/geometry.h"
 #include "models/model.h"
 #include "models/obj_loader.h"
@@ -55,7 +56,7 @@ private:
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
 
     std::vector<std::unique_ptr<Model>> structure_models;
-
+    std::vector<std::unique_ptr<Model>> operation_models;
     std::unique_ptr<Model> arrow_model;
 
     float structure_span = 0;
@@ -98,6 +99,18 @@ public:
      * axes should lie
      */
     void set_structure_rotation(glm::mat3x3 cartesian_axes);
+
+    /**
+     * @brief Set the operation displayed in the widget
+     *
+     * @param operation
+     */
+    void set_operation(Operation operation);
+
+    /**
+     * @brief Unset the operation displayed in the widget
+     */
+    void unset_operation();
 
 protected:
     /**
@@ -151,6 +164,11 @@ private:
      * @brief Paint all instances of structure models to the screen
      */
     void paint_structure_models();
+
+    /**
+     * @brief Paint all instances of operation models to the screen
+     */
+    void paint_operation_models();
 
     /**
      * @brief Paint axis gizmos
