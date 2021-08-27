@@ -39,6 +39,6 @@ file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
 add_executable(schoenflies ${SOURCES})
 
 # Libraries
-target_link_libraries(schoenflies ${Boost_LIBRARIES} glm Qt5::Widgets Eigen3::Eigen)
+target_link_libraries(schoenflies ${Boost_LIBRARIES} glm::glm Qt5::Widgets Eigen3::Eigen)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
