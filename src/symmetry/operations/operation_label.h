@@ -19,8 +19,10 @@
 #ifndef SYMMETRY_OPERATIONS_OPERATION_LABEL_H
 #define SYMMETRY_OPERATIONS_OPERATION_LABEL_H
 
+#include <algorithm>
 #include <stdexcept>
 #include <string>
+#include <glm/glm.hpp>
 
 class OperationLabel {
 public:
@@ -198,6 +200,13 @@ public:
      * @return const std::string
      */
     const std::string get_name_html() const;
+
+    /**
+     * @brief Get the colour of this symmetry operation (rgb)
+     *
+     * @return const glm::vec3
+     */
+    const glm::vec3 get_colour() const;
 
     /**
      * @brief Check whether this symmetry operation matches another symmetry

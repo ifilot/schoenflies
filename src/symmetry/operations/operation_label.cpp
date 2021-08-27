@@ -351,6 +351,27 @@ const std::string OperationLabel::get_name_html() const {
 }
 
 /**
+ * @brief Get the colour of this symmetry operation (rgb)
+ *
+ * @return const glm::vec3
+ */
+const glm::vec3 OperationLabel::get_colour() const {
+    float l = std::min(1.0, 0.7 / this->degree + 0.4);
+    switch (this->element) {
+        case Element::ProperRotation:
+            return glm::vec3(0.0, l, 0.0);
+        case Element::Inversion:
+            return glm::vec3(0.6, 0.0, 0.0);
+        case Element::ImproperRotation:
+            return glm::vec3(0.0, l, l);
+        case Element::Reflection:
+            return glm::vec3(0.0, 0.0, 0.6);
+        default:
+            throw std::runtime_error("Unexpected symmetry element encountered.");
+    }
+}
+
+/**
  * @brief Check whether this symmetry operation matches another symmetry
  * operation
  *
