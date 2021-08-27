@@ -31,7 +31,6 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
-#include <QTextEdit>
 #include <QTreeView>
 #include <QVBoxLayout>
 #include <QVector>
@@ -51,7 +50,6 @@ class CentralWidget: public QWidget {
 
 private:
     GLWidget *gl_widget;
-    QTextEdit *text_edit;
 
     QLabel *point_group_label;
 

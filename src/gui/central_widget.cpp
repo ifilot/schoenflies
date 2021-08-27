@@ -39,12 +39,6 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     this->point_group_label->setVisible(false);
     symmetry_layout->addWidget(this->point_group_label);
 
-    // TODO text edit is temporary
-    this->text_edit = new QTextEdit();
-    this->text_edit->setReadOnly(true);
-    this->text_edit->setPlainText("Hello, World!");
-    symmetry_layout->addWidget(this->text_edit);
-
     QTreeView *tree_view = new QTreeView();
     this->model = new QStandardItemModel();
     SymmetryOperationItemDelegate *delegate = new SymmetryOperationItemDelegate();
@@ -90,44 +84,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->point_group_label->setText(QString("Point group: %1").arg(point_group_name));
     this->point_group_label->setVisible(true);
 
-    this->text_edit->setPlainText(QString::fromStdString(this->structure->get_description()));
-
     this->update_operations_model();
-
-    // temporarily show found symmetry operations in the text edit
-    auto operation_manager = symmetry->get_operation_manager();
-
-    for (unsigned int i = 0; i < operation_manager->get_inversions().size(); ++i) {
-        auto inversion = operation_manager->get_inversions()[i];
-        this->text_edit->append(QString("%1").arg(QString::fromStdString(inversion.get_label().get_name_html())));
-    }
-    for (unsigned int i = 0; i < operation_manager->get_proper_rotations().size(); ++i) {
-        auto rotation = operation_manager->get_proper_rotations()[i];
-        auto a = rotation.get_axis();
-        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_label().get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
-    }
-    for (unsigned int i = 0; i < operation_manager->get_improper_rotations().size(); ++i) {
-        auto rotation = operation_manager->get_improper_rotations()[i];
-        auto a = rotation.get_axis();
-        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(rotation.get_label().get_name_html()), QString::number(a.x), QString::number(a.y), QString::number(a.z)));
-    }
-    for (unsigned int i = 0; i < operation_manager->get_reflections().size(); ++i) {
-        auto reflection = operation_manager->get_reflections()[i];
-        auto n = reflection.get_axis();
-        this->text_edit->append(QString("%1 (%2, %3, %4)").arg(QString::fromStdString(reflection.get_label().get_name_html()), QString::number(n.x), QString::number(n.y), QString::number(n.z)));
-    }
-
-    auto point_group = symmetry->get_point_group();
-    this->text_edit->append(QString("Point group: %1").arg(QString::fromStdString(point_group.get_label().get_name_html())));
-
-    auto x = symmetry->get_x_axis();
-    this->text_edit->append(QString("x axis (%1, %2, %3)").arg(QString::number(x.x), QString::number(x.y), QString::number(x.z)));
-
-    auto y = symmetry->get_y_axis();
-    this->text_edit->append(QString("y axis (%1, %2, %3)").arg(QString::number(y.x), QString::number(y.y), QString::number(y.z)));
-
-    auto z = symmetry->get_z_axis();
-    this->text_edit->append(QString("z axis (%1, %2, %3)").arg(QString::number(z.x), QString::number(z.y), QString::number(z.z)));
 }
 
 void CentralWidget::update_operations_model() {
