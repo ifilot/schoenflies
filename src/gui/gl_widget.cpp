@@ -47,6 +47,7 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
  */
 void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 animation_matrix) {
     this->remove_structure_model_instances();
+    this->structure_span = 0;
 
     for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
         Element el = PeriodicTable::get_element(structure->get_atomic_number(i));
@@ -56,6 +57,9 @@ void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 a
             animation_matrix * structure->get_coordinates(i),
             glm::vec4(el.colour, 1.0f)
         );
+
+        float span = glm::length(structure->get_coordinates(i)) + el.radius;
+        if (span > this->structure_span) this->structure_span = span;
     }
 
     auto pairs = structure->calculate_bond_pairs();

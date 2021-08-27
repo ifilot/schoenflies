@@ -58,6 +58,8 @@ private:
 
     std::unique_ptr<Model> arrow_model;
 
+    float structure_span = 0;
+
     QMatrix4x4 projection;
     QMatrix4x4 view;
     QMatrix4x4 rotation_matrix;
