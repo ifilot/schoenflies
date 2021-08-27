@@ -72,7 +72,6 @@ void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 a
         glm::vec3 coords_b = animation_matrix * structure->get_coordinates(pair.second);
 
         glm::vec3 v = coords_b - coords_a;
-        glm::vec3 vn = glm::normalize(v);
         float vl = glm::length(v);
 
         float scale_factor = .5 + (el_a.radius - el_b.radius) / vl / 2;
@@ -83,16 +82,7 @@ void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 a
         glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};
         glm::vec3 scale_b = {0.05f, 0.05f, (1 - scale_factor) * vl};
 
-        glm::mat4 rotation(1.0f);
-        if (qFabs(vn.z) > .9999f) {
-            if (vn.z < -.5f) {
-                rotation = glm::rotate(glm::mat4(1.0f), -(float) M_PI, glm::vec3(0.0f, 1.0f, 0.0f));
-            }
-        } else {
-            float angle = qAcos(vn.z);
-            glm::vec3 axis_angle = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), v));
-            rotation = glm::rotate(glm::mat4(1.0), angle, axis_angle);
-        }
+        glm::mat4 rotation = this->rotation_matrix_from_axis_vector(v);
 
         this->structure_models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
         this->structure_models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
@@ -336,6 +326,30 @@ void GLWidget::paint_gizmos() {
     this->arrow_model->draw();
 
     axes_shader->release();
+}
+
+/**
+ * @brief Compute the rotation matrix to rotate an object aligned along the
+ * z axis towards the given axis
+ *
+ * @param axis
+ * @return glm::mat4x4 rotation matrix
+ */
+glm::mat4x4 GLWidget::rotation_matrix_from_axis_vector(glm::vec3 axis) {
+    glm::vec3 axis_n = glm::normalize(axis);
+    glm::mat4 rotation(1.0f);
+
+    if (qFabs(axis_n.z) > .9999f) {
+        if (axis_n.z < -.5f) {
+            rotation = glm::rotate(glm::mat4(1.0f), -(float) M_PI, glm::vec3(0.0f, 1.0f, 0.0f));
+        }
+    } else {
+        float angle = qAcos(axis_n.z);
+        glm::vec3 axis_angle = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), axis));
+        rotation = glm::rotate(glm::mat4(1.0), angle, axis_angle);
+    }
+
+    return rotation;
 }
 
 /**

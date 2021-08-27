@@ -158,6 +158,15 @@ private:
     void paint_gizmos();
 
     /**
+     * @brief Compute the rotation matrix to rotate an object aligned along the
+     * z axis towards the given axis
+     *
+     * @param axis
+     * @return glm::mat4x4 rotation matrix
+     */
+    glm::mat4x4 rotation_matrix_from_axis_vector(glm::vec3 axis);
+
+    /**
      * @brief Load OpenGL shaders
      */
     void load_shaders();
