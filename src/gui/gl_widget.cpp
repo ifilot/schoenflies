@@ -24,7 +24,7 @@
  * @param parent pointer to parent widget
  */
 GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
-    this->bg = parent->palette().color(QPalette::ColorRole::Background);
+    this->bg = parent->palette().color(QPalette::ColorRole::Window);
     this->shader_program_manager = std::make_unique<ShaderProgramManager>();
 
     this->camera_position = QVector3D(0.0, -10.0f, 0.0);
@@ -295,7 +295,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
  * @param event
  */
 void GLWidget::wheelEvent(QWheelEvent* event) {
-    this->camera_position += event->delta() * 0.01f * QVector3D(0, 1, 0);
+    this->camera_position += event->angleDelta().y() * 0.01f * QVector3D(0, 1, 0);
 
     // prevent zooming in too far
     if (this->camera_position[1] > -5.0) this->camera_position[1] = -5.0;
