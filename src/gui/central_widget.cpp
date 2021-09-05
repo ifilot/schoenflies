@@ -46,7 +46,7 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     connect(this->model, SIGNAL(dataChanged(QModelIndex, QModelIndex, QVector<int>)), this, SLOT(trigger_animation(QModelIndex)));
 
     tree_view->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::MinimumExpanding);
-    tree_view->setMinimumSize(320, 50);
+    tree_view->setMinimumSize(220, 50);
     tree_view->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);
     tree_view->setMouseTracking(true);
     tree_view->setHeaderHidden(true);
