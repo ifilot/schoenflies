@@ -80,6 +80,11 @@ int main_cmd(int argc, char** argv) {
  * @return int return code
  */
 int main_gui(int argc, char** argv) {
+    // configure application attributes
+    QApplication::setAttribute(Qt::ApplicationAttribute::AA_EnableHighDpiScaling);
+    QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
+
+    // create application
     QApplication app(argc, argv);
 
     // configure OpenGL
