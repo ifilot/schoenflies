@@ -77,6 +77,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
 
     this->gl_widget->set_structure(structure, glm::mat3x3(1.0f));
     this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
+    this->gl_widget->reset_camera();
 
     this->send_operation_to_gl();
 

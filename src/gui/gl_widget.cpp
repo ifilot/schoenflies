@@ -27,9 +27,7 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->bg = parent->palette().color(QPalette::ColorRole::Window);
     this->shader_program_manager = std::make_unique<ShaderProgramManager>();
 
-    this->camera_position = QVector3D(0.0, -10.0f, 0.0);
-
-    this->structure_rotation.setToIdentity();
+    this->reset_camera();
 
     this->structure_models.push_back(Geometry::sphere());
     this->structure_models.push_back(Geometry::cylinder());
@@ -166,6 +164,21 @@ void GLWidget::unset_operation() {
     }
 
     this->update();
+}
+
+/**
+ * @brief Reset variables related to the camera
+ */
+void GLWidget::reset_camera() {
+    this->rotation_matrix.setToIdentity();
+    this->rotation_matrix.rotate(60.0, QVector3D(1.0, 0.0, 0.0));
+    this->rotation_matrix.rotate(20.0, QVector3D(0.0, 0.0, 1.0));
+
+    this->arcball_rotation.setToIdentity();
+    this->arcball_rotating = false;
+
+    float camera_distance = 4 * this->structure_span;
+    this->camera_position = QVector3D(0.0, -camera_distance, 0.0);
 }
 
 /**

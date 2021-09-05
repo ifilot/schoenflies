@@ -112,6 +112,11 @@ public:
      */
     void unset_operation();
 
+    /**
+     * @brief Reset variables related to the camera
+     */
+    void reset_camera();
+
 protected:
     /**
      * @brief Initialise OpenGL environment
