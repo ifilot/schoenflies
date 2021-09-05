@@ -311,7 +311,8 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
     this->camera_position += event->angleDelta().y() * 0.01f * QVector3D(0, 1, 0);
 
     // prevent zooming in too far
-    if (this->camera_position[1] > -5.0) this->camera_position[1] = -5.0;
+    float min_camera_distance = 1.5 * this->structure_span;
+    if (this->camera_position[1] > -min_camera_distance) this->camera_position[1] = -min_camera_distance;
 
     this->update();
 }
