@@ -407,7 +407,7 @@ void GLWidget::paint_gizmos() {
     QMatrix4x4 projection_ortho;
     projection_ortho.setToIdentity();
     float ratio = height / width;
-    static const float size = 25.0f;
+    static const float size = 15.0f;
     projection_ortho.ortho(-size, size, -size * ratio, size * ratio, 0.1f, 1000.0f);
 
     this->view.setToIdentity();
