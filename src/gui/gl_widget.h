@@ -35,6 +35,7 @@
 #include <QVector3D>
 #include <QWheelEvent>
 #include <QWidget>
+#include <QWindow>
 #include "../structure.h"
 #include "../periodic_table/element.h"
 #include "../periodic_table/periodic_table.h"

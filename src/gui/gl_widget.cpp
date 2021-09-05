@@ -398,11 +398,15 @@ void GLWidget::paint_gizmos() {
 
     // set viewport, projection, and view matrices
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
-    f->glViewport(0.75f * this->geometry().width(), 0.0f, 0.25f * this->geometry().width(), 0.25f * this->geometry().height());
+    QWindow *window_handle = this->window()->windowHandle();
+    qreal pixel_ratio = window_handle->devicePixelRatio();
+    float width = this->geometry().width() * pixel_ratio;
+    float height = this->geometry().height() * pixel_ratio;
+    f->glViewport(0.75f * width, 0.0f, 0.25f * width, 0.25f * height);
 
     QMatrix4x4 projection_ortho;
     projection_ortho.setToIdentity();
-    float ratio = (float) this->geometry().height() / (float) this->geometry().width();
+    float ratio = height / width;
     static const float size = 25.0f;
     projection_ortho.ortho(-size, size, -size * ratio, size * ratio, 0.1f, 1000.0f);
 
