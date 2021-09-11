@@ -113,8 +113,11 @@ public:
      * add it to the list of operations, if it does not already exist yet
      *
      * @param operation operation to check and add
+     * @return true if the operation exists (independent of whether it has
+     * already been added)
+     * @return false if the operation doesn't exist
      */
-    void add_operation(Operation& operation);
+    bool add_operation(Operation& operation);
 
     /**
      * @brief Generate all operations belonging to the point group of the

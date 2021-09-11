@@ -199,6 +199,12 @@ void Symmetry::find_proper_rotational_axes_between_atoms() {
     for (unsigned int i = 0; i < this->structure->get_num_atoms() - 1; ++i) {
         for (unsigned int j = i + 1; j < this->structure->get_num_atoms(); ++j) {
             if (this->structure->get_atomic_number(i) != this->structure->get_atomic_number(j)) continue;
+            if (this->get_rotor_class() == RotorClass::SphericalTop) {
+                // skip if distance between atoms of pair is too large
+                const float d2 = glm::distance2(this->structure->get_coordinates(i),
+                                                this->structure->get_coordinates(j));
+                if (d2 > 16) continue;
+            }
 
             // calculate midpoint between atoms i and j
             glm::vec3 axis = .5f * (this->structure->get_coordinates(i) + this->structure->get_coordinates(j));
@@ -211,7 +217,9 @@ void Symmetry::find_proper_rotational_axes_between_atoms() {
             // TODO move maximum degree to a constant
             for (unsigned int degree = 2; degree <= 8; degree += 2) {
                 Operation rotation(OperationLabel::Element::ProperRotation, degree, axis);
-                this->operation_manager->add_operation(rotation);
+                bool operation_exists = this->operation_manager->add_operation(rotation);
+                // if C2 doesn't exist, further Cn with even n won't exist either
+                if (degree == 2 && !operation_exists) break;
             }
         }
     }

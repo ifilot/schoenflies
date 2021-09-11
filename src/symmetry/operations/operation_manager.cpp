@@ -138,9 +138,14 @@ const std::vector<std::vector<unsigned int>>& OperationManager::get_point_group_
  * add it to the list of operations, if it does not already exist yet
  *
  * @param operation operation to check and add
+ * @return true if the operation exists (independent of whether it has
+ * already been added)
+ * @return false if the operation doesn't exist
  */
-void OperationManager::add_operation(Operation& operation) {
-    if (this->check_operation(operation)) {
+bool OperationManager::add_operation(Operation& operation) {
+    bool operation_exists = this->check_operation(operation);
+
+    if (operation_exists) {
         bool found = false;
 
         operation.set_id(this->next_id++);
@@ -158,6 +163,8 @@ void OperationManager::add_operation(Operation& operation) {
 
         if (!found) this->operations.push_back(operation);
     }
+
+    return operation_exists;
 }
 
 /**
