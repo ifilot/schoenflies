@@ -127,9 +127,9 @@ const Operation& OperationManager::get_point_group_operation(unsigned int id) co
 /**
  * @brief Get the order in which the point group operations should appear
  *
- * @return const std::vector<std::vector<unsigned int>>&
+ * @return const std::vector<OperationGroup>&
  */
-const std::vector<std::vector<unsigned int>>& OperationManager::get_point_group_operations_order() const {
+const std::vector<OperationGroup>& OperationManager::get_point_group_operations_order() const {
     return this->point_group_operations_order;
 }
 
@@ -211,7 +211,7 @@ void OperationManager::generate_point_group_operations(PointGroup& point_group) 
  * @param operation_label
  */
 void OperationManager::generate_operations_by_label(OperationLabel& operation_label) {
-    std::vector<unsigned int> operation_group;
+    OperationGroup operation_group(operation_label);
 
     // find operations with matching label
     std::vector<Operation> matches;
@@ -226,7 +226,7 @@ void OperationManager::generate_operations_by_label(OperationLabel& operation_la
         // inversion and reflection can be added directly
         for (Operation& match : matches) {
             point_group_operations.insert({match.get_id(), match});
-            operation_group.push_back(match.get_id());
+            operation_group.add_operation_id(match.get_id());
         }
     } else {
         // (im)proper rotations need multiples
@@ -242,13 +242,13 @@ void OperationManager::generate_operations_by_label(OperationLabel& operation_la
                 if (multiple == match.get_label().get_multiple()) {
                     // re-use already-created operation
                     point_group_operations.insert({match.get_id(), match});
-                    operation_group.push_back(match.get_id());
+                    operation_group.add_operation_id(match.get_id());
                 } else {
                     // copy operation, set multiple, and add new id
                     Operation copy = this->copy_operation(match);
                     copy.get_label().set_multiple(multiple);
                     point_group_operations.insert({copy.get_id(), copy});
-                    operation_group.push_back(copy.get_id());
+                    operation_group.add_operation_id(copy.get_id());
                 }
             }
         }

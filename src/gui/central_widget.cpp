@@ -100,9 +100,9 @@ void CentralWidget::update_operations_model() {
 
     // add all other operations
     for (auto operation_group : point_group_operations_order) {
-        if (operation_group.size() == 1) {
+        if (operation_group.get_num_operations() == 1) {
             // add operation on top level
-            int operation_id = operation_group[0];
+            int operation_id = operation_group.get_operation_ids()[0];
             auto operation = operation_manager->get_point_group_operation(operation_id);
 
             QStandardItem *item = new QStandardItem(QString("<span>%1</span>").arg(
@@ -110,17 +110,17 @@ void CentralWidget::update_operations_model() {
             item->setData(operation_id, SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
 
             root->appendRow(item);
-        } else if (operation_group.size() > 1) {
+        } else if (operation_group.get_num_operations() > 1) {
             // add operation group
             // get name of first operation for group title
-            auto first_op = operation_manager->get_point_group_operation(operation_group[0]);
+            auto first_op = operation_manager->get_point_group_operation(operation_group.get_operation_ids()[0]);
             QString title = QString("<span>%1s (%2)</span>").arg(
                 QString::fromStdString(first_op.get_label().get_name_html()),
-                QString::number(operation_group.size())
+                QString::number(operation_group.get_num_operations())
             );
             QStandardItem *item = new QStandardItem(title);
 
-            for (auto operation_id : operation_group) {
+            for (auto operation_id : operation_group.get_operation_ids()) {
                 auto operation = operation_manager->get_point_group_operation(operation_id);
 
                 QStandardItem *sub_item = new QStandardItem(QString("<span>%1</span>").arg(

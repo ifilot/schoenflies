@@ -25,6 +25,7 @@
 #include "../../structure.h"
 #include "../point_groups/point_group.h"
 #include "operation.h"
+#include "operation_group.h"
 #include "operation_label.h"
 
 class OperationManager {
@@ -35,7 +36,7 @@ private:
     std::vector<Operation> operations;
 
     std::unordered_map<unsigned int, Operation> point_group_operations;
-    std::vector<std::vector<unsigned int>> point_group_operations_order;
+    std::vector<OperationGroup> point_group_operations_order;
 
 public:
     /**
@@ -104,9 +105,9 @@ public:
     /**
      * @brief Get the order in which the point group operations should appear
      *
-     * @return const std::vector<std::vector<unsigned int>>&
+     * @return const std::vector<OperationGroup>&
      */
-    const std::vector<std::vector<unsigned int>>& get_point_group_operations_order() const;
+    const std::vector<OperationGroup>& get_point_group_operations_order() const;
 
     /**
      * @brief Check whether a symmetry operation exists in the structure and
