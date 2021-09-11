@@ -110,13 +110,10 @@ void CentralWidget::update_operations_model() {
             item->setData(operation_id, SymmetryOperationItemDelegate::ItemDataRole::ButtonRole);
 
             root->appendRow(item);
-        } else if (operation_group.get_num_operations() > 1) {
+        } else if (operation_group.get_num_operations() > 1 || operation_group.get_infinite_multiplicity()) {
             // add operation group
-            // get name of first operation for group title
-            auto first_op = operation_manager->get_point_group_operation(operation_group.get_operation_ids()[0]);
-            QString title = QString("<span>%1s (%2)</span>").arg(
-                QString::fromStdString(first_op.get_label().get_name_html()),
-                QString::number(operation_group.get_num_operations())
+            QString title = QString("<span>%1</span>").arg(
+                QString::fromStdString(operation_group.get_name_html())
             );
             QStandardItem *item = new QStandardItem(title);
 

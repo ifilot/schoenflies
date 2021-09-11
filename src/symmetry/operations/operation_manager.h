@@ -24,6 +24,7 @@
 #include <vector>
 #include "../../structure.h"
 #include "../point_groups/point_group.h"
+#include "../point_groups/point_group_label.h"
 #include "operation.h"
 #include "operation_group.h"
 #include "operation_label.h"
@@ -151,9 +152,22 @@ private:
      * PointGroups::point_groups) is stored in point_group_operations_order.
      * These two objects can be obtained by their respective getters.
      *
+     * @param point_group
      * @param operation_label
      */
-    void generate_operations_by_label(OperationLabel& operation_label);
+    void generate_operations_by_label(PointGroup& point_group, OperationLabel& operation_label);
+
+    /**
+     * @brief Generate an operation group with infinite multiplicity
+     *
+     * Operations with infinite multiplicity (C2' and σv) occur in C∞v and D∞h
+     * point groups. Due to this multiplicity, we do not search for them in the
+     * operation-finding algorithm. However, we do want to show them in the
+     * operation list, so we manually add them here.
+     *
+     * @param operation_label
+     */
+    void generate_infinite_operation_group(OperationLabel& operation_label);
 
     /**
      * @brief Copy the provided operation and give it a new ID

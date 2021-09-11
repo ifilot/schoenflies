@@ -193,7 +193,7 @@ void OperationManager::generate_point_group_operations(PointGroup& point_group) 
     std::vector<OperationLabel> operation_labels = point_group.get_unique_operations();
 
     for (OperationLabel& operation_label : operation_labels) {
-        this->generate_operations_by_label(operation_label);
+        this->generate_operations_by_label(point_group, operation_label);
     }
 }
 
@@ -208,9 +208,20 @@ void OperationManager::generate_point_group_operations(PointGroup& point_group) 
  * PointGroups::point_groups) is stored in point_group_operations_order.
  * These two objects can be obtained by their respective getters.
  *
+ * @param point_group
  * @param operation_label
  */
-void OperationManager::generate_operations_by_label(OperationLabel& operation_label) {
+void OperationManager::generate_operations_by_label(PointGroup& point_group, OperationLabel& operation_label) {
+    // handle special cases (∞ C2' and ∞ σv in C∞v, D∞h)
+    if ((point_group.get_label().get_class() == PointGroupLabel::Class::Cinfv ||
+         point_group.get_label().get_class() == PointGroupLabel::Class::Dinfh) &&
+        (operation_label.get_element() == OperationLabel::Element::ProperRotation &&
+         operation_label.get_degree() == 2 ||
+         operation_label.get_element() == OperationLabel::Element::Reflection)) {
+        this->generate_infinite_operation_group(operation_label);
+        return;
+    }
+
     OperationGroup operation_group(operation_label);
 
     // find operations with matching label
@@ -253,6 +264,23 @@ void OperationManager::generate_operations_by_label(OperationLabel& operation_la
             }
         }
     }
+
+    this->point_group_operations_order.push_back(operation_group);
+}
+
+/**
+ * @brief Generate an operation with infinite multiplicity
+ *
+ * These operations (C2' and σv) occur in C∞v and D∞h point groups. Due to
+ * their infinite multiplicity, we do not search for them in the operation-
+ * finding algorithm. However, we do want to show them in the operation
+ * list, so we manually add them here.
+ *
+ * @param operation_label
+ */
+void OperationManager::generate_infinite_operation_group(OperationLabel& operation_label) {
+    OperationGroup operation_group(operation_label);
+    operation_group.set_infinite_multiplicity(true);
 
     this->point_group_operations_order.push_back(operation_group);
 }
