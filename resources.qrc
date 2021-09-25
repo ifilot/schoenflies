@@ -6,6 +6,12 @@
         <file>assets/shaders/phong.fs</file>
         <file>assets/shaders/phong.vs</file>
         <file>assets/shaders/stereo_anaglyph_red_cyan.fs</file>
+        <file>assets/shaders/stereo_interlaced_checkerboard_lr.fs</file>
+        <file>assets/shaders/stereo_interlaced_checkerboard_rl.fs</file>
+        <file>assets/shaders/stereo_interlaced_columns_lr.fs</file>
+        <file>assets/shaders/stereo_interlaced_columns_rl.fs</file>
+        <file>assets/shaders/stereo_interlaced_rows_lr.fs</file>
+        <file>assets/shaders/stereo_interlaced_rows_rl.fs</file>
         <file>assets/shaders/stereo.vs</file>
     </qresource>
 </RCC>

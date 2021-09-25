@@ -63,9 +63,51 @@ MainWindow::MainWindow() {
     action_anaglyph_red_cyan->setData(StereoscopicMethod::AnaglyphRedCyan);
     menu_stereoscopy->addAction(action_anaglyph_red_cyan);
 
+    QAction *action_interlaced_rows_lr = new QAction(menu_stereoscopy);
+    action_interlaced_rows_lr->setCheckable(true);
+    action_interlaced_rows_lr->setText(tr("Interlaced rows (left first)"));
+    action_interlaced_rows_lr->setData(StereoscopicMethod::InterlacedRowsLR);
+    menu_stereoscopy->addAction(action_interlaced_rows_lr);
+
+    QAction *action_interlaced_rows_rl = new QAction(menu_stereoscopy);
+    action_interlaced_rows_rl->setCheckable(true);
+    action_interlaced_rows_rl->setText(tr("Interlaced rows (right first)"));
+    action_interlaced_rows_rl->setData(StereoscopicMethod::InterlacedRowsRL);
+    menu_stereoscopy->addAction(action_interlaced_rows_rl);
+
+    QAction *action_interlaced_columns_lr = new QAction(menu_stereoscopy);
+    action_interlaced_columns_lr->setCheckable(true);
+    action_interlaced_columns_lr->setText(tr("Interlaced columns (left first)"));
+    action_interlaced_columns_lr->setData(StereoscopicMethod::InterlacedColumnsLR);
+    menu_stereoscopy->addAction(action_interlaced_columns_lr);
+
+    QAction *action_interlaced_columns_rl = new QAction(menu_stereoscopy);
+    action_interlaced_columns_rl->setCheckable(true);
+    action_interlaced_columns_rl->setText(tr("Interlaced columns (right first)"));
+    action_interlaced_columns_rl->setData(StereoscopicMethod::InterlacedColumnsRL);
+    menu_stereoscopy->addAction(action_interlaced_columns_rl);
+
+    QAction *action_interlaced_checkerboard_lr = new QAction(menu_stereoscopy);
+    action_interlaced_checkerboard_lr->setCheckable(true);
+    action_interlaced_checkerboard_lr->setText(tr("Interlaced checkerboard (left first)"));
+    action_interlaced_checkerboard_lr->setData(StereoscopicMethod::InterlacedCheckerboardLR);
+    menu_stereoscopy->addAction(action_interlaced_checkerboard_lr);
+
+    QAction *action_interlaced_checkerboard_rl = new QAction(menu_stereoscopy);
+    action_interlaced_checkerboard_rl->setCheckable(true);
+    action_interlaced_checkerboard_rl->setText(tr("Interlaced checkerboard (right first)"));
+    action_interlaced_checkerboard_rl->setData(StereoscopicMethod::InterlacedCheckerboardRL);
+    menu_stereoscopy->addAction(action_interlaced_checkerboard_rl);
+
     QActionGroup *action_group_stereoscopy = new QActionGroup(this);
     action_group_stereoscopy->addAction(action_two_dimensional);
     action_group_stereoscopy->addAction(action_anaglyph_red_cyan);
+    action_group_stereoscopy->addAction(action_interlaced_rows_lr);
+    action_group_stereoscopy->addAction(action_interlaced_rows_rl);
+    action_group_stereoscopy->addAction(action_interlaced_columns_lr);
+    action_group_stereoscopy->addAction(action_interlaced_columns_rl);
+    action_group_stereoscopy->addAction(action_interlaced_checkerboard_lr);
+    action_group_stereoscopy->addAction(action_interlaced_checkerboard_rl);
     connect(action_group_stereoscopy, &QActionGroup::triggered, this->central_widget->get_gl_widget(), &GLWidget::set_stereoscopic_method);
 
     // actions for help menu

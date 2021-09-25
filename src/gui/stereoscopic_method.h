@@ -23,7 +23,13 @@
 
 enum StereoscopicMethod {
     None,
-    AnaglyphRedCyan
+    AnaglyphRedCyan,
+    InterlacedRowsLR,
+    InterlacedRowsRL,
+    InterlacedColumnsLR,
+    InterlacedColumnsRL,
+    InterlacedCheckerboardLR,
+    InterlacedCheckerboardRL
 };
 
 // allow StereoscopicMethod to be used as QVariant

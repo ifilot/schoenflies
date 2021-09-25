@@ -599,6 +599,12 @@ void GLWidget::load_shaders() {
     this->shader_program_manager->create_shader_program("axes_shader", ShaderProgramType::AxesShader, ":/assets/shaders/axes.vs", ":/assets/shaders/axes.fs");
 
     this->shader_program_manager->create_shader_program("stereo_anaglyph_red_cyan", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_anaglyph_red_cyan.fs");
+    this->shader_program_manager->create_shader_program("stereo_interlaced_rows_lr", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_rows_lr.fs");
+    this->shader_program_manager->create_shader_program("stereo_interlaced_rows_rl", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_rows_rl.fs");
+    this->shader_program_manager->create_shader_program("stereo_interlaced_columns_lr", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_columns_lr.fs");
+    this->shader_program_manager->create_shader_program("stereo_interlaced_columns_rl", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_columns_rl.fs");
+    this->shader_program_manager->create_shader_program("stereo_interlaced_checkerboard_lr", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_checkerboard_lr.fs");
+    this->shader_program_manager->create_shader_program("stereo_interlaced_checkerboard_rl", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_checkerboard_rl.fs");
 }
 
 /**
@@ -664,6 +670,24 @@ void GLWidget::set_stereoscopic_method(QAction* action) {
             break;
         case StereoscopicMethod::AnaglyphRedCyan:
             this->stereoscopic_method_name = "stereo_anaglyph_red_cyan";
+            break;
+        case StereoscopicMethod::InterlacedRowsLR:
+            this->stereoscopic_method_name = "stereo_interlaced_rows_lr";
+            break;
+        case StereoscopicMethod::InterlacedRowsRL:
+            this->stereoscopic_method_name = "stereo_interlaced_rows_rl";
+            break;
+        case StereoscopicMethod::InterlacedColumnsLR:
+            this->stereoscopic_method_name = "stereo_interlaced_columns_lr";
+            break;
+        case StereoscopicMethod::InterlacedColumnsRL:
+            this->stereoscopic_method_name = "stereo_interlaced_columns_rl";
+            break;
+        case StereoscopicMethod::InterlacedCheckerboardLR:
+            this->stereoscopic_method_name = "stereo_interlaced_checkerboard_lr";
+            break;
+        case StereoscopicMethod::InterlacedCheckerboardRL:
+            this->stereoscopic_method_name = "stereo_interlaced_checkerboard_rl";
             break;
         default:
             throw std::runtime_error("Unexpected stereoscopic method encountered.");
