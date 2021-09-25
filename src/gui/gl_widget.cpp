@@ -37,6 +37,7 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->operation_models.push_back(Geometry::circle());
 
     this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
+    this->quad_model = Geometry::quad();
 
     connect(this, SIGNAL(frameSwapped()), parent, SLOT(process_animations()));
 }
@@ -197,6 +198,7 @@ void GLWidget::initializeGL() {
     }
 
     this->arrow_model->load_to_vao();
+    this->quad_model->load_to_vao();
 
     glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
 

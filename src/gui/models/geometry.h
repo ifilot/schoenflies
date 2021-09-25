@@ -25,6 +25,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "model.h"
+#include "quad_model.h"
 
 class Geometry final {
 public:
@@ -53,6 +54,13 @@ public:
      * @return std::unique_ptr<Model>
      */
     static std::unique_ptr<Model> circle(unsigned int slice_count = 96);
+
+    /**
+     * @brief Create a unique pointer to a quad model
+     *
+     * @return std::unique_ptr<QuadModel>
+     */
+    static std::unique_ptr<QuadModel> quad();
 };
 
 #endif  // GUI_MODELS_GEOMETRY_H

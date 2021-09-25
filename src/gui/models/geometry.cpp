@@ -237,3 +237,12 @@ std::unique_ptr<Model> Geometry::circle(unsigned int slice_count) {
 
     return std::make_unique<Model>(vertices, normals, indices);
 }
+
+/**
+ * @brief Create a unique pointer to a quad model
+ *
+ * @return std::unique_ptr<QuadModel>
+ */
+std::unique_ptr<QuadModel> Geometry::quad() {
+    return std::make_unique<QuadModel>();
+}

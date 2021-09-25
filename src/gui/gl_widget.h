@@ -45,6 +45,7 @@
 #include "models/geometry.h"
 #include "models/model.h"
 #include "models/obj_loader.h"
+#include "models/quad_model.h"
 #include "shaders/shader_program_manager.h"
 #include "shaders/shader_program_type.h"
 #include "stereoscopic_method.h"
@@ -61,6 +62,7 @@ private:
     std::vector<std::unique_ptr<Model>> structure_models;
     std::vector<std::unique_ptr<Model>> operation_models;
     std::unique_ptr<Model> arrow_model;
+    std::unique_ptr<QuadModel> quad_model;
 
     float structure_span = 0;
 
