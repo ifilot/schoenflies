@@ -81,6 +81,15 @@ MainWindow::MainWindow() {
 }
 
 /**
+ * @brief Handle window move event
+ *
+ * @param event
+ */
+void MainWindow::moveEvent(QMoveEvent* event) {
+    this->central_widget->get_gl_widget()->window_move_event();
+}
+
+/**
  * @brief Open a new file
  */
 void MainWindow::open() {

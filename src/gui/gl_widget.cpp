@@ -183,6 +183,14 @@ void GLWidget::reset_camera() {
 }
 
 /**
+ * @brief Set top left coordinates of widget on the screen and update
+ */
+void GLWidget::window_move_event() {
+    this->top_left = this->mapToGlobal(QPoint(0, 0));
+    this->update();
+}
+
+/**
  * @brief Initialise OpenGL environment
  */
 void GLWidget::initializeGL() {
@@ -220,16 +228,11 @@ void GLWidget::paintGL() {
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
     glBlendEquation(GL_FUNC_ADD);
 
-    // set camera
-    QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
-    this->view.setToIdentity();
-    this->view.lookAt(this->camera_position, look_at, QVector3D(0.0f, 0.0f, 1.0f));
-
-    // draw structure models
-    this->paint_structure_models();
-
-    // draw operation models
-    this->paint_operation_models();
+    if (this->stereoscopic_method == StereoscopicMethod::None) {
+        this->paintGL_2d();
+    } else {
+        this->paintGL_stereoscopy();
+    }
 
     // draw axes
     this->paint_gizmos();
@@ -373,6 +376,63 @@ void GLWidget::resize_frame_buffers(int width, int height) {
         glBindRenderbuffer(GL_RENDERBUFFER, this->rbo[i]);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
     }
+}
+
+/**
+ * @brief Render scene in 2D
+ */
+void GLWidget::paintGL_2d() {
+    // set camera
+    QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
+    this->view.setToIdentity();
+    this->view.lookAt(this->camera_position, look_at, QVector3D(0.0f, 0.0f, 1.0f));
+
+    // draw structure models
+    this->paint_structure_models();
+
+    // draw operation models
+    this->paint_operation_models();
+}
+
+/**
+ * @brief Render scene in stereoscopy
+ */
+void GLWidget::paintGL_stereoscopy() {
+    for (int i = 0; i < 2; ++i) {
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[i]);  // draw to left/right framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // set camera
+        QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
+        float eye_sep = -this->camera_position[1] / 30.0f;
+        QVector3D camera_pos = this->camera_position + QVector3D((2 * i - 1) * eye_sep / 2.0, 0.0, 0.0);
+        this->view.setToIdentity();
+        this->view.lookAt(camera_pos, look_at, QVector3D(0.0f, 0.0f, 1.0f));
+
+        // draw structure models
+        this->paint_structure_models();
+
+        // draw operation models
+        this->paint_operation_models();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);  // draw to screen
+    glDisable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ShaderProgram *stereoscopic_shader = this->shader_program_manager->get_shader_program(this->stereoscopic_method_name);
+    stereoscopic_shader->bind();
+
+    stereoscopic_shader->set_uniform("left_eye_texture", 0);
+    stereoscopic_shader->set_uniform("right_eye_texture", 1);
+    stereoscopic_shader->set_uniform("screen_x", this->top_left.x());
+    stereoscopic_shader->set_uniform("screen_y", this->top_left.y());
+
+    this->quad_model->draw(this->texture_color_buffers);
+
+    stereoscopic_shader->release();
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 /**
@@ -537,6 +597,8 @@ glm::mat4x4 GLWidget::rotation_matrix_from_axis_vector(glm::vec3 axis) {
 void GLWidget::load_shaders() {
     this->shader_program_manager->create_shader_program("model_shader", ShaderProgramType::ModelShader, ":/assets/shaders/phong.vs", ":/assets/shaders/phong.fs");
     this->shader_program_manager->create_shader_program("axes_shader", ShaderProgramType::AxesShader, ":/assets/shaders/axes.vs", ":/assets/shaders/axes.fs");
+
+    this->shader_program_manager->create_shader_program("stereo_anaglyph_red_cyan", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_anaglyph_red_cyan.fs");
 }
 
 /**

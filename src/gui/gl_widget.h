@@ -66,6 +66,8 @@ private:
 
     float structure_span = 0;
 
+    QPoint top_left;
+
     QMatrix4x4 projection;
     QMatrix4x4 view;
     QMatrix4x4 rotation_matrix;
@@ -129,6 +131,11 @@ public:
      */
     void reset_camera();
 
+    /**
+     * @brief Set top left coordinates of widget on the screen and update
+     */
+    void window_move_event();
+
 protected:
     /**
      * @brief Initialise OpenGL environment
@@ -189,6 +196,16 @@ private:
      * @param height widget height
      */
     void resize_frame_buffers(int width, int height);
+
+    /**
+     * @brief Render scene in 2D
+     */
+    void paintGL_2d();
+
+    /**
+     * @brief Render scene in stereoscopy
+     */
+    void paintGL_stereoscopy();
 
     /**
      * @brief Paint all instances of structure models to the screen

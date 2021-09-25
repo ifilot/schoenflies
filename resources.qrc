@@ -5,5 +5,7 @@
         <file>assets/shaders/axes.vs</file>
         <file>assets/shaders/phong.fs</file>
         <file>assets/shaders/phong.vs</file>
+        <file>assets/shaders/stereo_anaglyph_red_cyan.fs</file>
+        <file>assets/shaders/stereo.vs</file>
     </qresource>
 </RCC>

@@ -32,6 +32,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMoveEvent>
 #include <QObject>
 #include <QStatusBar>
 #include <QString>
@@ -53,6 +54,14 @@ public:
      * @brief Construct a new Main Window object
      */
     MainWindow();
+
+protected:
+    /**
+     * @brief Handle window move event
+     *
+     * @param event
+     */
+    void moveEvent(QMoveEvent* event) Q_DECL_OVERRIDE;
 
 private slots:
     /**
