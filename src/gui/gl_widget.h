@@ -78,6 +78,10 @@ private:
     bool arcball_rotating = false;  // whether arcball rotation is active
     QPoint mouse_position;  // at start of arcball rotation
 
+    unsigned int framebuffers[2];
+    unsigned int texture_color_buffers[2];
+    unsigned int rbo[2];
+
     StereoscopicMethod stereoscopic_method = StereoscopicMethod::None;
     std::string stereoscopic_method_name;
 
@@ -171,6 +175,19 @@ protected:
     void wheelEvent(QWheelEvent* event) Q_DECL_OVERRIDE;
 
 private:
+    /**
+     * @brief Initialize two frame buffers for stereoscopy
+     */
+    void initialize_frame_buffers();
+
+    /**
+     * @brief Resize the frame buffers
+     *
+     * @param width widget width
+     * @param height widget height
+     */
+    void resize_frame_buffers(int width, int height);
+
     /**
      * @brief Paint all instances of structure models to the screen
      */

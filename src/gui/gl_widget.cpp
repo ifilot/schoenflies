@@ -202,6 +202,8 @@ void GLWidget::initializeGL() {
 
     this->load_shaders();
 
+    this->initialize_frame_buffers();
+
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -240,6 +242,8 @@ void GLWidget::paintGL() {
 void GLWidget::resizeGL(int width, int height) {
     this->projection.setToIdentity();
     this->projection.perspective(45.0f, GLfloat(width) / height, 0.01f, 1000.0f);
+
+    this->resize_frame_buffers(width, height);
 }
 
 /**
@@ -315,6 +319,58 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
     if (this->camera_position[1] > -min_camera_distance) this->camera_position[1] = -min_camera_distance;
 
     this->update();
+}
+
+/**
+ * @brief Initialize two frame buffers for stereoscopy
+ */
+void GLWidget::initialize_frame_buffers() {
+    initializeOpenGLFunctions();
+
+    glGenFramebuffers(2, this->framebuffers);
+    glGenTextures(2, this->texture_color_buffers);
+    glGenRenderbuffers(2, this->rbo);
+
+    QWindow *window_handle = this->window()->windowHandle();
+    qreal pixel_ratio = window_handle->devicePixelRatio();
+    float width = this->geometry().width() * pixel_ratio;
+    float height = this->geometry().height() * pixel_ratio;
+
+    for (unsigned int i = 0; i < 2; ++i) {
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[i]);
+        glBindTexture(GL_TEXTURE_2D, this->texture_color_buffers[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->texture_color_buffers[i], 0);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, this->rbo[i]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this->rbo[i]);
+    }
+}
+
+/**
+ * @brief Resize the frame buffers
+ *
+ * @param width widget width
+ * @param height widget height
+ */
+void GLWidget::resize_frame_buffers(int width, int height) {
+    initializeOpenGLFunctions();
+
+    QWindow *window_handle = this->window()->windowHandle();
+    qreal pixel_ratio = window_handle->devicePixelRatio();
+    float w = width * pixel_ratio;
+    float h = height * pixel_ratio;
+
+    for (unsigned int i = 0; i < 2; ++i) {
+        glBindTexture(GL_TEXTURE_2D, this->texture_color_buffers[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, this->rbo[i]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
+    }
 }
 
 /**
