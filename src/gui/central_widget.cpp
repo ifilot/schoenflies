@@ -88,6 +88,15 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->update_operations_model();
 }
 
+/**
+ * @brief Get the GL widget object
+ *
+ * @return GLWidget*
+ */
+GLWidget* CentralWidget::get_gl_widget() {
+    return this->gl_widget;
+}
+
 void CentralWidget::update_operations_model() {
     this->model->clear();
     QStandardItem *root = this->model->invisibleRootItem();

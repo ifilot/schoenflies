@@ -80,6 +80,13 @@ public:
      */
     void set_structure(std::shared_ptr<Structure> structure);
 
+    /**
+     * @brief Get the GL widget object
+     *
+     * @return GLWidget*
+     */
+    GLWidget* get_gl_widget();
+
 private:
     /**
      * @brief Update the model with symmetry operations from the structure

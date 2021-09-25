@@ -24,6 +24,7 @@
 #include <memory>
 #include <string>
 #include <QAction>
+#include <QActionGroup>
 #include <QApplication>
 #include <QFileDialog>
 #include <QKeySequence>
@@ -37,6 +38,7 @@
 #include "../program.h"
 #include "../structure.h"
 #include "central_widget.h"
+#include "stereoscopic_method.h"
 
 class CentralWidget;  // forward declaration
 

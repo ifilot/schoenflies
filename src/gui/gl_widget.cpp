@@ -529,3 +529,25 @@ void GLWidget::remove_structure_model_instances() {
 void GLWidget::cleanup() {
 
 }
+
+/**
+ * @brief Set the stereoscopic method and update
+ *
+ * @param action action corresponding to stereoscopic method
+ */
+void GLWidget::set_stereoscopic_method(QAction* action) {
+    this->stereoscopic_method = action->data().value<StereoscopicMethod>();
+
+    switch (this->stereoscopic_method) {
+        case StereoscopicMethod::None:
+            this->stereoscopic_method_name = "";
+            break;
+        case StereoscopicMethod::AnaglyphRedCyan:
+            this->stereoscopic_method_name = "stereo_anaglyph_red_cyan";
+            break;
+        default:
+            throw std::runtime_error("Unexpected stereoscopic method encountered.");
+    }
+
+    this->update();
+}

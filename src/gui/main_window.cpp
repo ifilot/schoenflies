@@ -24,11 +24,16 @@
 MainWindow::MainWindow() {
     this->setWindowTitle(QString(PROGRAM_NAME));
 
+    // central widget
+    this->central_widget = new CentralWidget(this);
+    setCentralWidget(this->central_widget);
+
     // menu bar
     QMenuBar *menu_bar = new QMenuBar;
 
     // drop-down menus
     QMenu *menu_file = menu_bar->addMenu(tr("&File"));
+    QMenu *menu_stereoscopy = menu_bar->addMenu(tr("&Stereoscopy"));
     QMenu *menu_help = menu_bar->addMenu(tr("&Help"));
 
     // actions for file menu
@@ -44,6 +49,25 @@ MainWindow::MainWindow() {
     connect(action_exit, &QAction::triggered, this, &MainWindow::exit);
     menu_file->addAction(action_exit);
 
+    // actions for stereoscopy menu
+    QAction *action_two_dimensional = new QAction(menu_stereoscopy);
+    action_two_dimensional->setCheckable(true);
+    action_two_dimensional->setChecked(true);
+    action_two_dimensional->setText(tr("Two-dimensional (off)"));
+    action_two_dimensional->setData(StereoscopicMethod::None);
+    menu_stereoscopy->addAction(action_two_dimensional);
+
+    QAction *action_anaglyph_red_cyan = new QAction(menu_stereoscopy);
+    action_anaglyph_red_cyan->setCheckable(true);
+    action_anaglyph_red_cyan->setText(tr("Anaglyph (red/cyan)"));
+    action_anaglyph_red_cyan->setData(StereoscopicMethod::AnaglyphRedCyan);
+    menu_stereoscopy->addAction(action_anaglyph_red_cyan);
+
+    QActionGroup *action_group_stereoscopy = new QActionGroup(this);
+    action_group_stereoscopy->addAction(action_two_dimensional);
+    action_group_stereoscopy->addAction(action_anaglyph_red_cyan);
+    connect(action_group_stereoscopy, &QActionGroup::triggered, this->central_widget->get_gl_widget(), &GLWidget::set_stereoscopic_method);
+
     // actions for help menu
     QAction *action_about = new QAction(menu_help);
     action_about->setText(tr("About"));
@@ -51,10 +75,6 @@ MainWindow::MainWindow() {
     menu_help->addAction(action_about);
 
     setMenuBar(menu_bar);
-
-    // central widget
-    this->central_widget = new CentralWidget(this);
-    setCentralWidget(this->central_widget);
 
     // status bar
     statusBar()->showMessage(PROGRAM_NAME);

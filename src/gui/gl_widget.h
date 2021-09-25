@@ -24,6 +24,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Qt>
 #include <QtMath>
+#include <QAction>
 #include <QColor>
 #include <QMatrix4x4>
 #include <QMouseEvent>
@@ -46,6 +47,7 @@
 #include "models/obj_loader.h"
 #include "shaders/shader_program_manager.h"
 #include "shaders/shader_program_type.h"
+#include "stereoscopic_method.h"
 
 class GLWidget: public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
@@ -75,6 +77,9 @@ private:
     QMatrix4x4 arcball_rotation;  // temporary rotation while dragging mouse
     bool arcball_rotating = false;  // whether arcball rotation is active
     QPoint mouse_position;  // at start of arcball rotation
+
+    StereoscopicMethod stereoscopic_method = StereoscopicMethod::None;
+    std::string stereoscopic_method_name;
 
 public:
     /**
@@ -221,6 +226,13 @@ public slots:
      * @brief Cleanup OpenGL environment
      */
     void cleanup();
+
+    /**
+     * @brief Set the stereoscopic method and update
+     *
+     * @param action action corresponding to stereoscopic method
+     */
+    void set_stereoscopic_method(QAction* action);
 };
 
 #endif  // GUI_GL_WIDGET_H
