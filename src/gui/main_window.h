@@ -27,6 +27,7 @@
 #include <QActionGroup>
 #include <QApplication>
 #include <QFileDialog>
+#include <QIcon>
 #include <QKeySequence>
 #include <QMainWindow>
 #include <QMenu>

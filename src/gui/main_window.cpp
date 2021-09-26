@@ -23,6 +23,7 @@
  */
 MainWindow::MainWindow() {
     this->setWindowTitle(QString(PROGRAM_NAME));
+    this->setWindowIcon(QIcon(":/assets/icons/schoenflies.ico"));
 
     // central widget
     this->central_widget = new CentralWidget(this);
@@ -161,5 +162,6 @@ void MainWindow::about() {
                         "Copyright (c) 2021 Luuk Kempen\n"
                         PROGRAM_NAME " is licensed under the GPLv3 license.");
     message_box.setWindowTitle("About " PROGRAM_NAME);
+    message_box.setWindowIcon(QIcon(":/assets/icons/schoenflies.ico"));
     message_box.exec();
 }
