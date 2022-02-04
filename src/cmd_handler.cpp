@@ -1,6 +1,6 @@
 /**
  * Schoenflies
- * Copyright (c) 2021 Luuk Kempen
+ * Copyright (c) 2022 Luuk Kempen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,38 +16,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MAIN_H
-#define MAIN_H
-
-#include <iostream>
-#include <memory>
-#include <string>
-#include <boost/program_options.hpp>
-#include <QApplication>
-#include <QPushButton>
-#include <QSurfaceFormat>
 #include "cmd_handler.h"
-#include "program.h"
-#include "gui/main_window.h"
-
-namespace po = boost::program_options;
 
 /**
- * @brief Run Schoenflies with command-line arguments.
+ * @brief Construct a new Cmd Handler object
  *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
+ * @param input_file
  */
-int main_cmd(int argc, char** argv);
+CmdHandler::CmdHandler(const std::string& input_file) {
+    this->filename = input_file;
+}
 
 /**
- * @brief Run the Schoenflies GUI.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
+ * @brief Handle the command-line input
  */
-int main_gui(int argc, char** argv);
+void CmdHandler::handle() {
+    std::cout << "Reading " << this->filename << "..." << std::endl;
 
-#endif  // MAIN_H
+    auto struc = std::make_shared<Structure>(this->filename);
+
+    std::cout << struc->get_description() << std::endl;
+
+    Symmetry symmetry(struc);
+
+    std::cout << "Point group: " << symmetry.get_point_group().get_label().get_name() << std::endl;
+}

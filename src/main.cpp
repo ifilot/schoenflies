@@ -68,8 +68,8 @@ int main_cmd(int argc, char** argv) {
         return 0;
     }
 
-    // TODO do more stuff
-    return 0;
+    CmdHandler cmd_handler = CmdHandler(vm["input-file"].as<std::string>());
+    cmd_handler.handle();
 }
 
 /**

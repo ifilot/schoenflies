@@ -1,6 +1,6 @@
 /**
  * Schoenflies
- * Copyright (c) 2021 Luuk Kempen
+ * Copyright (c) 2022 Luuk Kempen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,38 +16,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MAIN_H
-#define MAIN_H
+#ifndef CMD_H
+#define CMD_H
 
 #include <iostream>
-#include <memory>
 #include <string>
-#include <boost/program_options.hpp>
-#include <QApplication>
-#include <QPushButton>
-#include <QSurfaceFormat>
-#include "cmd_handler.h"
-#include "program.h"
-#include "gui/main_window.h"
+#include "structure.h"
+#include "symmetry/symmetry.h"
 
-namespace po = boost::program_options;
+class CmdHandler {
+private:
+    std::string filename;
 
-/**
- * @brief Run Schoenflies with command-line arguments.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
- */
-int main_cmd(int argc, char** argv);
+public:
+    /**
+     * @brief Construct a new Cmd Handler object
+     *
+     * @param input_file
+     */
+    CmdHandler(const std::string& input_file);
 
-/**
- * @brief Run the Schoenflies GUI.
- *
- * @param argc argument count
- * @param argv argument vector
- * @return int return code
- */
-int main_gui(int argc, char** argv);
+    /**
+     * @brief Handle the command-line input
+     */
+    void handle();
+};
 
-#endif  // MAIN_H
+#endif  // CMD_H
