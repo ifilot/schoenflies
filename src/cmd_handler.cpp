@@ -29,8 +29,10 @@ CmdHandler::CmdHandler(const std::string& input_file) {
 
 /**
  * @brief Handle the command-line input
+ *
+ * @return int return code
  */
-void CmdHandler::handle() {
+int CmdHandler::handle() {
     std::cout << "Reading " << this->filename << "..." << std::endl;
 
     auto struc = std::make_shared<Structure>(this->filename);
@@ -40,4 +42,6 @@ void CmdHandler::handle() {
     Symmetry symmetry(struc);
 
     std::cout << "Point group: " << symmetry.get_point_group().get_label().get_name() << std::endl;
+
+    return 0;
 }

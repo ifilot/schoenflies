@@ -38,8 +38,10 @@ public:
 
     /**
      * @brief Handle the command-line input
+     *
+     * @return int return code
      */
-    void handle();
+    int handle();
 };
 
 #endif  // CMD_H

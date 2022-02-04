@@ -69,7 +69,7 @@ int main_cmd(int argc, char** argv) {
     }
 
     CmdHandler cmd_handler = CmdHandler(vm["input-file"].as<std::string>());
-    cmd_handler.handle();
+    return cmd_handler.handle();
 }
 
 /**
