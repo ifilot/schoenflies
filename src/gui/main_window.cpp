@@ -160,7 +160,9 @@ void MainWindow::about() {
     QMessageBox message_box;
     message_box.setText(PROGRAM_NAME ": " PROGRAM_DESC ", version " PROGRAM_VERSION "\n"
                         "Copyright (c) 2021 Luuk Kempen\n"
-                        PROGRAM_NAME " is licensed under the GPLv3 license.");
+                        PROGRAM_NAME " is licensed under the GPLv3 license.\n"
+                        PROGRAM_NAME " is partially funded by the BOOST! program "
+                        "of Eindhoven University of Technology (https://boost.tue.nl).");
     message_box.setWindowTitle("About " PROGRAM_NAME);
     message_box.setWindowIcon(QIcon(":/assets/icons/schoenflies.ico"));
     message_box.exec();

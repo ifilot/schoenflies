@@ -27,3 +27,8 @@ root directory itself) so that required test files can be found.
 ## License
 
 This project is licensed under [the GNU GPL v3 license.](LICENSE.md)
+
+## Funding
+
+Development of this project is partially funded by
+[the BOOST! program of Eindhoven University of Technology.](https://boost.tue.nl)
