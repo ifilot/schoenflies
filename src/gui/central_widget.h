@@ -19,29 +19,19 @@
 #ifndef GUI_CENTRAL_WIDGET_H
 #define GUI_CENTRAL_WIDGET_H
 
-#include <chrono>
 #include <memory>
 #include <Qt>
 #include <QHBoxLayout>
-#include <QItemSelection>
-#include <QItemSelectionModel>
-#include <QLabel>
 #include <QModelIndex>
 #include <QSizePolicy>
-#include <QStandardItem>
-#include <QStandardItemModel>
-#include <QString>
-#include <QTreeView>
 #include <QVBoxLayout>
-#include <QVector>
 #include <QWidget>
 #include "../structure.h"
 #include "../symmetry/symmetry.h"
 #include "../symmetry/operations/operation.h"
-#include "../symmetry/operations/operation_manager.h"
 #include "gl_widget.h"
 #include "main_window.h"
-#include "symmetry_operation_item_delegate.h"
+#include "symmetry_widget.h"
 
 class MainWindow;  // forward declaration
 
@@ -50,20 +40,10 @@ class CentralWidget: public QWidget {
 
 private:
     GLWidget *gl_widget;
-
-    QLabel *point_group_label;
-
-    QStandardItemModel *model;
+    SymmetryWidget *symmetry_widget;
 
     std::shared_ptr<Structure> structure;
     std::shared_ptr<Symmetry> symmetry;
-
-    bool structure_animating = false;
-    std::chrono::time_point<std::chrono::high_resolution_clock> animation_start_time;
-    Operation animation_operation;
-
-    bool operation_selected = false;
-    Operation selected_operation;
 
 public:
     /**
@@ -86,38 +66,6 @@ public:
      * @return GLWidget*
      */
     GLWidget* get_gl_widget();
-
-private:
-    /**
-     * @brief Update the model with symmetry operations from the structure
-     */
-    void update_operations_model();
-
-    /**
-     * @brief Send the operation to the GL widget
-     */
-    void send_operation_to_gl();
-
-private slots:
-    /**
-     * @brief Update the operation shown in the GL widget based on the
-     * selection from the tree view
-     *
-     * @param selected information about selected items
-     */
-    void tree_view_selection_changed(const QItemSelection& selected);
-
-    /**
-     * @brief Trigger the animation of a symmetry operation in the GL widget
-     *
-     * @param index index of symmetry operation in the data model
-     */
-    void trigger_animation(QModelIndex index);
-
-    /**
-     * @brief Process any running animations
-     */
-    void process_animations();
 };
 
 #endif  // GUI_CENTRAL_WIDGET_H

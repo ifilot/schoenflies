@@ -39,59 +39,26 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
     this->quad_model = Geometry::quad();
 
-    connect(this, SIGNAL(frameSwapped()), parent, SLOT(process_animations()));
+    connect(this, SIGNAL(frameSwapped()), this, SLOT(process_animations()));
 }
 
 /**
  * @brief Set the structure displayed in the widget
  *
  * @param structure
+ */
+void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
+    this->structure = structure;
+    this->display_structure(glm::mat3x3(1.0f));
+}
+
+/**
+ * @brief Set the animation matrix for the structure
+ *
  * @param animation_matrix
  */
-void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 animation_matrix) {
-    this->remove_structure_model_instances();
-    this->structure_span = 0;
-
-    for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
-        Element el = PeriodicTable::get_element(structure->get_atomic_number(i));
-        this->structure_models[0]->add_instance(
-            glm::vec3(el.radius),
-            glm::mat4(1.0),
-            animation_matrix * structure->get_coordinates(i),
-            glm::vec4(el.colour, 1.0f)
-        );
-
-        float span = glm::length(structure->get_coordinates(i)) + el.radius;
-        if (span > this->structure_span) this->structure_span = span;
-    }
-
-    auto pairs = structure->calculate_bond_pairs();
-    for (auto pair : pairs) {
-        // generate two cylinders for each bond
-        Element el_a = PeriodicTable::get_element(structure->get_atomic_number(pair.first));
-        Element el_b = PeriodicTable::get_element(structure->get_atomic_number(pair.second));
-
-        glm::vec3 coords_a = animation_matrix * structure->get_coordinates(pair.first);
-        glm::vec3 coords_b = animation_matrix * structure->get_coordinates(pair.second);
-
-        glm::vec3 v = coords_b - coords_a;
-        float vl = glm::length(v);
-
-        float scale_factor = .5 + (el_a.radius - el_b.radius) / vl / 2;
-
-        glm::vec3 trans_a = coords_a;
-        glm::vec3 trans_b = trans_a + scale_factor * v;
-
-        glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};
-        glm::vec3 scale_b = {0.05f, 0.05f, (1 - scale_factor) * vl};
-
-        glm::mat4 rotation = this->rotation_matrix_from_axis_vector(v);
-
-        this->structure_models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
-        this->structure_models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
-    }
-
-    this->update();
+void GLWidget::set_structure_animation_matrix(glm::mat3x3 animation_matrix) {
+    this->display_structure(animation_matrix);
 }
 
 /**
@@ -376,6 +343,57 @@ void GLWidget::resize_frame_buffers(int width, int height) {
         glBindRenderbuffer(GL_RENDERBUFFER, this->rbo[i]);
         glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, w, h);
     }
+}
+
+/**
+ * @brief Display the structure in the widget
+ *
+ * @param animation_matrix
+ */
+void GLWidget::display_structure(glm::mat3x3 animation_matrix) {
+    this->remove_structure_model_instances();
+    this->structure_span = 0;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        Element el = PeriodicTable::get_element(this->structure->get_atomic_number(i));
+        this->structure_models[0]->add_instance(
+            glm::vec3(el.radius),
+            glm::mat4(1.0),
+            animation_matrix * this->structure->get_coordinates(i),
+            glm::vec4(el.colour, 1.0f)
+        );
+
+        float span = glm::length(this->structure->get_coordinates(i)) + el.radius;
+        if (span > this->structure_span) this->structure_span = span;
+    }
+
+    auto pairs = this->structure->calculate_bond_pairs();
+    for (auto pair : pairs) {
+        // generate two cylinders for each bond
+        Element el_a = PeriodicTable::get_element(this->structure->get_atomic_number(pair.first));
+        Element el_b = PeriodicTable::get_element(this->structure->get_atomic_number(pair.second));
+
+        glm::vec3 coords_a = animation_matrix * this->structure->get_coordinates(pair.first);
+        glm::vec3 coords_b = animation_matrix * this->structure->get_coordinates(pair.second);
+
+        glm::vec3 v = coords_b - coords_a;
+        float vl = glm::length(v);
+
+        float scale_factor = .5 + (el_a.radius - el_b.radius) / vl / 2;
+
+        glm::vec3 trans_a = coords_a;
+        glm::vec3 trans_b = trans_a + scale_factor * v;
+
+        glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};
+        glm::vec3 scale_b = {0.05f, 0.05f, (1 - scale_factor) * vl};
+
+        glm::mat4 rotation = this->rotation_matrix_from_axis_vector(v);
+
+        this->structure_models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
+        this->structure_models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
+    }
+
+    this->update();
 }
 
 /**
@@ -694,4 +712,56 @@ void GLWidget::set_stereoscopic_method(QAction* action) {
     }
 
     this->update();
+}
+
+/**
+ * @brief Start animating a symmetry operation
+ *
+ * @param operation operation to animate
+ */
+void GLWidget::start_animation(Operation operation) {
+    this->animation_operation = operation;
+    this->animation_start_time = std::chrono::high_resolution_clock::now();
+    this->structure_animating = true;
+}
+
+/**
+ * @brief Set the operation visible in the widget
+ *
+ * @param operation_selected
+ * @param selected_operation
+ */
+void GLWidget::set_operation(bool operation_selected, Operation selected_operation) {
+    if (!this->structure_animating) {
+        if (operation_selected) {
+            this->set_operation(selected_operation);
+        } else {
+            this->unset_operation();
+        }
+    }
+}
+
+/**
+ * @brief Process any running animations
+ */
+void GLWidget::process_animations() {
+    if (!this->structure_animating) return;
+
+    auto now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> runtime = now - this->animation_start_time;
+    double seconds = runtime.count();
+    double f = seconds / 1.0;  // TODO make animation duration variable
+
+    glm::mat3x3 animation_matrix;
+
+    if (f > 1) {
+        f = 1;
+        this->structure_animating = false;
+        animation_matrix = glm::mat3x3(1.0f);  // reset to identity matrix
+        emit this->animation_finished();
+    } else {
+        animation_matrix = this->animation_operation.calculate_fractional_matrix(f);
+    }
+
+    this->set_structure_animation_matrix(animation_matrix);
 }

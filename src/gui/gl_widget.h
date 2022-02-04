@@ -19,13 +19,14 @@
 #ifndef GUI_GL_WIDGET_H
 #define GUI_GL_WIDGET_H
 
+#include <chrono>
 #include <memory>
 #include <stdexcept>
+#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <Qt>
 #include <QtMath>
 #include <QAction>
-#include <QColor>
 #include <QMatrix4x4>
 #include <QMouseEvent>
 #include <QOpenGLContext>
@@ -54,7 +55,6 @@ class GLWidget: public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 
 private:
-    QWidget* parent;
     QColor bg;
 
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
@@ -64,7 +64,12 @@ private:
     std::unique_ptr<Model> arrow_model;
     std::unique_ptr<QuadModel> quad_model;
 
+    std::shared_ptr<Structure> structure;
     float structure_span = 0;
+
+    Operation animation_operation;
+    std::chrono::time_point<std::chrono::high_resolution_clock> animation_start_time;
+    bool structure_animating;
 
     QPoint top_left;
 
@@ -101,9 +106,15 @@ public:
      * @brief Set the structure displayed in the widget
      *
      * @param structure
+     */
+    void set_structure(std::shared_ptr<Structure> structure);
+
+    /**
+     * @brief Set the animation matrix for the structure
+     *
      * @param animation_matrix
      */
-    void set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 animation_matrix);
+    void set_structure_animation_matrix(glm::mat3x3 animation_matrix);
 
     /**
      * @brief Set the rotation of the structure in the GL widget to correctly
@@ -198,6 +209,13 @@ private:
     void resize_frame_buffers(int width, int height);
 
     /**
+     * @brief Display the structure in the widget
+     *
+     * @param animation_matrix
+     */
+    void display_structure(glm::mat3x3 animation_matrix);
+
+    /**
      * @brief Render scene in 2D
      */
     void paintGL_2d();
@@ -269,6 +287,33 @@ public slots:
      * @param action action corresponding to stereoscopic method
      */
     void set_stereoscopic_method(QAction* action);
+
+    /**
+     * @brief Start animating an operation
+     *
+     * @param operation
+     */
+    void start_animation(Operation operation);
+
+    /**
+     * @brief Set the operation visible in the widget
+     *
+     * @param operation_selected
+     * @param selected_operation
+     */
+    void set_operation(bool operation_selected, Operation selected_operation);
+
+private slots:
+    /**
+     * @brief Process any running animations
+     */
+    void process_animations();
+
+signals:
+    /**
+     * @brief Signal to send when the current animation has finished
+     */
+    void animation_finished();
 };
 
 #endif  // GUI_GL_WIDGET_H
