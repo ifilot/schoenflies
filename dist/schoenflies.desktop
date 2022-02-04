@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Schoenflies
+Type=Application
+Comment=Determine and visualise molecular symmetry
+Exec=/usr/bin/schoenflies
+Icon=schoenflies
+Terminal=false
+Categories=Education;Science;Chemistry;DataVisualization

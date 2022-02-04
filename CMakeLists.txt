@@ -36,7 +36,7 @@ add_subdirectory(test)
 
 # Add sources
 file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
-add_executable(schoenflies ${SOURCES})
+add_executable(schoenflies ${SOURCES} ${RESOURCES_WINDOWS})
 
 # Libraries
 target_link_libraries(schoenflies ${Boost_LIBRARIES} glm::glm Qt5::Widgets Eigen3::Eigen)
