@@ -14,12 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+import os
 import re
 import sys
 
 # based on SemVer regex, https://semver.org/spec/v2.0.0.html#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
 VERSION_REGEX = re.compile(r'## \[(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?\]')
 URLS_REGEX = re.compile(r'\[(.+)\]: ')
+ISSUE_REGEX = re.compile(r'#(\d)+')
+MERGE_REQUEST_REGEX = re.compile(r'!(\d)+')
+
+GITLAB_URL = os.environ.get('CI_PROJECT_URL')
+ISSUE_REPL = fr'[#\1]({GITLAB_URL}/-/issues/\1)'
+MERGE_REQUEST_REPL = fr'[!\1]({GITLAB_URL}/-/merge_requests/\1)'
 
 
 def main():
@@ -43,7 +50,10 @@ def main():
     line_end = find_end_line(lines, line_start)
     line_url = find_url_line(lines, tag)
 
-    print(''.join(lines[line_start:line_end]).strip())
+    desc = ''.join(lines[line_start:line_end]).strip()
+    desc = link_references(desc)
+
+    print(desc)
     if line_url is not None:
         print('\n' + lines[line_url].strip())
 
@@ -69,6 +79,13 @@ def find_url_line(lines, tag):
             if tag in match[1]:
                 return i
     return None
+
+
+def link_references(desc):
+    gitlab_url = os.environ.get('CI_PROJECT_URL')
+    desc = re.sub(ISSUE_REGEX, ISSUE_REPL, desc)
+    desc = re.sub(MERGE_REQUEST_REGEX, MERGE_REQUEST_REPL, desc)
+    return desc
 
 
 if __name__ == '__main__':
