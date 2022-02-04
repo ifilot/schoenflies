@@ -4,6 +4,10 @@
 
 Determine and visualise molecular symmetry.
 
+## Releases
+
+[Click here to download pre-built Schoenflies binaries.](https://gitlab.com/lkkmpn/schoenflies/-/releases)
+
 ## Dependencies (Debian 11)
 
 ```
