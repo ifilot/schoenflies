@@ -4,13 +4,13 @@
 
 Determine and visualise molecular symmetry.
 
-## Dependencies (Debian)
+## Dependencies (Debian 11)
 
 ```
-sudo apt install build-essential qt5-default libboost-all-dev libglm-dev
+sudo apt install build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libglm-dev
 ```
 
-## Compilation (Debian)
+## Compilation (Debian 11)
 
 ```
 $ cd build
