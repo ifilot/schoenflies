@@ -33,6 +33,7 @@
 #include "../symmetry/operations/operation.h"
 #include "gl_widget.h"
 #include "main_window.h"
+#include "practice_widget.h"
 #include "symmetry_widget.h"
 
 class MainWindow;  // forward declaration
@@ -43,6 +44,7 @@ class CentralWidget: public QWidget {
 private:
     GLWidget *gl_widget;
     QStackedWidget *side_widget;
+    PracticeWidget *practice_widget;
     SymmetryWidget *symmetry_widget;
 
     std::shared_ptr<Structure> structure;

@@ -38,6 +38,9 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     this->symmetry_widget = new SymmetryWidget(this);
     side_widget->addWidget(this->symmetry_widget);
 
+    this->practice_widget = new PracticeWidget(this);
+    side_widget->addWidget(this->practice_widget);
+
     connect(this->symmetry_widget, SIGNAL(animate_operation(Operation)), this->gl_widget, SLOT(start_animation(Operation)));
     connect(this->symmetry_widget, SIGNAL(operation_changed(bool, Operation)), this->gl_widget, SLOT(set_operation(bool, Operation)));
     connect(this->gl_widget, SIGNAL(animation_finished()), this->symmetry_widget, SLOT(request_operation()));
@@ -59,6 +62,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->gl_widget->unset_operation();
 
     this->symmetry_widget->set_symmetry(symmetry);
+    this->practice_widget->set_symmetry(symmetry);
 }
 
 /**
