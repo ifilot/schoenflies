@@ -140,6 +140,16 @@ public:
      * @brief Return whether the point group is linear (C∞v, D∞h)
      */
     const bool is_linear() const;
+
+    /**
+     * @brief Check whether this point group label matches another point group
+     * label
+     *
+     * @param other other point group label
+     * @return true if labels match
+     * @return false if labels don't match
+     */
+    const bool matches(PointGroupLabel& other) const;
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUP_LABEL_H

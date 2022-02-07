@@ -232,3 +232,23 @@ const bool PointGroupLabel::is_icosahedral() const {
 const bool PointGroupLabel::is_linear() const {
     return this->point_group_class == Class::Cinfv || this->point_group_class == Class::Dinfh;
 }
+
+/**
+ * @brief Check whether this symmetry operation matches another symmetry
+ * operation
+ *
+ * This check does not take multiplicity into account.
+ *
+ * @param other other symmetry operation
+ * @return true if operations match
+ * @return false if operations don't match
+ */
+const bool PointGroupLabel::matches(PointGroupLabel& other) const {
+    if (this->is_polyhedral()) {
+        // classes without order
+        return this->point_group_class == other.get_class();
+    } else {
+        return this->point_group_class == other.get_class() &&
+            this->order == other.get_order();
+    }
+}
