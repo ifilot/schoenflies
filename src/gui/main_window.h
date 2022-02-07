@@ -40,6 +40,7 @@
 #include "../program.h"
 #include "../structure.h"
 #include "central_widget.h"
+#include "gui_mode.h"
 #include "stereoscopic_method.h"
 
 class CentralWidget;  // forward declaration

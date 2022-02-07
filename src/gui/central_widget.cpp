@@ -65,6 +65,23 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->practice_widget->set_symmetry(symmetry);
 }
 
+void CentralWidget::set_gui_mode(QAction* action) {
+    this->gui_mode = action->data().value<GuiMode>();
+
+    int index;
+    switch (this->gui_mode) {
+        case GuiMode::SymmetryViewer:
+            index = this->side_widget->indexOf(this->symmetry_widget);
+            break;
+        case GuiMode::Practice:
+            index = this->side_widget->indexOf(this->practice_widget);
+            break;
+        default:
+            throw std::runtime_error("Unexpected GUI mode encountered.");
+    }
+    this->side_widget->setCurrentIndex(index);
+}
+
 /**
  * @brief Get the GL widget object
  *

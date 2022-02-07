@@ -35,6 +35,7 @@ MainWindow::MainWindow() {
     // drop-down menus
     QMenu *menu_file = menu_bar->addMenu(tr("&File"));
     QMenu *menu_stereoscopy = menu_bar->addMenu(tr("&Stereoscopy"));
+    QMenu *menu_mode = menu_bar->addMenu(tr("&Mode"));
     QMenu *menu_help = menu_bar->addMenu(tr("&Help"));
 
     // actions for file menu
@@ -110,6 +111,25 @@ MainWindow::MainWindow() {
     action_group_stereoscopy->addAction(action_interlaced_checkerboard_lr);
     action_group_stereoscopy->addAction(action_interlaced_checkerboard_rl);
     connect(action_group_stereoscopy, &QActionGroup::triggered, this->central_widget->get_gl_widget(), &GLWidget::set_stereoscopic_method);
+
+    // actions for mode menu
+    QAction *action_viewer = new QAction(menu_mode);
+    action_viewer->setCheckable(true);
+    action_viewer->setChecked(true);
+    action_viewer->setText(tr("Symmetry viewer"));
+    action_viewer->setData(GuiMode::SymmetryViewer);
+    menu_mode->addAction(action_viewer);
+
+    QAction *action_practice = new QAction(menu_mode);
+    action_practice->setCheckable(true);
+    action_practice->setText(tr("Practice"));
+    action_practice->setData(GuiMode::Practice);
+    menu_mode->addAction(action_practice);
+
+    QActionGroup *action_group_mode = new QActionGroup(this);
+    action_group_mode->addAction(action_viewer);
+    action_group_mode->addAction(action_practice);
+    connect(action_group_mode, &QActionGroup::triggered, this->central_widget, &CentralWidget::set_gui_mode);
 
     // actions for help menu
     QAction *action_about = new QAction(menu_help);

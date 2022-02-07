@@ -32,6 +32,7 @@
 #include "../symmetry/symmetry.h"
 #include "../symmetry/operations/operation.h"
 #include "gl_widget.h"
+#include "gui_mode.h"
 #include "main_window.h"
 #include "practice_widget.h"
 #include "symmetry_widget.h"
@@ -50,6 +51,8 @@ private:
     std::shared_ptr<Structure> structure;
     std::shared_ptr<Symmetry> symmetry;
 
+    GuiMode gui_mode;
+
 public:
     /**
      * @brief Construct a new Central Widget object
@@ -64,6 +67,13 @@ public:
      * @param structure
      */
     void set_structure(std::shared_ptr<Structure> structure);
+
+    /**
+     * @brief Set the GUI mode
+     *
+     * @param action
+     */
+    void set_gui_mode(QAction* action);
 
     /**
      * @brief Get the GL widget object
