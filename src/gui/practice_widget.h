@@ -22,9 +22,13 @@
 #include <QFrame>
 #include <QStackedWidget>
 #include <QWidget>
+#include "practice_flowchart_widget.h"
 
 class PracticeWidget: public QStackedWidget {
     Q_OBJECT
+
+private:
+    PracticeFlowchartWidget* flowchart_widget;
 
     std::shared_ptr<Symmetry> symmetry;
 

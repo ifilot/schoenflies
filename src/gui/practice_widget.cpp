@@ -25,6 +25,9 @@
  */
 PracticeWidget::PracticeWidget(QWidget* parent) {
     this->setFrameShape(QFrame::NoFrame);
+
+    this->flowchart_widget = new PracticeFlowchartWidget(this);
+    this->addWidget(this->flowchart_widget);
 }
 
 /**
@@ -34,4 +37,6 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
  */
 void PracticeWidget::set_symmetry(const std::shared_ptr<Symmetry> symmetry) {
     this->symmetry = symmetry;
+
+    this->flowchart_widget->initialize_flowchart(symmetry);
 }
