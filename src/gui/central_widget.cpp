@@ -31,8 +31,12 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     this->gl_widget->setSizePolicy(QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Expanding);
     layout->addWidget(this->gl_widget, 3);
 
+    this->side_widget = new QStackedWidget(this);
+    this->side_widget->setFrameShape(QFrame::NoFrame);
+    layout->addWidget(this->side_widget, 1);
+
     this->symmetry_widget = new SymmetryWidget(this);
-    layout->addWidget(this->symmetry_widget, 1);
+    side_widget->addWidget(this->symmetry_widget);
 
     connect(this->symmetry_widget, SIGNAL(animate_operation(Operation)), this->gl_widget, SLOT(start_animation(Operation)));
     connect(this->symmetry_widget, SIGNAL(operation_changed(bool, Operation)), this->gl_widget, SLOT(set_operation(bool, Operation)));

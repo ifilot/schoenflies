@@ -21,9 +21,11 @@
 
 #include <memory>
 #include <Qt>
+#include <QFrame>
 #include <QHBoxLayout>
 #include <QModelIndex>
 #include <QSizePolicy>
+#include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
 #include "../structure.h"
@@ -40,6 +42,7 @@ class CentralWidget: public QWidget {
 
 private:
     GLWidget *gl_widget;
+    QStackedWidget *side_widget;
     SymmetryWidget *symmetry_widget;
 
     std::shared_ptr<Structure> structure;
