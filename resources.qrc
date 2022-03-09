@@ -14,5 +14,6 @@
         <file>assets/shaders/stereo_interlaced_rows_lr.fs</file>
         <file>assets/shaders/stereo_interlaced_rows_rl.fs</file>
         <file>assets/shaders/stereo.vs</file>
+        <file>assets/structures/water.xyz</file>
     </qresource>
 </RCC>

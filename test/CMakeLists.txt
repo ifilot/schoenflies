@@ -1,6 +1,6 @@
 # Add sources
 file(GLOB TEST_SOURCES "*.cpp" "resources.qrc")
-file(GLOB SRC_SOURCES "../src/*.cpp" "../src/*/*.cpp" "../src/*/*/*.cpp" "../src/resources.qrc")
+file(GLOB SRC_SOURCES "../src/*.cpp" "../src/*/*.cpp" "../src/*/*/*.cpp" "../resources.qrc")
 list(FILTER SRC_SOURCES EXCLUDE REGEX ".*/src/main.cpp$")
 add_executable(schoenflies_test ${TEST_SOURCES} ${SRC_SOURCES})
 

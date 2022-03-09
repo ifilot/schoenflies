@@ -57,28 +57,24 @@ void Structure::load_from_file(const std::string& path) {
  * @param path
  */
 void Structure::load_from_xyz(const std::string& path) {
-    std::ifstream ifs(path);
-
-    if (!ifs.is_open()) {
-        throw std::runtime_error("Could not open file: " + path);
-    }
+    File file(path);
 
     std::string line;  // container for std::getline result
     std::vector<std::string> pieces;  // container for boost::split result
 
     // read number of atoms
-    std::getline(ifs, line);
+    std::getline(file.get_stream(), line);
     boost::trim(line);
     this->num_atoms = boost::lexical_cast<unsigned int>(line);
 
     // read description
-    std::getline(ifs, line);
+    std::getline(file.get_stream(), line);
     boost::trim(line);
     this->description = line;
 
     // read atoms
     for (unsigned int i = 0; i < this->num_atoms; ++i) {
-        std::getline(ifs, line);
+        std::getline(file.get_stream(), line);
         boost::trim(line);
         boost::split(pieces, line, boost::is_any_of("\t "), boost::token_compress_on);
 
@@ -93,8 +89,6 @@ void Structure::load_from_xyz(const std::string& path) {
             throw std::runtime_error("File has invalid format: " + path);
         }
     }
-
-    ifs.close();
 }
 
 /**

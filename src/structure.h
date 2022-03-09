@@ -21,7 +21,6 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include <fstream>
 #include <math.h>
 #include <memory>
 #include <stdexcept>
@@ -34,6 +33,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 #include "periodic_table/periodic_table.h"
+#include "file.h"
 
 class Structure {
 private:
