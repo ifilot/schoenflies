@@ -41,6 +41,8 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     this->practice_widget = new PracticeWidget(this);
     side_widget->addWidget(this->practice_widget);
 
+    this->library = std::make_shared<Library>();
+
     connect(this->symmetry_widget, SIGNAL(animate_operation(Operation)), this->gl_widget, SLOT(start_animation(Operation)));
     connect(this->symmetry_widget, SIGNAL(operation_changed(bool, Operation)), this->gl_widget, SLOT(set_operation(bool, Operation)));
     connect(this->gl_widget, SIGNAL(animation_finished()), this->symmetry_widget, SLOT(request_operation()));

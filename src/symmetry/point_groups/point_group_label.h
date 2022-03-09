@@ -21,6 +21,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <unordered_map>
 
 class PointGroupLabel {
 public:
@@ -53,6 +54,11 @@ public:
 private:
     Class point_group_class;
     unsigned int order;
+
+    /**
+     * @brief Mapping from string to point group class
+     */
+    static const std::unordered_map<std::string, Class> string_to_class;
 
 public:
     /**
@@ -150,6 +156,14 @@ public:
      * @return false if labels don't match
      */
     const bool matches(PointGroupLabel& other) const;
+
+    /**
+     * @brief Get the point group class from a string representing the class
+     *
+     * @param class_string
+     * @return Class
+     */
+    static Class get_class(std::string class_string);
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUP_LABEL_H

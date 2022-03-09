@@ -252,3 +252,44 @@ const bool PointGroupLabel::matches(PointGroupLabel& other) const {
             this->order == other.get_order();
     }
 }
+
+/**
+ * @brief Mapping from string to point group class
+ */
+const std::unordered_map<std::string, PointGroupLabel::Class> PointGroupLabel::string_to_class = {
+    {"C", Class::C},
+    {"Ch", Class::Ch},
+    {"Cv", Class::Cv},
+    {"S", Class::S},
+    {"D", Class::D},
+    {"Dh", Class::Dh},
+    {"Dd", Class::Dd},
+    {"T", Class::T},
+    {"Td", Class::Td},
+    {"Th", Class::Th},
+    {"O", Class::O},
+    {"Oh", Class::Oh},
+    {"I", Class::I},
+    {"Ih", Class::Ih},
+    {"Cs", Class::Cs},
+    {"Ci", Class::Ci},
+    {"Cinfv", Class::Cinfv},
+    {"Dinfh", Class::Dinfh}
+};
+
+/**
+ * @brief Get the point group class from a string representing the class
+ *
+ * @param class_string
+ * @return Class
+ */
+PointGroupLabel::Class PointGroupLabel::get_class(std::string class_string) {
+    std::unordered_map<std::string, Class>::const_iterator it =
+        PointGroupLabel::string_to_class.find(class_string);
+
+    if (it == PointGroupLabel::string_to_class.end()) {
+        throw std::runtime_error("Invalid class encountered: " + class_string);
+    }
+
+    return it->second;
+}

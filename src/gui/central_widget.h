@@ -28,6 +28,7 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include "../library/library.h"
 #include "../structure.h"
 #include "../symmetry/symmetry.h"
 #include "../symmetry/operations/operation.h"
@@ -50,6 +51,8 @@ private:
 
     std::shared_ptr<Structure> structure;
     std::shared_ptr<Symmetry> symmetry;
+
+    std::shared_ptr<Library> library;
 
     GuiMode gui_mode;
 
