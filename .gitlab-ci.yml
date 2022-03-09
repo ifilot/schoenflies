@@ -20,7 +20,7 @@ default:
 build-debian:
   stage: build
   variables:
-    APT_PACKAGES: "build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libglm-dev"
+    APT_PACKAGES: "build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libglm-dev nlohmann-json3-dev"
   script:
     - cd build
     - cmake ..
@@ -62,12 +62,13 @@ package-debian:
 build-windows:
   stage: build
   variables:
-    APT_PACKAGES: "bzip2 ca-certificates cmake curl g++ g++-mingw-w64-x86-64-posix git libeigen3-dev libglm-dev make tar"
+    APT_PACKAGES: "bzip2 ca-certificates cmake curl g++ g++-mingw-w64-x86-64-posix git libeigen3-dev libglm-dev make tar zstd"
   script:
     - ln -s /usr/include/eigen3 /usr/x86_64-w64-mingw32/include/eigen3
     - ln -s /usr/include/glm /usr/x86_64-w64-mingw32/include/glm
     - cd lib
     - ./download_boost_mingw.sh
+    - ./download_json_mingw.sh
     - ./download_qtbase_mingw.sh
     - cd ../build
     - cmake -DCMAKE_TOOLCHAIN_FILE=../windows-toolchain.cmake ..

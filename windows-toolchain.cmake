@@ -11,7 +11,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mwindows")
 
 # indicate where to find headers and libraries
-set(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 ${CMAKE_CURRENT_SOURCE_DIR}/lib/boost-mingw-w64-x86-64-posix ${CMAKE_CURRENT_SOURCE_DIR}/lib/qtbase-mingw-w64-x86-64-posix)
+set(CMAKE_FIND_ROOT_PATH /usr/x86_64-w64-mingw32 ${CMAKE_CURRENT_SOURCE_DIR}/lib/boost-mingw-w64-x86-64-posix ${CMAKE_CURRENT_SOURCE_DIR}/lib/qtbase-mingw-w64-x86-64-posix ${CMAKE_CURRENT_SOURCE_DIR}/lib/nlohmann-json-mingw-w64-x86-64-posix)
 
 # only search for headers and libraries in the above paths
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
