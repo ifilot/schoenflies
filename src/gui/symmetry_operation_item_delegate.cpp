@@ -27,73 +27,7 @@
  * @param index
  */
 void SymmetryOperationItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option_in, const QModelIndex& index) const {
-    QStyleOptionViewItem option = option_in;
-    initStyleOption(&option, index);
-
-    if (option.text.isEmpty()) {
-        // not handled by this function
-        QStyledItemDelegate::paint(painter, option_in, index);
-        return;
-    }
-
-    QStyle *style = option.widget ? option.widget->style() : QApplication::style();
-
-    QTextOption text_option;
-    text_option.setWrapMode(option.features & QStyleOptionViewItem::ViewItemFeature::WrapText ? QTextOption::WrapMode::WordWrap : QTextOption::WrapMode::ManualWrap);
-    text_option.setTextDirection(option.direction);
-
-    QTextDocument doc;
-    if (option.state & QStyle::StateFlag::State_Selected) {
-        QString highlighted_text_colour = option.palette.color(QPalette::ColorRole::HighlightedText).name();
-        doc.setDefaultStyleSheet(QString("span {color: %1;}").arg(highlighted_text_colour));
-    }
-    doc.setDefaultTextOption(text_option);
-    doc.setHtml(option.text);
-    doc.setDefaultFont(option.font);
-    doc.setDocumentMargin(2);
-    doc.setTextWidth(option.rect.width());
-    doc.adjustSize();
-
-    if (doc.size().width() > option.rect.width()) {
-        // elide text
-        QTextCursor cursor(&doc);
-        cursor.movePosition(QTextCursor::MoveOperation::End);
-
-        const QString ellipsis = "\u2026";
-        QFontMetrics metric(option.font);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-        int ellipsis_width = metric.horizontalAdvance(ellipsis);
-#else
-        int ellipsis_width = metric.width(ellipsis);
-#endif
-
-        int max_text_width = option.rect.width() - ellipsis_width;
-        if (index.data(ItemDataRole::ButtonRole).toBool()) max_text_width -= this->button_rect(option_in).width();
-
-        while (doc.size().width() > max_text_width) {
-            cursor.deletePreviousChar();
-            doc.adjustSize();
-        }
-
-        cursor.insertText(ellipsis);
-    }
-
-    // paint item without text (takes care of painting e.g. highlight)
-    option.text = QString();
-    style->drawControl(QStyle::ControlElement::CE_ItemViewItem, &option, painter, option_in.widget);
-
-    // determine where to render the text (alignment)
-    QRect text_rect = style->subElementRect(QStyle::SubElement::SE_ItemViewItemText, &option);
-    QSize document_size(doc.size().width(), doc.size().height());  // QSizeF -> QSize
-    QRect layout_rect = QStyle::alignedRect(Qt::LayoutDirection::LayoutDirectionAuto, option.displayAlignment, document_size, text_rect);
-
-    painter->save();
-
-    // translate painter to origin of layout rectangle to render text correctly
-    painter->translate(layout_rect.topLeft());
-    doc.drawContents(painter, text_rect.translated(-text_rect.topLeft()));
-
-    painter->restore();
+    ItemDelegate::paint(painter, option_in, index);
 
     // draw button if data exists in the button role
     if (index.data(ItemDataRole::ButtonRole).toBool()) {
@@ -104,33 +38,6 @@ void SymmetryOperationItemDelegate::paint(QPainter* painter, const QStyleOptionV
 
         QApplication::style()->drawControl(QStyle::ControlElement::CE_PushButton, &button, painter);
     }
-}
-
-/**
- * @brief Returns the size needed by the delegate to display the item
- * specified by index, taking into account the style information provided
- * by option_in.
- *
- * @param option_in
- * @param index
- * @return QSize
- */
-QSize SymmetryOperationItemDelegate::sizeHint(const QStyleOptionViewItem& option_in, const QModelIndex& index) const {
-    QStyleOptionViewItem option = option_in;
-    initStyleOption(&option, index);
-
-    if (option.text.isEmpty()) {
-        // not handled by this function
-        return QStyledItemDelegate::sizeHint(option_in, index);
-    }
-
-    QTextDocument doc;
-    doc.setHtml(option.text);
-    doc.setTextWidth(option.rect.width());
-    doc.setDefaultFont(option.font);
-    doc.setDocumentMargin(2);
-
-    return QSize(doc.idealWidth(), doc.size().height());
 }
 
 /**
@@ -173,4 +80,16 @@ QRect SymmetryOperationItemDelegate::button_rect(const QStyleOptionViewItem& opt
     h = option_in.rect.height();
 
     return QRect(x, y, w, h);
+}
+
+/**
+ * @brief Calculate the maximum text width for elision
+ *
+ * @param painter
+ * @param option
+ * @param index
+ * @return const int
+ */
+const int SymmetryOperationItemDelegate::max_text_width(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    return option.rect.width() - (index.data(ItemDataRole::ButtonRole).toBool() ? this->button_rect(option).width() : 0);
 }

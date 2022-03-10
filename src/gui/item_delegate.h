@@ -1,6 +1,6 @@
 /**
  * Schoenflies
- * Copyright (c) 2021 Luuk Kempen
+ * Copyright (c) 2022 Luuk Kempen
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,32 +16,30 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// implementation of this class based on https://stackoverflow.com/a/11778012
+// implementation of this class based on https://stackoverflow.com/a/66412883
 
-#ifndef GUI_SYMMETRY_OPERATION_ITEM_DELEGATE_H
-#define GUI_SYMMETRY_OPERATION_ITEM_DELEGATE_H
+#ifndef GUI_ITEM_DELEGATE_H
+#define GUI_ITEM_DELEGATE_H
 
-#include <Qt>
-#include <QAbstractItemModel>
 #include <QApplication>
-#include <QEvent>
 #include <QModelIndex>
-#include <QMouseEvent>
 #include <QPainter>
+#include <QPalette>
 #include <QRect>
+#include <QSize>
+#include <QString>
 #include <QStyle>
-#include <QStyleOptionButton>
+#include <QStyledItemDelegate>
 #include <QStyleOptionViewItem>
-#include "item_delegate.h"
+#include <QTextCursor>
+#include <QTextDocument>
+#include <QTextOption>
 
-class SymmetryOperationItemDelegate: public ItemDelegate {
+class ItemDelegate: public QStyledItemDelegate {
     Q_OBJECT
 
-public:
-    enum ItemDataRole {
-        ButtonRole = Qt::ItemDataRole::UserRole + 1,
-        ButtonClickedRole
-    };
+protected:
+    const QString ellipsis = "\u2026";
 
 protected:
     /**
@@ -55,27 +53,17 @@ protected:
     void paint(QPainter* painter, const QStyleOptionViewItem& option_in, const QModelIndex& index) const;
 
     /**
-     * @brief When editing of an item starts, this function is called with the
-     * event that triggered the editing, the model, the index of the item, and
-     * the option_in used for rendering the item.
+     * @brief Returns the size needed by the delegate to display the item
+     * specified by index, taking into account the style information provided
+     * by option_in.
      *
-     * @param event
-     * @param model
      * @param option_in
      * @param index
-     * @return true if event is handled
+     * @return QSize
      */
-    bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option_in, const QModelIndex& index);
+    QSize sizeHint(const QStyleOptionViewItem& option_in, const QModelIndex& index) const;
 
 private:
-    /**
-     * @brief Get rectangle of button
-     *
-     * @param option_in
-     * @return QRect
-     */
-    QRect button_rect(const QStyleOptionViewItem& option_in) const;
-
     /**
      * @brief Calculate the maximum text width for elision
      *
@@ -84,7 +72,7 @@ private:
      * @param index
      * @return const int
      */
-    const int max_text_width(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    virtual const int max_text_width(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 };
 
-#endif  // GUI_SYMMETRY_OPERATION_ITEM_DELEGATE_H
+#endif  // GUI_ITEM_DELEGATE_H
