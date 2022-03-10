@@ -84,6 +84,13 @@ public:
      * @return GLWidget*
      */
     GLWidget* get_gl_widget();
+
+    /**
+     * @brief Get the library object
+     *
+     * @return std::shared_ptr<Library>&
+     */
+    std::shared_ptr<Library>& get_library();
 };
 
 #endif  // GUI_CENTRAL_WIDGET_H

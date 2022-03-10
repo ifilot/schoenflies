@@ -45,6 +45,12 @@ MainWindow::MainWindow() {
     connect(action_open, &QAction::triggered, this, &MainWindow::open);
     menu_file->addAction(action_open);
 
+    QAction *action_open_library = new QAction(menu_file);
+    action_open_library->setText(tr("Open from library"));
+    action_open_library->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT + Qt::Key_O));
+    connect(action_open_library, &QAction::triggered, this, &MainWindow::open_library_dialog);
+    menu_file->addAction(action_open_library);
+
     QAction *action_exit = new QAction(menu_file);
     action_exit->setText(tr("Exit"));
     action_exit->setShortcuts(QKeySequence::Quit);
@@ -153,17 +159,47 @@ void MainWindow::moveEvent(QMoveEvent* event) {
 }
 
 /**
+ * @brief Load a structure
+ *
+ * @param filename
+ */
+void MainWindow::load_structure(const std::string& filename) {
+    auto structure = std::make_shared<Structure>(filename);
+    statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
+    this->central_widget->set_structure(structure);
+}
+
+/**
  * @brief Open a new file
  */
 void MainWindow::open() {
     std::string filename = QFileDialog::getOpenFileName(this, tr("Open file"), "", tr("All supported files (*.xyz);;xyz file (*.xyz)")).toStdString();
     if (filename.empty()) return;
 
-    auto structure = std::make_shared<Structure>(filename);
+    this->load_structure(filename);
+}
 
-    statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
+/**
+ * @brief Open the library dialog
+ */
+void MainWindow::open_library_dialog() {
+    this->library_dialog = new LibraryDialog(this);
+    this->library_dialog->set_library(this->central_widget->get_library());
+    this->library_dialog->open();
+}
 
-    this->central_widget->set_structure(structure);
+/**
+ * @brief Handle the return value of the library dialog
+ *
+ * @param result dialog result code
+ */
+void MainWindow::handle_library_dialog(int result) {
+    if (result == QDialog::DialogCode::Accepted) {
+        const std::string& filename = this->library_dialog->get_selected_item_path();
+        if (filename.empty()) return;
+
+        this->load_structure(filename);
+    }
 }
 
 /**

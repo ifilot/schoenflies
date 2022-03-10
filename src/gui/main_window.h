@@ -23,9 +23,11 @@
 
 #include <memory>
 #include <string>
+#include <Qt>
 #include <QAction>
 #include <QActionGroup>
 #include <QApplication>
+#include <QDialog>
 #include <QFileDialog>
 #include <QIcon>
 #include <QKeySequence>
@@ -41,6 +43,7 @@
 #include "../structure.h"
 #include "central_widget.h"
 #include "gui_mode.h"
+#include "library_dialog.h"
 #include "stereoscopic_method.h"
 
 class CentralWidget;  // forward declaration
@@ -50,6 +53,7 @@ class MainWindow: public QMainWindow {
 
 private:
     CentralWidget* central_widget;
+    LibraryDialog* library_dialog;
 
 public:
     /**
@@ -65,11 +69,31 @@ protected:
      */
     void moveEvent(QMoveEvent* event) Q_DECL_OVERRIDE;
 
+private:
+    /**
+     * @brief Load a structure
+     *
+     * @param filename
+     */
+    void load_structure(const std::string& filename);
+
 private slots:
     /**
      * @brief Open a new file
      */
     void open();
+
+    /**
+     * @brief Open the library dialog
+     */
+    void open_library_dialog();
+
+    /**
+     * @brief Handle the return value of the library dialog
+     *
+     * @param result dialog result code
+     */
+    void handle_library_dialog(int result);
 
     /**
      * @brief Close the application

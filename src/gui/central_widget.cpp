@@ -92,3 +92,12 @@ void CentralWidget::set_gui_mode(QAction* action) {
 GLWidget* CentralWidget::get_gl_widget() {
     return this->gl_widget;
 }
+
+/**
+ * @brief Get the library object
+ *
+ * @return std::shared_ptr<Library>&
+ */
+std::shared_ptr<Library>& CentralWidget::get_library() {
+    return this->library;
+}
