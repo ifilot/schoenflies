@@ -26,6 +26,7 @@
 #include <QDialogButtonBox>
 #include <QHeaderView>
 #include <QLabel>
+#include <QLineEdit>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
@@ -35,13 +36,17 @@
 #include "../library/library.h"
 #include "../library/library_item.h"
 #include "library_item_delegate.h"
+#include "library_item_filter_model.h"
 
 class LibraryDialog: public QDialog {
     Q_OBJECT
 
 private:
     QStandardItemModel* model;
+    LibraryItemFilterModel* proxy_model;
     QTreeView* tree_view;
+
+    QLineEdit* search_field;
 
     std::shared_ptr<Library> library;
 

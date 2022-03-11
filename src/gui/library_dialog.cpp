@@ -24,22 +24,28 @@ LibraryDialog::LibraryDialog(QWidget* parent) : QDialog(parent) {
     QVBoxLayout *layout = new QVBoxLayout;
     this->setLayout(layout);
 
+    this->search_field = new QLineEdit;
+    this->search_field->setPlaceholderText("Search in library...");
+    layout->addWidget(this->search_field);
+
     this->tree_view = new QTreeView;
     this->model = new QStandardItemModel;
+    this->proxy_model = new LibraryItemFilterModel;
     LibraryItemDelegate *delegate = new LibraryItemDelegate;
+
+    this->proxy_model->setSourceModel(this->model);
 
     this->tree_view->setMinimumSize(400, 200);
     this->tree_view->setEditTriggers(QTreeView::EditTrigger::NoEditTriggers);
     this->tree_view->setIndentation(0);
     this->tree_view->setItemsExpandable(false);
     this->tree_view->setAllColumnsShowFocus(true);
-    this->tree_view->setModel(this->model);
+    this->tree_view->setModel(this->proxy_model);
     this->tree_view->setItemDelegate(delegate);
     this->tree_view->header()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
 
+    connect(this->search_field, SIGNAL(textChanged(QString)), this->proxy_model, SLOT(set_string_filter(QString)));
     connect(this->tree_view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(double_click(QModelIndex)));
-
-    QItemSelectionModel *selection_model = this->tree_view->selectionModel();
 
     layout->addWidget(this->tree_view);
 
@@ -77,7 +83,7 @@ const std::string LibraryDialog::get_selected_item_path() const {
         return "";
     }
 
-    QStandardItem *item = this->model->itemFromIndex(indices[0]);
+    QStandardItem *item = this->model->itemFromIndex(this->proxy_model->mapToSource(indices[0]));
     return item->data(LibraryItemDelegate::ItemDataRole::PathRole).toString().toStdString();
 }
 
