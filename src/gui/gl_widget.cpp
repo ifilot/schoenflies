@@ -894,6 +894,7 @@ void GLWidget::process_animations() {
         f = 1;
         this->structure_animating = false;
         animation_matrix = glm::mat3x3(1.0f);  // reset to identity matrix
+        this->structure->apply_operation_to_highlighted_atoms(this->animation_operation);
         emit this->animation_finished();
     } else {
         animation_matrix = this->animation_operation.calculate_fractional_matrix(f);

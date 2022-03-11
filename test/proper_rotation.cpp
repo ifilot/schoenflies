@@ -17,6 +17,7 @@
  */
 
 #include <memory>
+#include <vector>
 #include <boost/test/unit_test.hpp>
 #include <glm/glm.hpp>
 #include "../src/structure.h"
@@ -173,14 +174,34 @@ BOOST_AUTO_TEST_CASE(tropylium) {
     auto proper_rotations = symmetry.get_operation_manager()->get_proper_rotations();
 
     unsigned int num_C2s = 0, num_C7s = 0;
+    Operation C7;
     for (Operation& rotation : proper_rotations) {
         if (rotation.get_degree() == 2) num_C2s++;
-        if (rotation.get_degree() == 7) num_C7s++;
+        if (rotation.get_degree() == 7) {
+            num_C7s++;
+            C7 = rotation;
+        }
     }
 
     BOOST_TEST(num_C2s == 7);
     BOOST_TEST(num_C7s == 1);
     BOOST_TEST(proper_rotations.size() == 8);
+
+    std::vector<unsigned int> expected_indices_f = {1, 2, 3, 4, 5, 6, 0, 8, 9, 10, 11, 12, 13, 7};
+    std::vector<unsigned int> expected_indices_b = {6, 0, 1, 2, 3, 4, 5, 13, 7, 8, 9, 10, 11, 12};
+    for (unsigned int i = 0; i < struc->get_num_atoms(); ++i) {
+        BOOST_TEST(C7.get_result_index(i) == expected_indices_f[i]);
+    }
+
+    C7.get_label().set_multiple(3);
+    for (unsigned int i = 0; i < struc->get_num_atoms(); ++i) {
+        BOOST_TEST(C7.get_result_index(i) == expected_indices_f[expected_indices_f[expected_indices_f[i]]]);
+    }
+
+    C7.get_label().set_multiple(-1);
+    for (unsigned int i = 0; i < struc->get_num_atoms(); ++i) {
+        BOOST_TEST(C7.get_result_index(i) == expected_indices_b[i]);
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

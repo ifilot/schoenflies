@@ -25,9 +25,13 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <glm/glm.hpp>
 #include "../../structure.h"
 #include "operation_label.h"
+
+class Structure;  // forward declaration
 
 class Operation {
 public:
@@ -43,6 +47,9 @@ private:
 
     glm::mat3x3 matrix;
     float error = NAN;
+public:
+    std::vector<unsigned int> result_indices_forwards;
+    std::vector<unsigned int> result_indices_backwards;
 
 public:
     /**
@@ -122,6 +129,15 @@ public:
      * @return const glm::vec3
      */
     const glm::vec3 get_axis() const;
+
+    /**
+     * @brief Get the index of the atom overlapping the atom indicated with
+     * index after applying this operation
+     *
+     * @param index
+     * @return const unsigned int
+     */
+    const unsigned int get_result_index(unsigned int index) const;
 
     /**
      * @brief Check whether this operation equals another operation

@@ -140,6 +140,27 @@ const glm::vec3 Operation::get_axis() const {
 }
 
 /**
+ * @brief Get the index of the atom overlapping the atom indicated with
+ * index after applying this operation
+ *
+ * @param index
+ * @return const unsigned int
+ */
+const unsigned int Operation::get_result_index(unsigned int index) const {
+    auto& result_indices =
+        (this->label.get_multiple() > 0) ? this->result_indices_forwards : this->result_indices_backwards;
+
+    // for operations with multiplicity, the result_indices map only stores the
+    // result after a single step, so we need to iterate a number of times
+    unsigned int result_index = index;
+    for (unsigned int i = 0; i < std::abs(this->label.get_multiple()); ++i) {
+        result_index = result_indices[result_index];
+    }
+
+    return result_index;
+}
+
+/**
  * @brief Check whether this operation equals another operation
  *
  * @param other other operation
@@ -172,11 +193,16 @@ const bool Operation::operator==(Operation& other) const {
  */
 void Operation::do_operation(std::shared_ptr<Structure> structure) {
     float max_error = 0;
+    this->result_indices_forwards.resize(structure->get_num_atoms());
+    if (this->label.get_degree() > 2) {
+        // negative multiples exist, so we also need the backwards map
+        this->result_indices_backwards.resize(structure->get_num_atoms());
+    }
 
     for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
         glm::vec3 after = this->do_atom_operation(structure->get_coordinates(i));
-        glm::vec3 closest_original_atom = structure->find_closest_coordinates(after, structure->get_atomic_number(i));
-        float distance = glm::distance(after, closest_original_atom);
+        unsigned int closest_original_atom = structure->find_closest_index(after, structure->get_atomic_number(i));
+        float distance = glm::distance(after, structure->get_coordinates(closest_original_atom));
 
         float dist_to_element = this->get_distance_to_element(after);
 
@@ -184,6 +210,11 @@ void Operation::do_operation(std::shared_ptr<Structure> structure) {
         float error = (dist_to_element > 1) ? distance / dist_to_element : distance;
 
         if (error > max_error) max_error = error;
+
+        this->result_indices_forwards[i] = closest_original_atom;
+        if (this->label.get_degree() > 2) {
+            this->result_indices_backwards[closest_original_atom] = i;
+        }
     }
 
     this->error = max_error;

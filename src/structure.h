@@ -34,7 +34,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
 #include "periodic_table/periodic_table.h"
+#include "symmetry/operations/operation.h"
 #include "file.h"
+
+class Operation;  // forward declaration
 
 class Structure {
 private:
@@ -151,16 +154,23 @@ public:
     void clear_highlighted_atoms();
 
     /**
-     * @brief Find the coordinates of the closest atom of the element given by
-     * the provided atomic number to the provided coordinates
+     * @brief Apply a symmetry operation to the highlighted atom indices
+     *
+     * @param operation
+     */
+    void apply_operation_to_highlighted_atoms(Operation operation);
+
+    /**
+     * @brief Find the index of the closest atom of the element given by the
+     * provided atomic number to the provided coordinates
      *
      * @param coordinates coordinates around which the closest atom should be
      * found
      * @param atomic_number atomic number of the atom that should be found
-     * @return const glm::vec3 coordinates of the closest atom with the given
+     * @return const unsigned int index of the closest atom with the given
      * atomic number
      */
-    const glm::vec3 find_closest_coordinates(glm::vec3 coordinates, unsigned int atomic_number) const;
+    const unsigned int find_closest_index(glm::vec3 coordinates, unsigned int atomic_number) const;
 
 private:
     /**

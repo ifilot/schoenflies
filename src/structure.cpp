@@ -261,18 +261,32 @@ void Structure::clear_highlighted_atoms() {
 }
 
 /**
- * @brief Find the coordinates of the closest atom of the element given by
- * the provided atomic number to the provided coordinates
+ * @brief Apply a symmetry operation to the highlighted atom indices
+ *
+ * @param operation
+ */
+void Structure::apply_operation_to_highlighted_atoms(Operation operation) {
+    std::unordered_set<unsigned int> highlighted_atoms_copy = this->highlighted_atoms;  // temporary copy
+
+    this->highlighted_atoms.clear();
+    for (unsigned int index : highlighted_atoms_copy) {
+        this->highlighted_atoms.insert(operation.get_result_index(index));
+    }
+}
+
+/**
+ * @brief Find the index of the closest atom of the element given by the
+ * provided atomic number to the provided coordinates
  *
  * @param coordinates coordinates around which the closest atom should be
  * found
  * @param atomic_number atomic number of the atom that should be found
- * @return const glm::vec3 coordinates of the closest atom with the given
+ * @return const unsigned int index of the closest atom with the given
  * atomic number
  */
-const glm::vec3 Structure::find_closest_coordinates(glm::vec3 coordinates, unsigned int atomic_number) const {
+const unsigned int Structure::find_closest_index(glm::vec3 coordinates, unsigned int atomic_number) const {
     float min_distance2 = INFINITY;
-    glm::vec3 closest_coordinates;
+    unsigned int closest_index = -1;
 
     for (unsigned int i = 0; i < this->get_num_atoms(); ++i) {
         if (this->get_atomic_number(i) != atomic_number) continue;
@@ -281,9 +295,9 @@ const glm::vec3 Structure::find_closest_coordinates(glm::vec3 coordinates, unsig
 
         if (distance2 < min_distance2) {
             min_distance2 = distance2;
-            closest_coordinates = this->get_coordinates(i);
+            closest_index = i;
         }
     }
 
-    return closest_coordinates;
+    return closest_index;
 }
