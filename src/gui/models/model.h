@@ -19,6 +19,7 @@
 #ifndef GUI_MODELS_MODEL_H
 #define GUI_MODELS_MODEL_H
 
+#include <stdexcept>
 #include <vector>
 #include <glm/glm.hpp>
 #include <QOpenGLBuffer>

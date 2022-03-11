@@ -114,6 +114,10 @@ const std::vector<ModelInstance>& Model::get_instances() const {
 void Model::draw() {
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
 
+    if (!this->loaded_vao) {
+        throw std::logic_error("This model has not yet been loaded to VAO.");
+    }
+
     this->vao.bind();
     f->glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, 0);
     this->vao.release();
