@@ -18,7 +18,10 @@
 
 #include "library_dialog.h"
 
-LibraryDialog::LibraryDialog(QWidget* parent) : QDialog(parent) {
+LibraryDialog::LibraryDialog(QWidget* parent)
+    : QDialog(parent, Qt::WindowType::WindowTitleHint |
+                      Qt::WindowType::WindowSystemMenuHint |
+                      Qt::WindowCloseButtonHint) {
     this->setWindowTitle("Library");
 
     QVBoxLayout *layout = new QVBoxLayout;

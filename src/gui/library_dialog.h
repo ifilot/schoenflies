@@ -22,6 +22,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <Qt>
 #include <QDialog>
 #include <QDialogButtonBox>
 #include <QHeaderView>
