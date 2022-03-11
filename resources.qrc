@@ -4,8 +4,11 @@
         <file>assets/models/arrow.obj</file>
         <file>assets/shaders/axes.fs</file>
         <file>assets/shaders/axes.vs</file>
+        <file>assets/shaders/canvas.fs</file>
         <file>assets/shaders/phong.fs</file>
         <file>assets/shaders/phong.vs</file>
+        <file>assets/shaders/silhouette.fs</file>
+        <file>assets/shaders/silhouette.vs</file>
         <file>assets/shaders/stereo_anaglyph_red_cyan.fs</file>
         <file>assets/shaders/stereo_interlaced_checkerboard_lr.fs</file>
         <file>assets/shaders/stereo_interlaced_checkerboard_rl.fs</file>

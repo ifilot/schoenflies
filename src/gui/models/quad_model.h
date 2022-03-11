@@ -61,9 +61,10 @@ public:
     /**
      * @brief Draw the quad model with two textures
      *
-     * @param texture_color_buffers texture color buffers to draw textures from
+     * @param texture_color_buffer_a first texture color buffer to draw from
+     * @param texture_color_buffer_b second texture color buffer to draw from
      */
-    void draw(unsigned int texture_color_buffers[]);
+    void draw(unsigned int texture_color_buffer_a, unsigned int texture_color_buffer_b);
 };
 
 #endif  // GUI_MODELS_QUAD_MODEL_H

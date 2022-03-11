@@ -219,6 +219,48 @@ const std::vector<std::pair<unsigned int, unsigned int>> Structure::calculate_bo
 }
 
 /**
+ * @brief Get the list of highlighted atoms
+ *
+ * @return const std::unordered_set<unsigned int>&
+ */
+const std::unordered_set<unsigned int>& Structure::get_highlighted_atoms() const {
+    return this->highlighted_atoms;
+}
+
+/**
+ * @brief Highlight an atom in the structure
+ *
+ * @param index
+ */
+void Structure::highlight_atom(unsigned int index) {
+    if (index < this->get_num_atoms()) {
+        this->highlighted_atoms.insert(index);
+    } else {
+        throw std::runtime_error("Requested invalid atom index.");
+    }
+}
+
+/**
+ * @brief Remove the highlight from an atom in the structure
+ *
+ * @param index
+ */
+void Structure::unhighlight_atom(unsigned int index) {
+    if (index < this->get_num_atoms()) {
+        this->highlighted_atoms.erase(index);
+    } else {
+        throw std::runtime_error("Requested invalid atom index.");
+    }
+}
+
+/**
+ * @brief Clear the list of highlighted atoms
+ */
+void Structure::clear_highlighted_atoms() {
+    this->highlighted_atoms.clear();
+}
+
+/**
  * @brief Find the coordinates of the closest atom of the element given by
  * the provided atomic number to the provided coordinates
  *

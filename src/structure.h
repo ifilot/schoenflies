@@ -25,6 +25,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 #include <boost/algorithm/string.hpp>
@@ -42,6 +43,8 @@ private:
     std::vector<unsigned int> atomic_numbers;
     std::string description;
     std::string filename;
+
+    std::unordered_set<unsigned int> highlighted_atoms;
 
 public:
     /**
@@ -120,6 +123,32 @@ public:
      * @return const std::vector<std::pair<unsigned int, unsigned int>>
      */
     const std::vector<std::pair<unsigned int, unsigned int>> calculate_bond_pairs() const;
+
+    /**
+     * @brief Get the list of highlighted atoms
+     *
+     * @return const std::unordered_set<unsigned int>&
+     */
+    const std::unordered_set<unsigned int>& get_highlighted_atoms() const;
+
+    /**
+     * @brief Highlight an atom by index
+     *
+     * @param index
+     */
+    void highlight_atom(unsigned int index);
+
+    /**
+     * @brief Unhighlight an atom by index
+     *
+     * @param index
+     */
+    void unhighlight_atom(unsigned int index);
+
+    /**
+     * @brief Clear the list of highlighted atoms
+     */
+    void clear_highlighted_atoms();
 
     /**
      * @brief Find the coordinates of the closest atom of the element given by

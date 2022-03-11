@@ -36,6 +36,9 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->operation_models.push_back(Geometry::cylinder(true));
     this->operation_models.push_back(Geometry::circle());
 
+    this->silhouette_models.push_back(Geometry::sphere());
+    this->silhouette_models.push_back(Geometry::cylinder());
+
     this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
     this->quad_model = Geometry::quad();
 
@@ -172,6 +175,10 @@ void GLWidget::initializeGL() {
         this->operation_models[i]->load_to_vao();
     }
 
+    for (unsigned int i = 0; i < this->silhouette_models.size(); ++i) {
+        this->silhouette_models[i]->load_to_vao();
+    }
+
     this->arrow_model->load_to_vao();
     this->quad_model->load_to_vao();
 
@@ -299,16 +306,16 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
 void GLWidget::initialize_frame_buffers() {
     initializeOpenGLFunctions();
 
-    glGenFramebuffers(2, this->framebuffers);
-    glGenTextures(2, this->texture_color_buffers);
-    glGenRenderbuffers(2, this->rbo);
+    glGenFramebuffers(FrameBuffer::Count, this->framebuffers);
+    glGenTextures(FrameBuffer::Count, this->texture_color_buffers);
+    glGenRenderbuffers(FrameBuffer::Count, this->rbo);
 
     QWindow *window_handle = this->window()->windowHandle();
     qreal pixel_ratio = window_handle->devicePixelRatio();
     float width = this->geometry().width() * pixel_ratio;
     float height = this->geometry().height() * pixel_ratio;
 
-    for (unsigned int i = 0; i < 2; ++i) {
+    for (unsigned int i = 0; i < FrameBuffer::Count; ++i) {
         glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[i]);
         glBindTexture(GL_TEXTURE_2D, this->texture_color_buffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -336,7 +343,7 @@ void GLWidget::resize_frame_buffers(int width, int height) {
     float w = width * pixel_ratio;
     float h = height * pixel_ratio;
 
-    for (unsigned int i = 0; i < 2; ++i) {
+    for (unsigned int i = 0; i < FrameBuffer::Count; ++i) {
         glBindTexture(GL_TEXTURE_2D, this->texture_color_buffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 
@@ -352,19 +359,30 @@ void GLWidget::resize_frame_buffers(int width, int height) {
  */
 void GLWidget::display_structure(glm::mat3x3 animation_matrix) {
     this->remove_structure_model_instances();
+    this->remove_silhouette_model_instances();
     this->structure_span = 0;
 
     for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
         Element el = PeriodicTable::get_element(this->structure->get_atomic_number(i));
+        glm::vec3 coordinates = animation_matrix * this->structure->get_coordinates(i);
+
         this->structure_models[0]->add_instance(
-            glm::vec3(el.radius),
-            glm::mat4(1.0),
-            animation_matrix * this->structure->get_coordinates(i),
-            glm::vec4(el.colour, 1.0f)
-        );
+            glm::vec3(el.radius), glm::mat4(1.0), coordinates, glm::vec4(el.colour, 1.0f));
 
         float span = glm::length(this->structure->get_coordinates(i)) + el.radius;
         if (span > this->structure_span) this->structure_span = span;
+
+        glm::vec4 silhouette_colour;
+        if (this->structure->get_highlighted_atoms().find(i) != this->structure->get_highlighted_atoms().end()) {
+            // unique, not black
+            float fi = (float) (i + 1) / this->structure->get_num_atoms();
+            silhouette_colour = glm::vec4(1.0f, fi, 0.0f, 1.0f);
+        } else {
+            silhouette_colour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+        }
+
+        this->silhouette_models[0]->add_instance(
+            glm::vec3(el.radius), glm::mat4(1.0), coordinates, silhouette_colour);
     }
 
     auto pairs = this->structure->calculate_bond_pairs();
@@ -384,6 +402,7 @@ void GLWidget::display_structure(glm::mat3x3 animation_matrix) {
         glm::vec3 trans_a = coords_a;
         glm::vec3 trans_b = trans_a + scale_factor * v;
 
+        glm::vec3 scale = {0.05f, 0.05f, vl};
         glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};
         glm::vec3 scale_b = {0.05f, 0.05f, (1 - scale_factor) * vl};
 
@@ -391,6 +410,10 @@ void GLWidget::display_structure(glm::mat3x3 animation_matrix) {
 
         this->structure_models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
         this->structure_models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
+
+        // in the silhouette, only one cylinder is enough as its shape is only
+        // needed in the depth buffer
+        this->silhouette_models[1]->add_instance(scale, rotation, trans_a, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
     }
 
     this->update();
@@ -405,21 +428,56 @@ void GLWidget::paintGL_2d() {
     this->view.setToIdentity();
     this->view.lookAt(this->camera_position, look_at, QVector3D(0.0f, 0.0f, 1.0f));
 
+    // draw to silhouette frame buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[FrameBuffer::Silhouette2D]);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // draw silhouette models
+    this->paint_silhouette_models();
+
+    // draw to structure frame buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[FrameBuffer::Structure2D]);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     // draw structure models
     this->paint_structure_models();
 
     // draw operation models
     this->paint_operation_models();
+
+    // draw to screen
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDisable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ShaderProgram *canvas_shader = this->shader_program_manager->get_shader_program("canvas_shader");
+    canvas_shader->bind();
+
+    canvas_shader->set_uniform("silhouette_texture", 0);
+    canvas_shader->set_uniform("structure_texture", 1);
+
+    this->quad_model->draw(this->texture_color_buffers[FrameBuffer::Silhouette2D],
+                           this->texture_color_buffers[FrameBuffer::Structure2D]);
+
+    canvas_shader->release();
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 /**
  * @brief Render scene in stereoscopy
  */
 void GLWidget::paintGL_stereoscopy() {
-    for (int i = 0; i < 2; ++i) {
-        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[i]);  // draw to left/right framebuffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    const FrameBuffer framebuffers_side[2][3] = {
+        {FrameBuffer::SilhouetteLeft, FrameBuffer::StructureLeft, FrameBuffer::StereoscopicLeft},
+        {FrameBuffer::SilhouetteRight, FrameBuffer::StructureRight, FrameBuffer::StereoscopicRight}
+    };
 
+    for (int i = 0; i < 2; ++i) {
         // set camera
         QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
         float eye_sep = -this->camera_position[1] / 30.0f;
@@ -427,14 +485,48 @@ void GLWidget::paintGL_stereoscopy() {
         this->view.setToIdentity();
         this->view.lookAt(camera_pos, look_at, QVector3D(0.0f, 0.0f, 1.0f));
 
+        // draw to silhouette frame buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][0]]);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // draw silhouette models
+        this->paint_silhouette_models();
+
+        // draw to structure frame buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][1]]);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         // draw structure models
         this->paint_structure_models();
 
         // draw operation models
         this->paint_operation_models();
+
+        // draw to eye frame buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][2]]);
+        glDisable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        ShaderProgram *canvas_shader = this->shader_program_manager->get_shader_program("canvas_shader");
+        canvas_shader->bind();
+
+        canvas_shader->set_uniform("silhouette_texture", 0);
+        canvas_shader->set_uniform("structure_texture", 1);
+
+        this->quad_model->draw(this->texture_color_buffers[framebuffers_side[i][0]],
+                               this->texture_color_buffers[framebuffers_side[i][1]]);
+
+        canvas_shader->release();
+
+        glEnable(GL_DEPTH_TEST);
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);  // draw to screen
+    // draw to screen
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -446,7 +538,8 @@ void GLWidget::paintGL_stereoscopy() {
     stereoscopic_shader->set_uniform("screen_x", this->top_left.x());
     stereoscopic_shader->set_uniform("screen_y", this->top_left.y());
 
-    this->quad_model->draw(this->texture_color_buffers);
+    this->quad_model->draw(this->texture_color_buffers[FrameBuffer::StereoscopicLeft],
+                           this->texture_color_buffers[FrameBuffer::StereoscopicRight]);
 
     stereoscopic_shader->release();
 
@@ -519,6 +612,37 @@ void GLWidget::paint_operation_models() {
     }
 
     model_shader->release();
+}
+
+/**
+ * @brief Paint all instances of silhouette models to the screen
+ */
+void GLWidget::paint_silhouette_models() {
+    ShaderProgram *silhouette_shader = this->shader_program_manager->get_shader_program("silhouette_shader");
+    silhouette_shader->bind();
+
+    for (unsigned int i = 0; i < this->silhouette_models.size(); ++i) {
+        Model *model = this->silhouette_models[i].get();
+
+        for (const auto& instance : model->get_instances()) {
+            // build model matrix (scale -> rotation -> translation)
+            this->model.setToIdentity();
+            this->model.translate(-this->camera_translation);
+            this->model *= this->arcball_rotation * this->rotation_matrix * this->structure_rotation;
+            this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
+            this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
+            this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);
+
+            this->mvp = this->projection * this->view * this->model;
+
+            silhouette_shader->set_uniform("mvp", this->mvp);
+            silhouette_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+
+            model->draw();
+        }
+    }
+
+    silhouette_shader->release();
 }
 
 /**
@@ -615,6 +739,9 @@ glm::mat4x4 GLWidget::rotation_matrix_from_axis_vector(glm::vec3 axis) {
 void GLWidget::load_shaders() {
     this->shader_program_manager->create_shader_program("model_shader", ShaderProgramType::ModelShader, ":/assets/shaders/phong.vs", ":/assets/shaders/phong.fs");
     this->shader_program_manager->create_shader_program("axes_shader", ShaderProgramType::AxesShader, ":/assets/shaders/axes.vs", ":/assets/shaders/axes.fs");
+    this->shader_program_manager->create_shader_program("silhouette_shader", ShaderProgramType::SilhouetteShader, ":/assets/shaders/silhouette.vs", ":/assets/shaders/silhouette.fs");
+
+    this->shader_program_manager->create_shader_program("canvas_shader", ShaderProgramType::CanvasShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/canvas.fs");
 
     this->shader_program_manager->create_shader_program("stereo_anaglyph_red_cyan", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_anaglyph_red_cyan.fs");
     this->shader_program_manager->create_shader_program("stereo_interlaced_rows_lr", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_rows_lr.fs");
@@ -664,6 +791,15 @@ void GLWidget::set_arcball_rotation(float angle, const QVector4D& vector) {
 void GLWidget::remove_structure_model_instances() {
     for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
         this->structure_models[i]->remove_instances();
+    }
+}
+
+/**
+ * @brief Remove all instances of silhouette models
+ */
+void GLWidget::remove_silhouette_model_instances() {
+    for (unsigned int i = 0; i < this->silhouette_models.size(); ++i) {
+        this->silhouette_models[i]->remove_instances();
     }
 }
 

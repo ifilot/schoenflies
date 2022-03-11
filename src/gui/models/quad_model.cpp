@@ -62,16 +62,17 @@ void QuadModel::load_to_vao() {
 /**
  * @brief Draw the quad model with two textures
  *
- * @param texture_color_buffers texture color buffers to draw textures from
+ * @param texture_color_buffer_a first texture color buffer to draw from
+ * @param texture_color_buffer_b second texture color buffer to draw from
  */
-void QuadModel::draw(unsigned int texture_color_buffers[]) {
+void QuadModel::draw(unsigned int texture_color_buffer_a, unsigned int texture_color_buffer_b) {
     QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
 
     this->vao.bind();
     f->glActiveTexture(GL_TEXTURE0);
-    f->glBindTexture(GL_TEXTURE_2D, texture_color_buffers[0]);
+    f->glBindTexture(GL_TEXTURE_2D, texture_color_buffer_a);
     f->glActiveTexture(GL_TEXTURE1);
-    f->glBindTexture(GL_TEXTURE_2D, texture_color_buffers[1]);
+    f->glBindTexture(GL_TEXTURE_2D, texture_color_buffer_b);
     f->glDrawArrays(GL_TRIANGLES, 0, 6);
     this->vao.release();
 }

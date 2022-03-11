@@ -22,6 +22,7 @@
 #include <chrono>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <Qt>
@@ -55,12 +56,25 @@ class GLWidget: public QOpenGLWidget, protected QOpenGLFunctions {
     Q_OBJECT
 
 private:
+    enum FrameBuffer {
+        Structure2D,
+        StructureLeft,
+        StructureRight,
+        Silhouette2D,
+        SilhouetteLeft,
+        SilhouetteRight,
+        StereoscopicLeft,
+        StereoscopicRight,
+        Count
+    };
+
     QColor bg;
 
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
 
     std::vector<std::unique_ptr<Model>> structure_models;
     std::vector<std::unique_ptr<Model>> operation_models;
+    std::vector<std::unique_ptr<Model>> silhouette_models;
     std::unique_ptr<Model> arrow_model;
     std::unique_ptr<QuadModel> quad_model;
 
@@ -87,9 +101,9 @@ private:
     bool arcball_rotating = false;  // whether arcball rotation is active
     QPoint mouse_position;  // at start of arcball rotation
 
-    unsigned int framebuffers[2];
-    unsigned int texture_color_buffers[2];
-    unsigned int rbo[2];
+    unsigned int framebuffers[FrameBuffer::Count];
+    unsigned int texture_color_buffers[FrameBuffer::Count];
+    unsigned int rbo[FrameBuffer::Count];
 
     StereoscopicMethod stereoscopic_method = StereoscopicMethod::None;
     std::string stereoscopic_method_name;
@@ -236,6 +250,11 @@ private:
     void paint_operation_models();
 
     /**
+     * @brief Paint all instances of silhouette models to the screen
+     */
+    void paint_silhouette_models();
+
+    /**
      * @brief Paint axis gizmos
      */
     void paint_gizmos();
@@ -271,9 +290,14 @@ private:
     void set_arcball_rotation(float angle, const QVector4D& vector);
 
     /**
-     * @brief Remove all instances of models
+     * @brief Remove all instances of structure models
      */
     void remove_structure_model_instances();
+
+    /**
+     * @brief Remove all instances of silhouette models
+     */
+    void remove_silhouette_model_instances();
 
 public slots:
     /**

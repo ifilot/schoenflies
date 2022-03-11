@@ -80,6 +80,7 @@ void ShaderProgram::add_attributes(ShaderProgramType type) {
     switch (type) {
         case ShaderProgramType::ModelShader:
         case ShaderProgramType::AxesShader:
+        case ShaderProgramType::SilhouetteShader:
             this->m_program->bindAttributeLocation("position", 0);
             this->m_program->bindAttributeLocation("normal", 1);
             break;
@@ -104,11 +105,21 @@ void ShaderProgram::add_uniforms(ShaderProgramType type) {
             this->uniforms.emplace("view", this->m_program->uniformLocation("view"));
             this->uniforms.emplace("color", this->m_program->uniformLocation("color"));
             break;
+        case ShaderProgramType::SilhouetteShader:
+            this->uniforms.emplace("mvp", this->m_program->uniformLocation("mvp"));
+            this->uniforms.emplace("color", this->m_program->uniformLocation("color"));
+            break;
+        case ShaderProgramType::CanvasShader:
+            this->uniforms.emplace("silhouette_texture", this->m_program->uniformLocation("silhouette_texture"));
+            this->uniforms.emplace("structure_texture", this->m_program->uniformLocation("structure_texture"));
+            break;
         case ShaderProgramType::StereoscopicShader:
             this->uniforms.emplace("left_eye_texture", this->m_program->uniformLocation("left_eye_texture"));
             this->uniforms.emplace("right_eye_texture", this->m_program->uniformLocation("right_eye_texture"));
             this->uniforms.emplace("screen_x", this->m_program->uniformLocation("screen_x"));
             this->uniforms.emplace("screen_y", this->m_program->uniformLocation("screen_y"));
             break;
+        default:
+            throw std::runtime_error("Unexpected shader program type encountered.");
     }
 }
