@@ -45,7 +45,7 @@ LibraryDialog::LibraryDialog(QWidget* parent)
     this->tree_view->setAllColumnsShowFocus(true);
     this->tree_view->setModel(this->proxy_model);
     this->tree_view->setItemDelegate(delegate);
-    this->tree_view->header()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
+    // this->tree_view->header()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);
 
     connect(this->search_field, SIGNAL(textChanged(QString)), this->proxy_model, SLOT(set_string_filter(QString)));
     connect(this->tree_view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(double_click(QModelIndex)));
@@ -107,16 +107,24 @@ void LibraryDialog::update_widget() {
         };
 
         QList<QStandardItem*> row;
-        for (std::string& cell : cells) {
+        for (unsigned int i = 0; i < 3; ++i) {
             QStandardItem* model_item = new QStandardItem(QString("<span>%1</span>").arg(
-                QString::fromStdString(cell)));
+                QString::fromStdString(cells[i])));
             model_item->setData(QString::fromStdString(item.get_path()),
                 LibraryItemDelegate::ItemDataRole::PathRole);
+
+            if (i == 0) {
+                model_item->setData(QString::fromStdString(cells[i]), Qt::ItemDataRole::ToolTipRole);
+            }
 
             row.append(model_item);
         }
 
         root->appendRow(row);
+    }
+
+    for (unsigned int i = 0; i < 3; ++i) {
+        this->tree_view->resizeColumnToContents(i);
     }
 }
 
