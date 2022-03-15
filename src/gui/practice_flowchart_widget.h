@@ -85,6 +85,12 @@ private slots:
      * @brief Scroll the widget to the bottom
      */
     void scroll_to_bottom();
+
+signals:
+    /**
+     * @brief Emitted when the user has finished the exercise
+     */
+    void finished_exercise();
 };
 
 #endif  // GUI_PRACTICE_FLOWCHART_WIDGET_H

@@ -93,6 +93,7 @@ void PracticeFlowchartWidget::handle_answer(int step_index, int answer) {
         for (auto step_widget : this->step_widgets) {
             step_widget->show_answer();
         }
+        emit finished_exercise();
     } else {
         // reset answer visibility
         for (auto step_widget : this->step_widgets) {

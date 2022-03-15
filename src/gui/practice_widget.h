@@ -19,17 +19,33 @@
 #ifndef GUI_PRACTICE_WIDGET_H
 #define GUI_PRACTICE_WIDGET_H
 
+#include <stdexcept>
 #include <QFrame>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QStackedWidget>
+#include <QVBoxLayout>
 #include <QWidget>
+#include "../practice/practice_config.h"
+#include "../practice/practice_module.h"
+#include "practice_config_widget.h"
 #include "practice_flowchart_widget.h"
 
-class PracticeWidget: public QStackedWidget {
+class PracticeWidget: public QWidget {
     Q_OBJECT
 
 private:
+    QVBoxLayout* layout;
+    QStackedWidget* subwidgets;
+
+    QWidget* buttons_widget;
+    QPushButton* stop_button;
+    QPushButton* next_button;
+
+    PracticeConfigWidget* config_widget;
     PracticeFlowchartWidget* flowchart_widget;
 
+    std::shared_ptr<PracticeConfig> practice_config;
     std::shared_ptr<Symmetry> symmetry;
 
 public:
@@ -46,6 +62,33 @@ public:
      * @param symmetry
      */
     void set_symmetry(const std::shared_ptr<Symmetry> symmetry);
+
+private slots:
+    /**
+     * @brief Configure the practice module and start the practice session
+     */
+    void start_practice();
+
+    /**
+     * @brief Set the practice widget in a state where the exercise is finished
+     */
+    void finished_exercise();
+
+    /**
+     * @brief Stop the current practice session
+     */
+    void stop_practice();
+
+    /**
+     * @brief Create and show a new exercise
+     */
+    void create_exercise();
+
+signals:
+    /**
+     * @brief Emitted when a new structure should be loaded from the library
+     */
+    void request_new_structure();
 };
 
 #endif  // GUI_PRACTICE_WIDGET_H

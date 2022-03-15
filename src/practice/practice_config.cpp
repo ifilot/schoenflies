@@ -47,12 +47,9 @@ PracticeModule PracticeConfig::get_next_module() {
     }
 
     this->current_module_index++;
-    if (this->current_module_index >= this->enabled_modules.size()) {
-        this->current_module_index = 0;
-        this->select_new_structure = true;
-    } else {
-        this->select_new_structure = false;
-    }
+    if (this->current_module_index >= this->enabled_modules.size()) this->current_module_index = 0;
+
+    this->select_new_structure = (this->current_module_index == 0);
 
     return this->enabled_modules[this->current_module_index];
 }

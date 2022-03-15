@@ -43,9 +43,10 @@ CentralWidget::CentralWidget(MainWindow* mw) {
 
     this->library = std::make_shared<Library>();
 
+    connect(this->gl_widget, SIGNAL(animation_finished()), this->symmetry_widget, SLOT(request_operation()));
     connect(this->symmetry_widget, SIGNAL(animate_operation(Operation)), this->gl_widget, SLOT(start_animation(Operation)));
     connect(this->symmetry_widget, SIGNAL(operation_changed(bool, Operation)), this->gl_widget, SLOT(set_operation(bool, Operation)));
-    connect(this->gl_widget, SIGNAL(animation_finished()), this->symmetry_widget, SLOT(request_operation()));
+    connect(this->practice_widget, SIGNAL(request_new_structure()), mw, SLOT(load_random_library_structure()));
 }
 
 /**
