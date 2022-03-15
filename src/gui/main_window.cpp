@@ -203,6 +203,14 @@ void MainWindow::handle_library_dialog(int result) {
 }
 
 /**
+ * @brief Load a random structure from the library
+ */
+void MainWindow::load_random_library_structure() {
+    LibraryItem& item = this->central_widget->get_library()->get_random_item();
+    this->load_structure(item.get_path());
+}
+
+/**
  * @brief Close the application
  */
 void MainWindow::exit() {

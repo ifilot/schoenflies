@@ -19,9 +19,8 @@
 #ifndef LIBRARY_LIBRARY_H
 #define LIBRARY_LIBRARY_H
 
-#include <iostream>
-
 #include <algorithm>
+#include <random>
 #include <string>
 #include <vector>
 #include "library_item.h"
@@ -31,6 +30,8 @@ class Library {
 private:
     std::vector<LibraryItem> items;
     bool items_sorted = false;
+
+    std::mt19937 random_engine;
 
 public:
     /**
@@ -44,6 +45,13 @@ public:
      * @return std::vector<LibraryItem>&
      */
     std::vector<LibraryItem>& get_items();
+
+    /**
+     * @brief Get a random item from the library
+     *
+     * @return LibraryItem&
+     */
+    LibraryItem& get_random_item();
 
 private:
     /**

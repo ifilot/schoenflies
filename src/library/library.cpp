@@ -23,6 +23,9 @@
  */
 Library::Library() {
     this->add_items_from_package(":/assets/structures/library.json");
+
+    std::random_device device;
+    this->random_engine = std::mt19937(device());
 }
 
 /**
@@ -37,6 +40,17 @@ std::vector<LibraryItem>& Library::get_items() {
     }
 
     return this->items;
+}
+
+/**
+ * @brief Get a random item from the library
+ *
+ * @return LibraryItem&
+ */
+LibraryItem& Library::get_random_item() {
+    std::uniform_int_distribution<> dist(0, this->items.size() - 1);
+    int index = dist(this->random_engine);
+    return this->items[index];
 }
 
 /**

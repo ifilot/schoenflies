@@ -41,6 +41,7 @@
 #include <QString>
 #include "../program.h"
 #include "../structure.h"
+#include "../library/library_item.h"
 #include "central_widget.h"
 #include "gui_mode.h"
 #include "library_dialog.h"
@@ -94,6 +95,11 @@ private slots:
      * @param result dialog result code
      */
     void handle_library_dialog(int result);
+
+    /**
+     * @brief Load a random structure from the library
+     */
+    void load_random_library_structure();
 
     /**
      * @brief Close the application
