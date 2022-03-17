@@ -204,27 +204,41 @@ void OperationLabel::set_prime(Prime prime) {
  * @return const std::string
  */
 const std::string OperationLabel::get_name() const {
+    return this->get_short_name() + this->get_name_suffix();
+}
+
+/**
+ * @brief Get the name of this symmetry operation in HTML formatting
+ *
+ * @return const std::string
+ */
+const std::string OperationLabel::get_name_html() const {
+    return this->get_short_name_html() + this->get_name_suffix();
+}
+
+/**
+ * @brief Get the short name of this symmetry operation in plaintext
+ *
+ * @return const std::string
+ */
+const std::string OperationLabel::get_short_name() const {
     std::string degree = this->format_number(this->degree);
     std::string multiple = this->format_number(this->multiple);
 
-    std::string symbol, suffix;
+    std::string symbol;
 
     switch (this->element) {
         case Element::ProperRotation:
             symbol = "C";
-            suffix = " rotation";
             break;
         case Element::Inversion:
             symbol = "i";
-            suffix = " inversion";
             break;
         case Element::ImproperRotation:
             symbol = "S";
-            suffix = " improper rotation";
             break;
         case Element::Reflection:
             symbol = "σ";
-            suffix = " reflection";
             break;
         default:
             throw std::runtime_error("Unexpected symmetry element encountered.");
@@ -269,38 +283,32 @@ const std::string OperationLabel::get_name() const {
         }
     }
 
-    name += suffix;
-
     return name;
 }
 
 /**
- * @brief Get the name of this symmetry operation in HTML formatting
+ * @brief Get the short name of this symmetry operation in HTML formatting
  *
  * @return const std::string
  */
-const std::string OperationLabel::get_name_html() const {
+const std::string OperationLabel::get_short_name_html() const {
     std::string degree = this->format_number(this->degree);
     std::string multiple = this->format_number(this->multiple);
 
-    std::string symbol, suffix;
+    std::string symbol;
 
     switch (this->element) {
         case Element::ProperRotation:
             symbol = "<i>C</i>";
-            suffix = " rotation";
             break;
         case Element::Inversion:
             symbol = "<i>i</i>";
-            suffix = " inversion";
             break;
         case Element::ImproperRotation:
             symbol = "<i>S</i>";
-            suffix = " improper rotation";
             break;
         case Element::Reflection:
             symbol = "<i>σ</i>";
-            suffix = " reflection";
             break;
         default:
             throw std::runtime_error("Unexpected symmetry element encountered.");
@@ -344,8 +352,6 @@ const std::string OperationLabel::get_name_html() const {
                 throw std::runtime_error("Unexpected symmetry prime encountered.");
         }
     }
-
-    name += suffix;
 
     return name;
 }
@@ -401,4 +407,32 @@ const std::string OperationLabel::format_number(int number) const {
     } else {
         return std::to_string(number);
     }
+}
+
+/**
+ * @brief Get the suffix of the name of this symmetry operation
+ *
+ * @return const std::string
+ */
+const std::string OperationLabel::get_name_suffix() const {
+    std::string suffix;
+
+    switch (this->element) {
+        case Element::ProperRotation:
+            suffix = " rotation";
+            break;
+        case Element::Inversion:
+            suffix = " inversion";
+            break;
+        case Element::ImproperRotation:
+            suffix = " improper rotation";
+            break;
+        case Element::Reflection:
+            suffix = " reflection";
+            break;
+        default:
+            throw std::runtime_error("Unexpected symmetry element encountered.");
+    }
+
+    return suffix;
 }

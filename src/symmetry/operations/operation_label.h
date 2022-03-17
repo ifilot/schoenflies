@@ -202,6 +202,20 @@ public:
     const std::string get_name_html() const;
 
     /**
+     * @brief Get the short name of this symmetry operation in plaintext
+     *
+     * @return const std::string
+     */
+    const std::string get_short_name() const;
+
+    /**
+     * @brief Get the short name of this symmetry operation in HTML formatting
+     *
+     * @return const std::string
+     */
+    const std::string get_short_name_html() const;
+
+    /**
      * @brief Get the colour of this symmetry operation (rgb)
      *
      * @return const glm::vec3
@@ -228,6 +242,13 @@ private:
      * @return const std::string formatted number
      */
     const std::string format_number(int number) const;
+
+    /**
+     * @brief Get the suffix of the name of this symmetry operation
+     *
+     * @return const std::string
+     */
+    const std::string get_name_suffix() const;
 };
 
 #endif  // SYMMETRY_OPERATIONS_OPERATION_LABEL_H
