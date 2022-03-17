@@ -44,6 +44,13 @@ public:
     void add_module(PracticeModule module);
 
     /**
+     * @brief Get the list of enabled practice modules
+     *
+     * @return const std::vector<PracticeModule>
+     */
+    const std::vector<PracticeModule> get_enabled_modules() const;
+
+    /**
      * @brief Get the next practice module to use and advance the internal
      * counter
      *

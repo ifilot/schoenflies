@@ -25,15 +25,18 @@
  * @param name name of the structure
  * @param chemical_formula chemical formula of the structure
  * @param point_group_label point group label of the structure
+ * @param item_practice_config practice configuration of the structure
  */
 LibraryItem::LibraryItem(const std::string path,
                          const std::string name,
                          const std::string chemical_formula,
-                         const PointGroupLabel point_group_label) {
+                         const PointGroupLabel point_group_label,
+                         const json item_practice_config) {
     this->path = path;
     this->name = name;
     this->chemical_formula = chemical_formula;
     this->point_group_label = point_group_label;
+    this->item_practice_config = item_practice_config;
 }
 
 /**
@@ -70,6 +73,35 @@ const std::string& LibraryItem::get_chemical_formula() const {
  */
 const PointGroupLabel& LibraryItem::get_point_group_label() const {
     return this->point_group_label;
+}
+
+/**
+ * @brief Get the practice configuration of the item
+ *
+ * @return const json&
+ */
+const json& LibraryItem::get_item_practice_config() const {
+    return this->item_practice_config;
+}
+
+/**
+ * @brief Get whether this item can appear in a practice session given the
+ * provided practice configuration
+ *
+ * @param practice_config practice configuration
+ * @return true
+ * @return false
+ */
+const bool LibraryItem::can_appear_in_practice(const std::shared_ptr<PracticeConfig> practice_config) {
+    json& config = this->item_practice_config;
+
+    for (PracticeModule practice_module : practice_config->get_enabled_modules()) {
+        std::string key = PracticeModules::get_key(practice_module);
+        if (!(config.contains(key) && config[key].contains("enabled") && config[key]["enabled"])) {
+            return false;
+        }
+    }
+    return true;
 }
 
 /**

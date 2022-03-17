@@ -68,10 +68,20 @@ void PracticeWidget::set_symmetry(const std::shared_ptr<Symmetry> symmetry) {
 }
 
 /**
+ * @brief Set the library object
+ *
+ * @param library
+ */
+void PracticeWidget::set_library(const std::shared_ptr<Library> library) {
+    this->library = library;
+}
+
+/**
  * @brief Configure the practice module and start the practice session
  */
 void PracticeWidget::start_practice() {
     this->practice_config = this->config_widget->get_practice_config();
+    this->library->set_practice_config(this->practice_config);
     this->buttons_widget->setVisible(true);
     this->create_exercise();
 }

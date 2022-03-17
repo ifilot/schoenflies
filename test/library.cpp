@@ -42,6 +42,9 @@ BOOST_AUTO_TEST_CASE(library_item) {
             BOOST_TEST(item.get_chemical_formula() == "C<sub>6</sub>H<sub>6</sub>");
             PointGroupLabel correct(PointGroupLabel::Class::Dh, 6);
             BOOST_TEST(item.get_point_group_label().matches(correct));
+            BOOST_TEST(item.get_item_practice_config().contains("flowchart"));
+            BOOST_TEST(item.get_item_practice_config()["flowchart"].contains("enabled"));
+            BOOST_TEST(item.get_item_practice_config()["flowchart"]["enabled"] == true);
         }
     }
 

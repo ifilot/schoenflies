@@ -44,7 +44,7 @@ LibraryItem LibraryPackage::get_item(unsigned int index) {
 
     json item = this->metadata[index];
 
-    for (std::string field : {"path", "name", "chemical_formula", "point_group"}) {
+    for (std::string field : {"path", "name", "chemical_formula", "point_group", "practice_config"}) {
         if (!item.contains(field)) throw std::runtime_error("Key " + field + " not found in JSON object");
     }
 
@@ -62,7 +62,9 @@ LibraryItem LibraryPackage::get_item(unsigned int index) {
         throw std::runtime_error("Invalid value for key point_group in JSON object");
     }
 
-    return {path, name, chemical_formula, point_group_label};
+    json item_practice_config = item["practice_config"];
+
+    return {path, name, chemical_formula, point_group_label, item_practice_config};
 }
 
 /**

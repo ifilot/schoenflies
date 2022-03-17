@@ -26,6 +26,7 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
+#include "../library/library.h"
 #include "../practice/practice_config.h"
 #include "../practice/practice_module.h"
 #include "practice_config_widget.h"
@@ -47,6 +48,7 @@ private:
 
     std::shared_ptr<PracticeConfig> practice_config;
     std::shared_ptr<Symmetry> symmetry;
+    std::shared_ptr<Library> library;
 
 public:
     /**
@@ -62,6 +64,13 @@ public:
      * @param symmetry
      */
     void set_symmetry(const std::shared_ptr<Symmetry> symmetry);
+
+    /**
+     * @brief Set the library object
+     *
+     * @param library
+     */
+    void set_library(const std::shared_ptr<Library> library);
 
 private slots:
     /**

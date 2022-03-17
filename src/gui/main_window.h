@@ -97,9 +97,9 @@ private slots:
     void handle_library_dialog(int result);
 
     /**
-     * @brief Load a random structure from the library
+     * @brief Load a random practice structure from the library
      */
-    void load_random_library_structure();
+    void load_library_practice_structure();
 
     /**
      * @brief Close the application

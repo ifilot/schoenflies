@@ -68,6 +68,9 @@ BOOST_AUTO_TEST_CASE(library_items) {
         }
         BOOST_TEST(item.get_chemical_formula() == chemical_formulas[i]);
         BOOST_TEST(item.get_point_group_label().matches(point_group_labels[i]));
+        BOOST_TEST(item.get_item_practice_config().contains("flowchart"));
+        BOOST_TEST(item.get_item_practice_config()["flowchart"].contains("enabled"));
+        BOOST_TEST(item.get_item_practice_config()["flowchart"]["enabled"] == true);
     }
 }
 

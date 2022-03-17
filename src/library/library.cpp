@@ -36,6 +36,7 @@ Library::Library() {
 std::vector<LibraryItem>& Library::get_items() {
     if (!this->items_sorted) {
         std::sort(this->items.begin(), this->items.end());
+        if (this->practice_subset_generated) this->generate_practice_subset();  // regenerate due to sorting
         this->items_sorted = true;
     }
 
@@ -43,14 +44,24 @@ std::vector<LibraryItem>& Library::get_items() {
 }
 
 /**
- * @brief Get a random item from the library
+ * @brief Get a random practice item from the library
  *
  * @return LibraryItem&
  */
-LibraryItem& Library::get_random_item() {
-    std::uniform_int_distribution<> dist(0, this->items.size() - 1);
-    int index = dist(this->random_engine);
-    return this->items[index];
+LibraryItem& Library::get_practice_item() {
+    LibraryItem& item = this->items[this->practice_subset[this->practice_subset_index++]];
+    if (this->practice_subset_index >= this->practice_subset.size()) this->practice_subset_index = 0;
+    return item;
+}
+
+/**
+ * @brief Set the practice config object
+ *
+ * @param practice_config
+ */
+void Library::set_practice_config(const std::shared_ptr<PracticeConfig> practice_config) {
+    this->practice_config = practice_config;
+    this->generate_practice_subset();
 }
 
 /**
@@ -66,4 +77,19 @@ void Library::add_items_from_package(const std::string path) {
     }
 
     this->items_sorted = false;
+}
+
+/**
+ * @brief Generate the subset of library items available for practice
+ */
+void Library::generate_practice_subset() {
+    this->practice_subset.clear();
+    for (unsigned int i = 0; i < this->items.size(); ++i) {
+        if (this->items[i].can_appear_in_practice(practice_config)) {
+            this->practice_subset.push_back(i);
+        }
+    }
+    std::shuffle(this->practice_subset.begin(), this->practice_subset.end(), this->random_engine);
+    this->practice_subset_index = 0;
+    this->practice_subset_generated = true;
 }

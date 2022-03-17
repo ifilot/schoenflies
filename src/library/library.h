@@ -20,9 +20,11 @@
 #define LIBRARY_LIBRARY_H
 
 #include <algorithm>
+#include <memory>
 #include <random>
 #include <string>
 #include <vector>
+#include "../practice/practice_config.h"
 #include "library_item.h"
 #include "library_package.h"
 
@@ -30,6 +32,11 @@ class Library {
 private:
     std::vector<LibraryItem> items;
     bool items_sorted = false;
+
+    std::shared_ptr<PracticeConfig> practice_config;
+    std::vector<unsigned int> practice_subset;
+    unsigned int practice_subset_index;
+    bool practice_subset_generated = false;
 
     std::mt19937 random_engine;
 
@@ -47,11 +54,18 @@ public:
     std::vector<LibraryItem>& get_items();
 
     /**
-     * @brief Get a random item from the library
+     * @brief Get a random practice item from the library
      *
      * @return LibraryItem&
      */
-    LibraryItem& get_random_item();
+    LibraryItem& get_practice_item();
+
+    /**
+     * @brief Set the practice config object
+     *
+     * @param practice_config
+     */
+    void set_practice_config(const std::shared_ptr<PracticeConfig> practice_config);
 
 private:
     /**
@@ -60,6 +74,11 @@ private:
      * @param path path to the package metadata file
      */
     void add_items_from_package(const std::string path);
+
+    /**
+     * @brief Generate the subset of library items available for practice
+     */
+    void generate_practice_subset();
 };
 
 #endif  // LIBRARY_LIBRARY_H
