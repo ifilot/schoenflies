@@ -60,6 +60,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->structure = structure;
     auto symmetry = std::make_shared<Symmetry>(structure);
     this->symmetry = symmetry;
+    this->symmetry_set = true;
 
     this->gl_widget->set_structure(structure);
     this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
@@ -94,6 +95,25 @@ void CentralWidget::set_gui_mode(QAction* action) {
  */
 GLWidget* CentralWidget::get_gl_widget() {
     return this->gl_widget;
+}
+
+/**
+ * @brief Get whether the symmetry object is set
+ *
+ * @return true
+ * @return false
+ */
+bool CentralWidget::get_symmetry_set() {
+    return this->symmetry_set;
+}
+
+/**
+ * @brief Get the symmetry object
+ *
+ * @return std::shared_ptr<Symmetry>&
+ */
+std::shared_ptr<Symmetry>& CentralWidget::get_symmetry() {
+    return this->symmetry;
 }
 
 /**

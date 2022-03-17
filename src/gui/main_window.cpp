@@ -238,6 +238,10 @@ void MainWindow::open_character_table_dialog() {
         this->character_table_dialog = new CharacterTableDialog(this);
         this->character_table_dialog->show();
     }
+    if (this->central_widget->get_symmetry_set()) {
+        this->character_table_dialog->show_point_group(
+            this->central_widget->get_symmetry()->get_point_group().get_label());
+    }
 }
 
 /**

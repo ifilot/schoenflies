@@ -51,6 +51,7 @@ private:
 
     std::shared_ptr<Structure> structure;
     std::shared_ptr<Symmetry> symmetry;
+    bool symmetry_set = false;
 
     std::shared_ptr<Library> library;
 
@@ -84,6 +85,21 @@ public:
      * @return GLWidget*
      */
     GLWidget* get_gl_widget();
+
+    /**
+     * @brief Get whether the symmetry object is set
+     *
+     * @return true
+     * @return false
+     */
+    bool get_symmetry_set();
+
+    /**
+     * @brief Get the symmetry object
+     *
+     * @return std::shared_ptr<Symmetry>&
+     */
+    std::shared_ptr<Symmetry>& get_symmetry();
 
     /**
      * @brief Get the library object
