@@ -43,6 +43,15 @@ Symmetry::Symmetry(std::shared_ptr<Structure> structure) {
 }
 
 /**
+ * @brief Get the structure object
+ *
+ * @return const std::shared_ptr<Structure>
+ */
+const std::shared_ptr<Structure> Symmetry::get_structure() const {
+    return this->structure;
+}
+
+/**
  * @brief Calculate the inertial tensor and use this to determine principal
  * axes and their principal moments.
  */

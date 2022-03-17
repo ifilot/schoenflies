@@ -20,7 +20,8 @@
 #define PRACTICE_PRACTICE_MODULE_H
 
 enum PracticeModule {
-    Flowchart
+    Flowchart,
+    Irreps
 };
 
 #endif  // PRACTICE_PRACTICE_MODULE_H

@@ -40,6 +40,10 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
     this->subwidgets->addWidget(this->flowchart_widget);
     connect(this->flowchart_widget, SIGNAL(finished_exercise()), this, SLOT(finished_exercise()));
 
+    this->irreps_widget = new PracticeIrrepsWidget(this);
+    this->subwidgets->addWidget(this->irreps_widget);
+    connect(this->irreps_widget, SIGNAL(finished_exercise()), this, SLOT(finished_exercise()));
+
     this->buttons_widget = new QWidget;
     QHBoxLayout *buttons_layout = new QHBoxLayout;
     buttons_layout->setContentsMargins(0, 0, 0, 0);
@@ -117,6 +121,9 @@ void PracticeWidget::create_exercise() {
             this->flowchart_widget->initialize_flowchart(this->symmetry);
             this->subwidgets->setCurrentWidget(this->flowchart_widget);
             break;
+        case PracticeModule::Irreps:
+            this->irreps_widget->initialize(this->symmetry);
+            this->subwidgets->setCurrentWidget(this->irreps_widget);
         default:
             std::runtime_error("Invalid practice module encountered.");
     }

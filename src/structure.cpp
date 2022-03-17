@@ -261,6 +261,24 @@ void Structure::clear_highlighted_atoms() {
 }
 
 /**
+ * @brief Get the library item object
+ *
+ * @return const std::shared_ptr<LibraryItem>
+ */
+const std::shared_ptr<LibraryItem> Structure::get_library_item() const {
+    return this->library_item;
+}
+
+/**
+ * @brief Set the library item object
+ *
+ * @param library_item
+ */
+void Structure::set_library_item(const std::shared_ptr<LibraryItem> library_item) {
+    this->library_item = library_item;
+}
+
+/**
  * @brief Apply a symmetry operation to the highlighted atom indices
  *
  * @param operation

@@ -67,6 +67,13 @@ public:
     Symmetry(std::shared_ptr<Structure> structure);
 
     /**
+     * @brief Get the structure object
+     *
+     * @return const std::shared_ptr<Structure>
+     */
+    const std::shared_ptr<Structure> get_structure() const;
+
+    /**
      * @brief Get the principal moments of the structure
      *
      * @return const glm::vec3&

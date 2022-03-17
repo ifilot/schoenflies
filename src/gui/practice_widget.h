@@ -19,6 +19,7 @@
 #ifndef GUI_PRACTICE_WIDGET_H
 #define GUI_PRACTICE_WIDGET_H
 
+#include <memory>
 #include <stdexcept>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -27,10 +28,12 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include "../library/library.h"
+#include "../library/library_item.h"
 #include "../practice/practice_config.h"
 #include "../practice/practice_module.h"
 #include "practice_config_widget.h"
 #include "practice_flowchart_widget.h"
+#include "practice_irreps_widget.h"
 
 class PracticeWidget: public QWidget {
     Q_OBJECT
@@ -45,6 +48,7 @@ private:
 
     PracticeConfigWidget* config_widget;
     PracticeFlowchartWidget* flowchart_widget;
+    PracticeIrrepsWidget* irreps_widget;
 
     std::shared_ptr<PracticeConfig> practice_config;
     std::shared_ptr<Symmetry> symmetry;

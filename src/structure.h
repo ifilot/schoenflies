@@ -33,6 +33,7 @@
 #include <boost/lexical_cast.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtx/norm.hpp>
+#include "library/library_item.h"
 #include "periodic_table/periodic_table.h"
 #include "symmetry/operations/operation.h"
 #include "file.h"
@@ -48,6 +49,8 @@ private:
     std::string filename;
 
     std::unordered_set<unsigned int> highlighted_atoms;
+
+    std::shared_ptr<LibraryItem> library_item;
 
 public:
     /**
@@ -152,6 +155,20 @@ public:
      * @brief Clear the list of highlighted atoms
      */
     void clear_highlighted_atoms();
+
+    /**
+     * @brief Get the library item object
+     *
+     * @return const std::shared_ptr<LibraryItem>
+     */
+    const std::shared_ptr<LibraryItem> get_library_item() const;
+
+    /**
+     * @brief Set the library item object
+     *
+     * @param library_item
+     */
+    void set_library_item(const std::shared_ptr<LibraryItem> library_item);
 
     /**
      * @brief Apply a symmetry operation to the highlighted atom indices

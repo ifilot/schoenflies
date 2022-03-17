@@ -78,6 +78,13 @@ private:
      */
     void load_structure(const std::string& filename);
 
+    /**
+     * @brief Load a structure
+     *
+     * @param item
+     */
+    void load_structure(const LibraryItem& item);
+
 private slots:
     /**
      * @brief Open a new file

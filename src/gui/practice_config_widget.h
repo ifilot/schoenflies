@@ -37,6 +37,7 @@ private:
     QWidget *container;
 
     QCheckBox *flowchart_checkbox;
+    QCheckBox *irreps_checkbox;
     QPushButton *start_button;
 
     std::shared_ptr<PracticeConfig> practice_config;

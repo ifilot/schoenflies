@@ -39,6 +39,11 @@ PracticeConfigWidget::PracticeConfigWidget(QWidget* parent) {
     this->flowchart_checkbox->setChecked(true);
     this->layout->addWidget(this->flowchart_checkbox);
 
+    this->irreps_checkbox = new QCheckBox;
+    this->irreps_checkbox->setText("Irreducible representation");
+    this->irreps_checkbox->setChecked(true);
+    this->layout->addWidget(this->irreps_checkbox);
+
     this->start_button = new QPushButton;
     this->start_button->setText("Start practice");
     this->layout->addWidget(this->start_button);
@@ -63,6 +68,7 @@ void PracticeConfigWidget::create_practice_config() {
     this->practice_config = std::make_shared<PracticeConfig>();
 
     if (this->flowchart_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Flowchart);
+    if (this->irreps_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Irreps);
 
     emit start();
 }

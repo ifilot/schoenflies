@@ -22,7 +22,8 @@
  * @brief Mapping from practice module enum to string key
  */
 const std::unordered_map<PracticeModule, std::string> PracticeModules::keys = {
-    {PracticeModule::Flowchart, "flowchart"}
+    {PracticeModule::Flowchart, "flowchart"},
+    {PracticeModule::Irreps, "irreps"}
 };
 
 /**

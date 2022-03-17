@@ -170,6 +170,18 @@ void MainWindow::load_structure(const std::string& filename) {
 }
 
 /**
+ * @brief Load a structure
+ *
+ * @param item
+ */
+void MainWindow::load_structure(const LibraryItem& item) {
+    auto structure = std::make_shared<Structure>(item.get_path());
+    structure->set_library_item(std::make_shared<LibraryItem>(item));
+    statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
+    this->central_widget->set_structure(structure);
+}
+
+/**
  * @brief Open a new file
  */
 void MainWindow::open() {
@@ -207,7 +219,7 @@ void MainWindow::handle_library_dialog(int result) {
  */
 void MainWindow::load_library_practice_structure() {
     LibraryItem& item = this->central_widget->get_library()->get_practice_item();
-    this->load_structure(item.get_path());
+    this->load_structure(item);
 }
 
 /**
