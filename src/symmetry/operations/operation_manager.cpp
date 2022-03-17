@@ -190,10 +190,10 @@ bool OperationManager::check_operation(Operation& operation) {
  * @param point_group
  */
 void OperationManager::generate_point_group_operations(PointGroup& point_group) {
-    std::vector<OperationLabel> operation_labels = point_group.get_unique_operations();
+    std::vector<OperationLabelCount> operation_labels = point_group.get_unique_operations();
 
-    for (OperationLabel& operation_label : operation_labels) {
-        this->generate_operations_by_label(point_group, operation_label);
+    for (OperationLabelCount& operation_label : operation_labels) {
+        this->generate_operations_by_label(point_group, operation_label.get_label());
     }
 }
 

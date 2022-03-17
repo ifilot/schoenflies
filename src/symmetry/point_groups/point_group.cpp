@@ -31,26 +31,35 @@ PointGroup::PointGroup() {}
  * counted once.
  *
  * @param label point group label
+ * @param order order of this point group (total number of unique symmetry operations)
  * @param num_inversions number of inversions in this point group
  * @param num_proper_rotations number of proper rotations per degree in this point group
  * @param num_improper_rotations number of improper rotations per degree in this point group
  * @param num_reflections number of reflections in this point group
  * @param unique_operations vector of labels of unique operations in this point group
+ * @param irreps vector of irreducible representations in this point group
+ * @param characters matrix of characters (indexed as [irrep][operation])
  */
 PointGroup::PointGroup(
     PointGroupLabel label,
+    unsigned int order,
     unsigned int num_inversions,
     std::unordered_map<unsigned int, unsigned int> num_proper_rotations,
     std::unordered_map<unsigned int, unsigned int> num_improper_rotations,
     unsigned int num_reflections,
-    std::vector<OperationLabel> unique_operations
+    std::vector<OperationLabelCount> unique_operations,
+    std::vector<IrrepLabel> irreps,
+    std::vector<std::vector<double>> characters
 ) {
     this->label = label;
+    this->order = order;
     this->num_inversions = num_inversions;
     this->num_proper_rotations = num_proper_rotations;
     this->num_improper_rotations = num_improper_rotations;
     this->num_reflections = num_reflections;
     this->unique_operations = unique_operations;
+    this->irreps = irreps;
+    this->characters = characters;
 }
 
 /**
@@ -126,10 +135,37 @@ const PointGroupLabel& PointGroup::get_label() const {
 }
 
 /**
+ * @brief Get the order of the point group
+ *
+ * @return const unsigned int
+ */
+const unsigned int PointGroup::get_order() const {
+    return this->order;
+}
+
+/**
  * @brief Get the unique operations of the point group
  *
- * @return const std::vector<OperationLabel>&
+ * @return const std::vector<OperationLabelCount>&
  */
-const std::vector<OperationLabel>& PointGroup::get_unique_operations() const {
+const std::vector<OperationLabelCount>& PointGroup::get_unique_operations() const {
     return this->unique_operations;
+}
+
+/**
+ * @brief Get the irreducible representations of the point group
+ *
+ * @return const std::vector<IrrepLabel>&
+ */
+const std::vector<IrrepLabel>& PointGroup::get_irreps() const {
+    return this->irreps;
+}
+
+/**
+ * @brief Get the characters matrix of the point group
+ *
+ * @return const std::vector<std::vector<double>>&
+ */
+const std::vector<std::vector<double>>& PointGroup::get_characters() const {
+    return this->characters;
 }

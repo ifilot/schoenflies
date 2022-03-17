@@ -28,6 +28,7 @@
 #include "operation.h"
 #include "operation_group.h"
 #include "operation_label.h"
+#include "operation_label_count.h"
 
 class OperationManager {
 private:
