@@ -35,7 +35,7 @@ MainWindow::MainWindow() {
     // drop-down menus
     QMenu *menu_file = menu_bar->addMenu(tr("&File"));
     QMenu *menu_stereoscopy = menu_bar->addMenu(tr("&Stereoscopy"));
-    QMenu *menu_mode = menu_bar->addMenu(tr("&Mode"));
+    QMenu *menu_view = menu_bar->addMenu(tr("&View"));
     QMenu *menu_help = menu_bar->addMenu(tr("&Help"));
 
     // actions for file menu
@@ -118,24 +118,32 @@ MainWindow::MainWindow() {
     action_group_stereoscopy->addAction(action_interlaced_checkerboard_rl);
     connect(action_group_stereoscopy, &QActionGroup::triggered, this->central_widget->get_gl_widget(), &GLWidget::set_stereoscopic_method);
 
-    // actions for mode menu
-    QAction *action_viewer = new QAction(menu_mode);
+    // actions for view menu
+    QAction *action_viewer = new QAction(menu_view);
     action_viewer->setCheckable(true);
     action_viewer->setChecked(true);
     action_viewer->setText(tr("Symmetry viewer"));
     action_viewer->setData(GuiMode::SymmetryViewer);
-    menu_mode->addAction(action_viewer);
+    menu_view->addAction(action_viewer);
 
-    QAction *action_practice = new QAction(menu_mode);
+    QAction *action_practice = new QAction(menu_view);
     action_practice->setCheckable(true);
     action_practice->setText(tr("Practice"));
     action_practice->setData(GuiMode::Practice);
-    menu_mode->addAction(action_practice);
+    menu_view->addAction(action_practice);
 
     QActionGroup *action_group_mode = new QActionGroup(this);
     action_group_mode->addAction(action_viewer);
     action_group_mode->addAction(action_practice);
     connect(action_group_mode, &QActionGroup::triggered, this->central_widget, &CentralWidget::set_gui_mode);
+
+    menu_view->addSeparator();
+
+    QAction *action_open_character_table = new QAction(menu_view);
+    action_open_character_table->setText(tr("Character tables"));
+    action_open_character_table->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT + Qt::Key_T));
+    connect(action_open_character_table, &QAction::triggered, this, &MainWindow::open_character_table_dialog);
+    menu_view->addAction(action_open_character_table);
 
     // actions for help menu
     QAction *action_about = new QAction(menu_help);
@@ -220,6 +228,16 @@ void MainWindow::handle_library_dialog(int result) {
 void MainWindow::load_library_practice_structure() {
     LibraryItem& item = this->central_widget->get_library()->get_practice_item();
     this->load_structure(item);
+}
+
+/**
+ * @brief Open the character table dialog
+ */
+void MainWindow::open_character_table_dialog() {
+    if (this->character_table_dialog == nullptr || !this->character_table_dialog->isVisible()) {
+        this->character_table_dialog = new CharacterTableDialog(this);
+        this->character_table_dialog->show();
+    }
 }
 
 /**

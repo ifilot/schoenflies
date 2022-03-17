@@ -51,6 +51,7 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option_i
     doc.setHtml(option.text);
     doc.setDefaultFont(option.font);
     doc.setDocumentMargin(2);
+    this->configure_document(doc);
     doc.setTextWidth(option.rect.width());
     doc.adjustSize();
 
@@ -118,6 +119,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option_in, const QModel
     doc.setTextWidth(option.rect.width());
     doc.setDefaultFont(option.font);
     doc.setDocumentMargin(2);
+    this->configure_document(doc);
 
     return QSize(doc.idealWidth(), doc.size().height());
 }
@@ -132,4 +134,13 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option_in, const QModel
  */
 const int ItemDelegate::max_text_width(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
     return option.rect.width();
+}
+
+/**
+ * @brief Add optional configuration options to the document object
+ *
+ * @param doc
+ */
+void ItemDelegate::configure_document(QTextDocument& doc) const {
+    // noop in the default ItemDelegate
 }

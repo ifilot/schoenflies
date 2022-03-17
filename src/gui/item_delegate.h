@@ -73,6 +73,13 @@ private:
      * @return const int
      */
     virtual const int max_text_width(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+    /**
+     * @brief Add optional configuration options to the document object
+     *
+     * @param doc
+     */
+    virtual void configure_document(QTextDocument& doc) const;
 };
 
 #endif  // GUI_ITEM_DELEGATE_H

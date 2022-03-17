@@ -43,6 +43,7 @@
 #include "../structure.h"
 #include "../library/library_item.h"
 #include "central_widget.h"
+#include "character_table_dialog.h"
 #include "gui_mode.h"
 #include "library_dialog.h"
 #include "stereoscopic_method.h"
@@ -55,6 +56,7 @@ class MainWindow: public QMainWindow {
 private:
     CentralWidget* central_widget;
     LibraryDialog* library_dialog;
+    CharacterTableDialog* character_table_dialog = nullptr;
 
 public:
     /**
@@ -107,6 +109,11 @@ private slots:
      * @brief Load a random practice structure from the library
      */
     void load_library_practice_structure();
+
+    /**
+     * @brief Open the character table dialog
+     */
+    void open_character_table_dialog();
 
     /**
      * @brief Close the application
