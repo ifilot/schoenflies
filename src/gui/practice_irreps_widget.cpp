@@ -65,6 +65,11 @@ PracticeIrrepsWidget::PracticeIrrepsWidget(QWidget* parent) {
     q2->setWordWrap(true);
     part2_layout->addWidget(q2);
 
+    QPushButton *open_character_table = new QPushButton;
+    open_character_table->setText("View character table");
+    part2_layout->addWidget(open_character_table);
+    connect(open_character_table, SIGNAL(clicked()), parent, SIGNAL(open_character_table_dialog()));
+
     this->irrep_coefficients_grid = new QGridLayout;
     part2_layout->addLayout(this->irrep_coefficients_grid);
 

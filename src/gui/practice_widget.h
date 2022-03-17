@@ -102,6 +102,11 @@ signals:
      * @brief Emitted when a new structure should be loaded from the library
      */
     void request_new_structure();
+
+    /**
+     * @brief Open the character table dialog
+     */
+    void open_character_table_dialog();
 };
 
 #endif  // GUI_PRACTICE_WIDGET_H
