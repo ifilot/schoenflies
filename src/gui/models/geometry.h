@@ -24,8 +24,8 @@
 #include <memory>
 #include <vector>
 #include <glm/glm.hpp>
-#include "model.h"
-#include "quad_model.h"
+#include "model_2d.h"
+#include "model_3d.h"
 
 class Geometry final {
 public:
@@ -33,9 +33,9 @@ public:
      * @brief Create a unique pointer to a sphere model
      *
      * @param tesselation_level detail of the sphere
-     * @return std::unique_ptr<Model>
+     * @return std::unique_ptr<Model3D>
      */
-    static std::unique_ptr<Model> sphere(unsigned int tesselation_level = 3);
+    static std::unique_ptr<Model3D> sphere(unsigned int tesselation_level = 3);
 
     /**
      * @brief Create a unique pointer to a cylinder model
@@ -43,24 +43,24 @@ public:
      * @param include_caps whether to include cylinder caps
      * @param stack_count number of stacks in axial direction
      * @param slice_count number of slices in radial direction
-     * @return std::unique_ptr<Model>
+     * @return std::unique_ptr<Model3D>
      */
-    static std::unique_ptr<Model> cylinder(bool include_caps = false, unsigned int stack_count = 2, unsigned int slice_count = 24);
+    static std::unique_ptr<Model3D> cylinder(bool include_caps = false, unsigned int stack_count = 2, unsigned int slice_count = 24);
 
-    /**
+        /**
      * @brief Create a unique pointer to a circle model
      *
      * @param slice_count number of slices
-     * @return std::unique_ptr<Model>
+     * @return std::unique_ptr<Model3D>
      */
-    static std::unique_ptr<Model> circle(unsigned int slice_count = 96);
+    static std::unique_ptr<Model3D> circle(unsigned int slice_count = 96);
 
     /**
      * @brief Create a unique pointer to a quad model
      *
-     * @return std::unique_ptr<QuadModel>
+     * @return std::unique_ptr<Model2D>
      */
-    static std::unique_ptr<QuadModel> quad();
+    static std::unique_ptr<Model2D> quad();
 };
 
 #endif  // GUI_MODELS_GEOMETRY_H

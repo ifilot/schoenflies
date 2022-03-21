@@ -25,131 +25,56 @@
  */
 GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->bg = parent->palette().color(QPalette::ColorRole::Window);
+    this->model_manager = std::make_unique<ModelManager>();
     this->shader_program_manager = std::make_unique<ShaderProgramManager>();
+    this->structure_renderer = std::make_shared<StructureRenderer>();
 
     this->reset_camera();
 
-    this->structure_models.push_back(Geometry::sphere());
-    this->structure_models.push_back(Geometry::cylinder());
+    this->model_manager->add_model("sphere", Geometry::sphere());
+    this->model_manager->add_model("cylinder", Geometry::cylinder());
+    this->model_manager->add_model("cylinder_capped", Geometry::cylinder(true));
+    this->model_manager->add_model("circle", Geometry::circle());
 
-    this->operation_models.push_back(Geometry::sphere());
-    this->operation_models.push_back(Geometry::cylinder(true));
-    this->operation_models.push_back(Geometry::circle());
+    this->model_manager->add_model("arrow", ObjLoader::load_from_obj(":/assets/models/arrow.obj"));
+    this->model_manager->add_model("quad", Geometry::quad());
 
-    this->silhouette_models.push_back(Geometry::sphere());
-    this->silhouette_models.push_back(Geometry::cylinder());
-
-    this->arrow_model = ObjLoader::load_from_obj(":/assets/models/arrow.obj");
-    this->quad_model = Geometry::quad();
-
-    connect(this, SIGNAL(frameSwapped()), this, SLOT(process_animations()));
+    connect(this, SIGNAL(frameSwapped()), this->structure_renderer.get(), SLOT(process_animations()));
+    connect(this->structure_renderer.get(), SIGNAL(update()), this, SLOT(update()));
+    connect(this->structure_renderer.get(), SIGNAL(animation_finished()), this, SIGNAL(animation_finished()));
 }
 
 /**
  * @brief Set the structure displayed in the widget
  *
  * @param structure
- */
-void GLWidget::set_structure(std::shared_ptr<Structure> structure) {
-    this->structure = structure;
-    this->display_structure(glm::mat3x3(1.0f));
-}
-
-/**
- * @brief Set the animation matrix for the structure
- *
- * @param animation_matrix
- */
-void GLWidget::set_structure_animation_matrix(glm::mat3x3 animation_matrix) {
-    this->display_structure(animation_matrix);
-}
-
-/**
- * @brief Set the rotation of the structure in the GL widget to correctly
- * rotate to Cartesian axes
- *
  * @param cartesian_axes matrix of unit vectors along which the Cartesian
  * axes should lie
  */
-void GLWidget::set_structure_rotation(glm::mat3x3 cartesian_axes) {
-    // the inverse of the Cartesian axes gives us the rotation matrix to convert.
-    // we transpose this because the QMatrix4x4 constructor assumes the values
-    // to be in row-major order, while GLM stores them in column-major order
-    glm::mat4x4 structure_rotation = glm::transpose(glm::mat4x4(glm::inverse(cartesian_axes)));
-
-    this->structure_rotation = QMatrix4x4(glm::value_ptr(structure_rotation));
-
+void GLWidget::set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 cartesian_axes) {
+    this->structure_renderer->set_structure(structure, cartesian_axes);
+    this->reset_camera();
     this->update();
 }
 
 /**
- * @brief Set the operation displayed in the widget
+ * @brief Get the structure renderer object
  *
- * @param operation
+ * @return const std::shared_ptr<StructureRenderer>
  */
-void GLWidget::set_operation(Operation operation) {
-    this->unset_operation();
-
-    OperationLabel::Element element = operation.get_label().get_element();
-    glm::vec3 colour = operation.get_label().get_colour();
-    glm::mat4x4 rotation = this->rotation_matrix_from_axis_vector(operation.get_axis());
-
-    if (element == OperationLabel::Element::Inversion) {
-        this->operation_models[0]->add_instance(
-            glm::vec3(0.25),
-            glm::mat4(1.0),
-            glm::vec3(0.0),
-            glm::vec4(colour, 1.0)
-        );
-    }
-
-    if (element == OperationLabel::Element::ProperRotation ||
-        element == OperationLabel::Element::ImproperRotation) {
-        this->operation_models[1]->add_instance(
-            glm::vec3(0.04f, 0.04f, 2 * this->structure_span + 0.4),
-            rotation,
-            -(this->structure_span + 0.2f) * operation.get_axis(),
-            glm::vec4(colour, 1.0)
-        );
-    }
-
-    if (element == OperationLabel::Element::Reflection ||
-        element == OperationLabel::Element::ImproperRotation) {
-        this->operation_models[2]->add_instance(
-            glm::vec3(this->structure_span + 0.2),
-            rotation,
-            glm::vec3(0.0),
-            glm::vec4(colour, 0.5)
-        );
-    }
-
-    this->update();
+const std::shared_ptr<StructureRenderer> GLWidget::get_structure_renderer() const {
+    return this->structure_renderer;
 }
 
 /**
- * @brief Unset the operation displayed in the widget
- */
-void GLWidget::unset_operation() {
-    for (unsigned int i = 0; i < this->operation_models.size(); ++i) {
-        this->operation_models[i]->remove_instances();
-    }
-
-    this->update();
-}
-
-/**
- * @brief Reset variables related to the camera
+ * @brief Reset camera
  */
 void GLWidget::reset_camera() {
-    this->rotation_matrix.setToIdentity();
-    this->rotation_matrix.rotate(60.0, QVector3D(1.0, 0.0, 0.0));
-    this->rotation_matrix.rotate(20.0, QVector3D(0.0, 0.0, 1.0));
-
-    this->arcball_rotation.setToIdentity();
-    this->arcball_rotating = false;
-
-    float camera_distance = 4 * this->structure_span;
+    float camera_distance = 4 * this->structure_renderer->get_structure_span();
     this->camera_position = QVector3D(0.0, -camera_distance, 0.0);
+    this->arcball_rotating = false;
+    this->structure_renderer->reset_camera();
+    this->update();
 }
 
 /**
@@ -167,22 +92,9 @@ void GLWidget::initializeGL() {
     connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &GLWidget::cleanup);
     initializeOpenGLFunctions();
 
-    for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
-        this->structure_models[i]->load_to_vao();
-    }
-
-    for (unsigned int i = 0; i < this->operation_models.size(); ++i) {
-        this->operation_models[i]->load_to_vao();
-    }
-
-    for (unsigned int i = 0; i < this->silhouette_models.size(); ++i) {
-        this->silhouette_models[i]->load_to_vao();
-    }
-
-    this->arrow_model->load_to_vao();
-    this->quad_model->load_to_vao();
-
     glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
+
+    this->model_manager->load_models_to_vao();
 
     this->load_shaders();
 
@@ -244,9 +156,7 @@ void GLWidget::mousePressEvent(QMouseEvent* event) {
  */
 void GLWidget::mouseReleaseEvent(QMouseEvent* event) {
     if (this->arcball_rotating && !(event->buttons() & Qt::MouseButton::LeftButton)) {
-        // apply arcball rotation to rotation matrix, and reset arcball rotation
-        this->rotation_matrix = this->arcball_rotation * this->rotation_matrix;
-        this->arcball_rotation.setToIdentity();
+        this->structure_renderer->apply_arcball_rotation();
         this->arcball_rotating = false;
     }
 }
@@ -271,16 +181,23 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
             float angle = qAcos(qMin(1.0f, dotprod));
 
             // rotation vector in camera space
-            QVector4D axis_cam_space = QVector4D(QVector3D::crossProduct(va, vb).normalized());
+            QVector3D axis_cam_space = QVector3D::crossProduct(va, vb).normalized();
 
             // matrix to change basis from camera to model space
             QMatrix3x3 cam_to_model_trans = this->view.inverted().toGenericMatrix<3, 3>();
 
             // rotation vector in model space
-            QVector4D axis_model_space = QMatrix4x4(cam_to_model_trans) * axis_cam_space;
+            QVector3D axis_model_space = QMatrix4x4(cam_to_model_trans) * axis_cam_space;
+            glm::vec3 axis_model_space_ = glm::vec3(
+                axis_model_space.x(),
+                axis_model_space.y(),
+                axis_model_space.z()
+            );
 
             // set rotation
-            this->set_arcball_rotation(qRadiansToDegrees(angle), axis_model_space);
+            this->structure_renderer->set_arcball_rotation(angle, axis_model_space_);
+
+            this->update();
         }
     }
 }
@@ -294,7 +211,7 @@ void GLWidget::wheelEvent(QWheelEvent* event) {
     this->camera_position += event->angleDelta().y() * 0.01f * QVector3D(0, 1, 0);
 
     // prevent zooming in too far
-    float min_camera_distance = 1.5 * this->structure_span;
+    float min_camera_distance = 1.5 * this->structure_renderer->get_structure_span();
     if (this->camera_position[1] > -min_camera_distance) this->camera_position[1] = -min_camera_distance;
 
     this->update();
@@ -353,76 +270,11 @@ void GLWidget::resize_frame_buffers(int width, int height) {
 }
 
 /**
- * @brief Display the structure in the widget
- *
- * @param animation_matrix
- */
-void GLWidget::display_structure(glm::mat3x3 animation_matrix) {
-    this->remove_structure_model_instances();
-    this->remove_silhouette_model_instances();
-    this->structure_span = 0;
-
-    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
-        Element el = PeriodicTable::get_element(this->structure->get_atomic_number(i));
-        glm::vec3 coordinates = animation_matrix * this->structure->get_coordinates(i);
-
-        this->structure_models[0]->add_instance(
-            glm::vec3(el.radius), glm::mat4(1.0), coordinates, glm::vec4(el.colour, 1.0f));
-
-        float span = glm::length(this->structure->get_coordinates(i)) + el.radius;
-        if (span > this->structure_span) this->structure_span = span;
-
-        glm::vec4 silhouette_colour;
-        if (this->structure->get_highlighted_atoms().find(i) != this->structure->get_highlighted_atoms().end()) {
-            // unique, not black
-            float fi = (float) (i + 1) / this->structure->get_num_atoms();
-            silhouette_colour = glm::vec4(1.0f, fi, 0.0f, 1.0f);
-        } else {
-            silhouette_colour = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-        }
-
-        this->silhouette_models[0]->add_instance(
-            glm::vec3(el.radius), glm::mat4(1.0), coordinates, silhouette_colour);
-    }
-
-    auto pairs = this->structure->calculate_bond_pairs();
-    for (auto pair : pairs) {
-        // generate two cylinders for each bond
-        Element el_a = PeriodicTable::get_element(this->structure->get_atomic_number(pair.first));
-        Element el_b = PeriodicTable::get_element(this->structure->get_atomic_number(pair.second));
-
-        glm::vec3 coords_a = animation_matrix * this->structure->get_coordinates(pair.first);
-        glm::vec3 coords_b = animation_matrix * this->structure->get_coordinates(pair.second);
-
-        glm::vec3 v = coords_b - coords_a;
-        float vl = glm::length(v);
-
-        float scale_factor = .5 + (el_a.radius - el_b.radius) / vl / 2;
-
-        glm::vec3 trans_a = coords_a;
-        glm::vec3 trans_b = trans_a + scale_factor * v;
-
-        glm::vec3 scale = {0.05f, 0.05f, vl};
-        glm::vec3 scale_a = {0.05f, 0.05f, scale_factor * vl};
-        glm::vec3 scale_b = {0.05f, 0.05f, (1 - scale_factor) * vl};
-
-        glm::mat4 rotation = this->rotation_matrix_from_axis_vector(v);
-
-        this->structure_models[1]->add_instance(scale_a, rotation, trans_a, glm::vec4(el_a.colour, 1.0f));
-        this->structure_models[1]->add_instance(scale_b, rotation, trans_b, glm::vec4(el_b.colour, 1.0f));
-
-        // in the silhouette, only one cylinder is enough as its shape is only
-        // needed in the depth buffer
-        this->silhouette_models[1]->add_instance(scale, rotation, trans_a, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-    }
-
-    this->update();
-}
-
-/**
  * @brief Render scene in 2D
  */
 void GLWidget::paintGL_2d() {
+    Model *quad_model = this->model_manager->get_model("quad");
+
     // set camera
     QVector3D look_at = QVector3D(0.0f, 0.0f, 0.0f);
     this->view.setToIdentity();
@@ -460,8 +312,8 @@ void GLWidget::paintGL_2d() {
     canvas_shader->set_uniform("silhouette_texture", 0);
     canvas_shader->set_uniform("structure_texture", 1);
 
-    this->quad_model->draw(this->texture_color_buffers[FrameBuffer::Silhouette2D],
-                           this->texture_color_buffers[FrameBuffer::Structure2D]);
+    quad_model->draw(this->texture_color_buffers[FrameBuffer::Silhouette2D],
+                     this->texture_color_buffers[FrameBuffer::Structure2D]);
 
     canvas_shader->release();
 
@@ -476,6 +328,8 @@ void GLWidget::paintGL_stereoscopy() {
         {FrameBuffer::SilhouetteLeft, FrameBuffer::StructureLeft, FrameBuffer::StereoscopicLeft},
         {FrameBuffer::SilhouetteRight, FrameBuffer::StructureRight, FrameBuffer::StereoscopicRight}
     };
+
+    Model *quad_model = this->model_manager->get_model("quad");
 
     for (int i = 0; i < 2; ++i) {
         // set camera
@@ -517,8 +371,8 @@ void GLWidget::paintGL_stereoscopy() {
         canvas_shader->set_uniform("silhouette_texture", 0);
         canvas_shader->set_uniform("structure_texture", 1);
 
-        this->quad_model->draw(this->texture_color_buffers[framebuffers_side[i][0]],
-                               this->texture_color_buffers[framebuffers_side[i][1]]);
+        quad_model->draw(this->texture_color_buffers[framebuffers_side[i][0]],
+                         this->texture_color_buffers[framebuffers_side[i][1]]);
 
         canvas_shader->release();
 
@@ -538,8 +392,8 @@ void GLWidget::paintGL_stereoscopy() {
     stereoscopic_shader->set_uniform("screen_x", this->top_left.x());
     stereoscopic_shader->set_uniform("screen_y", this->top_left.y());
 
-    this->quad_model->draw(this->texture_color_buffers[FrameBuffer::StereoscopicLeft],
-                           this->texture_color_buffers[FrameBuffer::StereoscopicRight]);
+    quad_model->draw(this->texture_color_buffers[FrameBuffer::StereoscopicLeft],
+                     this->texture_color_buffers[FrameBuffer::StereoscopicRight]);
 
     stereoscopic_shader->release();
 
@@ -553,28 +407,19 @@ void GLWidget::paint_structure_models() {
     ShaderProgram *model_shader = this->shader_program_manager->get_shader_program("model_shader");
     model_shader->bind();
 
-    for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
-        Model *model = this->structure_models[i].get();
+    for (ModelInstance instance : this->structure_renderer->get_structure_model_instances()) {
+        Model *model = this->model_manager->get_model(instance.model_name);
 
-        for (const auto& instance : model->get_instances()) {
-            // build model matrix (scale -> rotation -> translation)
-            this->model.setToIdentity();
-            this->model.translate(-this->camera_translation);
-            this->model *= this->arcball_rotation * this->rotation_matrix * this->structure_rotation;
-            this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
-            this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
-            this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);
+        this->model = this->convert_glm_matrix(instance.transform);
+        this->mvp = this->projection * this->view * this->model;
 
-            this->mvp = this->projection * this->view * this->model;
+        model_shader->set_uniform("mvp", this->mvp);
+        model_shader->set_uniform("view", this->view);
+        model_shader->set_uniform("model", this->model);
+        model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+        model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
 
-            model_shader->set_uniform("mvp", this->mvp);
-            model_shader->set_uniform("view", this->view);
-            model_shader->set_uniform("model", this->model);
-            model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
-            model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
-
-            model->draw();
-        }
+        model->draw();
     }
 
     model_shader->release();
@@ -587,28 +432,19 @@ void GLWidget::paint_operation_models() {
     ShaderProgram *model_shader = this->shader_program_manager->get_shader_program("model_shader");
     model_shader->bind();
 
-    for (unsigned int i = 0; i < this->operation_models.size(); ++i) {
-        Model *model = this->operation_models[i].get();
+    for (ModelInstance instance : this->structure_renderer->get_operation_model_instances()) {
+        Model *model = this->model_manager->get_model(instance.model_name);
 
-        for (const auto& instance : model->get_instances()) {
-            // build model matrix (scale -> rotation -> translation)
-            this->model.setToIdentity();
-            this->model.translate(-this->camera_translation);
-            this->model *= this->arcball_rotation * this->rotation_matrix * this->structure_rotation;
-            this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
-            this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
-            this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);
+        this->model = this->convert_glm_matrix(instance.transform);
+        this->mvp = this->projection * this->view * this->model;
 
-            this->mvp = this->projection * this->view * this->model;
+        model_shader->set_uniform("mvp", this->mvp);
+        model_shader->set_uniform("view", this->view);
+        model_shader->set_uniform("model", this->model);
+        model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+        model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
 
-            model_shader->set_uniform("mvp", this->mvp);
-            model_shader->set_uniform("view", this->view);
-            model_shader->set_uniform("model", this->model);
-            model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
-            model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
-
-            model->draw();
-        }
+        model->draw();
     }
 
     model_shader->release();
@@ -621,25 +457,16 @@ void GLWidget::paint_silhouette_models() {
     ShaderProgram *silhouette_shader = this->shader_program_manager->get_shader_program("silhouette_shader");
     silhouette_shader->bind();
 
-    for (unsigned int i = 0; i < this->silhouette_models.size(); ++i) {
-        Model *model = this->silhouette_models[i].get();
+    for (ModelInstance instance : this->structure_renderer->get_silhouette_model_instances()) {
+        Model *model = this->model_manager->get_model(instance.model_name);
 
-        for (const auto& instance : model->get_instances()) {
-            // build model matrix (scale -> rotation -> translation)
-            this->model.setToIdentity();
-            this->model.translate(-this->camera_translation);
-            this->model *= this->arcball_rotation * this->rotation_matrix * this->structure_rotation;
-            this->model.translate(instance.translation.x, instance.translation.y, instance.translation.z);
-            this->model *= QMatrix4x4(glm::value_ptr(instance.rotation)).transposed();
-            this->model.scale(instance.scale.x, instance.scale.y, instance.scale.z);
+        this->model = this->convert_glm_matrix(instance.transform);
+        this->mvp = this->projection * this->view * this->model;
 
-            this->mvp = this->projection * this->view * this->model;
+        silhouette_shader->set_uniform("mvp", this->mvp);
+        silhouette_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
 
-            silhouette_shader->set_uniform("mvp", this->mvp);
-            silhouette_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
-
-            model->draw();
-        }
+        model->draw();
     }
 
     silhouette_shader->release();
@@ -675,62 +502,39 @@ void GLWidget::paint_gizmos() {
     axes_shader->set_uniform("view", this->view);
 
     // draw the three axes
+    Model *arrow_model = this->model_manager->get_model("arrow");
     QMatrix4x4 axis_rotation;
 
     // z axis
     axis_rotation.setToIdentity();
-    this->model = this->arcball_rotation * this->rotation_matrix * axis_rotation;
+    this->model = this->convert_glm_matrix(this->structure_renderer->base_camera_matrix()) * axis_rotation;
     this->mvp = projection_ortho * this->view * this->model;
     axes_shader->set_uniform("model", this->model);
     axes_shader->set_uniform("mvp", this->mvp);
     axes_shader->set_uniform("color", b);
-    this->arrow_model->draw();
+    arrow_model->draw();
 
     // y axis
     axis_rotation.setToIdentity();
     axis_rotation.rotate(-90.0f, QVector3D(1.0f, 0.0f, 0.0f));
-    this->model = this->arcball_rotation * this->rotation_matrix * axis_rotation;
+    this->model = this->convert_glm_matrix(this->structure_renderer->base_camera_matrix()) * axis_rotation;
     this->mvp = projection_ortho * this->view * this->model;
     axes_shader->set_uniform("model", this->model);
     axes_shader->set_uniform("mvp", this->mvp);
     axes_shader->set_uniform("color", g);
-    this->arrow_model->draw();
+    arrow_model->draw();
 
     // x axis
     axis_rotation.setToIdentity();
     axis_rotation.rotate(90.0f, QVector3D(0.0f, 1.0f, 0.0f));
-    this->model = this->arcball_rotation * this->rotation_matrix * axis_rotation;
+    this->model = this->convert_glm_matrix(this->structure_renderer->base_camera_matrix()) * axis_rotation;
     this->mvp = projection_ortho * this->view * this->model;
     axes_shader->set_uniform("model", this->model);
     axes_shader->set_uniform("mvp", this->mvp);
     axes_shader->set_uniform("color", r);
-    this->arrow_model->draw();
+    arrow_model->draw();
 
     axes_shader->release();
-}
-
-/**
- * @brief Compute the rotation matrix to rotate an object aligned along the
- * z axis towards the given axis
- *
- * @param axis
- * @return glm::mat4x4 rotation matrix
- */
-glm::mat4x4 GLWidget::rotation_matrix_from_axis_vector(glm::vec3 axis) {
-    glm::vec3 axis_n = glm::normalize(axis);
-    glm::mat4 rotation(1.0f);
-
-    if (qFabs(axis_n.z) > .9999f) {
-        if (axis_n.z < -.5f) {
-            rotation = glm::rotate(glm::mat4(1.0f), -(float) M_PI, glm::vec3(0.0f, 1.0f, 0.0f));
-        }
-    } else {
-        float angle = qAcos(axis_n.z);
-        glm::vec3 axis_angle = glm::normalize(glm::cross(glm::vec3(0.0f, 0.0f, 1.0f), axis));
-        rotation = glm::rotate(glm::mat4(1.0), angle, axis_angle);
-    }
-
-    return rotation;
 }
 
 /**
@@ -774,33 +578,13 @@ QVector3D GLWidget::calc_arcball_vector(QPoint pos) {
 }
 
 /**
- * @brief Set arcball vector rotation and update
+ * @brief Convert GLM matrix to QMatrix
  *
- * @param angle arcball angle
- * @param vector arcball rotation vector
+ * @param matrix
+ * @return QMatrix4x4
  */
-void GLWidget::set_arcball_rotation(float angle, const QVector4D& vector) {
-    this->arcball_rotation.setToIdentity();
-    this->arcball_rotation.rotate(angle, QVector3D(vector));
-    this->update();
-}
-
-/**
- * @brief Remove all instances of structure models
- */
-void GLWidget::remove_structure_model_instances() {
-    for (unsigned int i = 0; i < this->structure_models.size(); ++i) {
-        this->structure_models[i]->remove_instances();
-    }
-}
-
-/**
- * @brief Remove all instances of silhouette models
- */
-void GLWidget::remove_silhouette_model_instances() {
-    for (unsigned int i = 0; i < this->silhouette_models.size(); ++i) {
-        this->silhouette_models[i]->remove_instances();
-    }
+QMatrix4x4 GLWidget::convert_glm_matrix(glm::mat4x4 matrix) {
+    return QMatrix4x4(glm::value_ptr(matrix)).transposed();
 }
 
 /**
@@ -856,9 +640,8 @@ void GLWidget::set_stereoscopic_method(QAction* action) {
  * @param operation operation to animate
  */
 void GLWidget::start_animation(Operation operation) {
-    this->animation_operation = operation;
-    this->animation_start_time = std::chrono::high_resolution_clock::now();
-    this->structure_animating = true;
+    this->structure_renderer->start_animation(operation);
+    this->update();
 }
 
 /**
@@ -868,37 +651,12 @@ void GLWidget::start_animation(Operation operation) {
  * @param selected_operation
  */
 void GLWidget::set_operation(bool operation_selected, Operation selected_operation) {
-    if (!this->structure_animating) {
+    if (!this->structure_renderer->get_animating()) {
         if (operation_selected) {
-            this->set_operation(selected_operation);
+            this->structure_renderer->set_operation(selected_operation);
         } else {
-            this->unset_operation();
+            this->structure_renderer->unset_operation();
         }
+        this->update();
     }
-}
-
-/**
- * @brief Process any running animations
- */
-void GLWidget::process_animations() {
-    if (!this->structure_animating) return;
-
-    auto now = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> runtime = now - this->animation_start_time;
-    double seconds = runtime.count();
-    double f = seconds / 1.0;  // TODO make animation duration variable
-
-    glm::mat3x3 animation_matrix;
-
-    if (f > 1) {
-        f = 1;
-        this->structure_animating = false;
-        animation_matrix = glm::mat3x3(1.0f);  // reset to identity matrix
-        this->structure->apply_operation_to_highlighted_atoms(this->animation_operation);
-        emit this->animation_finished();
-    } else {
-        animation_matrix = this->animation_operation.calculate_fractional_matrix(f);
-    }
-
-    this->set_structure_animation_matrix(animation_matrix);
 }

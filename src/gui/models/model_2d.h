@@ -16,32 +16,43 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_MODELS_MODEL_H
-#define GUI_MODELS_MODEL_H
+#ifndef GUI_MODELS_MODEL_2D_H
+#define GUI_MODELS_MODEL_2D_H
 
-#include <stdexcept>
+#include <vector>
+#include <glm/glm.hpp>
+#include <QOpenGLBuffer>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include "model.h"
 
-class Model {
+class Model2D: public Model {
+private:
+    std::vector<glm::vec4> vertices;
+
+    bool loaded_vao = false;
+
+    QOpenGLVertexArrayObject vao;
+    QOpenGLBuffer vbo;
+
 public:
     /**
-     * @brief Default constructor
+     * @brief Construct a new Model object
+     *
+     * @param vertices positions and texCoords of vertices
      */
-    Model();
+    Model2D(std::vector<glm::vec4> vertices);
 
     /**
      * @brief Destroy the Model object
      */
-    virtual ~Model();
+    ~Model2D() override;
 
     /**
      * @brief Load the model to the vertex array object
      */
-    virtual void load_to_vao();
-
-    /**
-     * @brief Draw the model
-     */
-    virtual void draw();
+    void load_to_vao() override;
 
     /**
      * @brief Draw the model with two textures
@@ -49,7 +60,7 @@ public:
      * @param texture_a first texture color buffer to draw from
      * @param texture_b second texture color buffer to draw from
      */
-    virtual void draw(unsigned int texture_a, unsigned int texture_b);
+    void draw(unsigned int texture_a, unsigned int texture_b) override;
 };
 
-#endif  // GUI_MODELS_MODEL_H
+#endif  // GUI_MODELS_MODEL_2D_H

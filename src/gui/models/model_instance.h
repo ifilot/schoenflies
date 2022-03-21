@@ -20,11 +20,11 @@
 #define GUI_MODELS_MODEL_INSTANCE_H
 
 #include <glm/glm.hpp>
+#include <string>
 
 struct ModelInstance {
-    glm::vec3 scale;
-    glm::mat4 rotation;
-    glm::vec3 translation;
+    std::string model_name;
+    glm::mat4x4 transform;
     glm::vec4 colour;
 };
 

@@ -48,8 +48,6 @@ private:
     std::string description;
     std::string filename;
 
-    std::unordered_set<unsigned int> highlighted_atoms;
-
     std::shared_ptr<LibraryItem> library_item;
 
 public:
@@ -138,25 +136,6 @@ public:
     const std::unordered_set<unsigned int>& get_highlighted_atoms() const;
 
     /**
-     * @brief Highlight an atom by index
-     *
-     * @param index
-     */
-    void highlight_atom(unsigned int index);
-
-    /**
-     * @brief Unhighlight an atom by index
-     *
-     * @param index
-     */
-    void unhighlight_atom(unsigned int index);
-
-    /**
-     * @brief Clear the list of highlighted atoms
-     */
-    void clear_highlighted_atoms();
-
-    /**
      * @brief Get the library item object
      *
      * @return const std::shared_ptr<LibraryItem>
@@ -169,13 +148,6 @@ public:
      * @param library_item
      */
     void set_library_item(const std::shared_ptr<LibraryItem> library_item);
-
-    /**
-     * @brief Apply a symmetry operation to the highlighted atom indices
-     *
-     * @param operation
-     */
-    void apply_operation_to_highlighted_atoms(Operation operation);
 
     /**
      * @brief Find the index of the closest atom of the element given by the

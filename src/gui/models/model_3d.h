@@ -16,40 +16,52 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_MODELS_MODEL_H
-#define GUI_MODELS_MODEL_H
+#ifndef GUI_MODELS_MODEL_3D_H
+#define GUI_MODELS_MODEL_3D_H
 
-#include <stdexcept>
+#include <vector>
+#include <glm/glm.hpp>
+#include <QOpenGLBuffer>
+#include <QOpenGLContext>
+#include <QOpenGLFunctions>
+#include <QOpenGLVertexArrayObject>
+#include "model.h"
 
-class Model {
+class Model3D: public Model {
+private:
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> normals;
+    std::vector<unsigned int> indices;
+
+    bool loaded_vao = false;
+
+    QOpenGLVertexArrayObject vao;
+    QOpenGLBuffer vbo[3];
+
 public:
     /**
-     * @brief Default constructor
+     * @brief Construct a new Model object
+     *
+     * @param positions positions of vertices
+     * @param normals normals of vertices
+     * @param indices triples of vertices forming triangles
      */
-    Model();
+    Model3D(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals, std::vector<unsigned int> indices);
 
     /**
      * @brief Destroy the Model object
      */
-    virtual ~Model();
+    ~Model3D() override;
 
     /**
      * @brief Load the model to the vertex array object
      */
-    virtual void load_to_vao();
+    void load_to_vao() override;
 
     /**
      * @brief Draw the model
      */
-    virtual void draw();
-
-    /**
-     * @brief Draw the model with two textures
-     *
-     * @param texture_a first texture color buffer to draw from
-     * @param texture_b second texture color buffer to draw from
-     */
-    virtual void draw(unsigned int texture_a, unsigned int texture_b);
+    void draw() override;
 };
 
-#endif  // GUI_MODELS_MODEL_H
+#endif  // GUI_MODELS_MODEL_3D_H

@@ -22,9 +22,9 @@
  * @brief Create a unique pointer to a model from an obj file
  *
  * @param path path to the obj file (can be Qt resource path)
- * @return std::unique_ptr<Model>
+ * @return std::unique_ptr<Model3D>
  */
-std::unique_ptr<Model> ObjLoader::load_from_obj(const std::string& path) {
+std::unique_ptr<Model3D> ObjLoader::load_from_obj(const std::string& path) {
     // we use QFile here instead of std::ifstream (such as in src/structure.cpp)
     // so that resource paths can be loaded
     QFile file(QString::fromStdString(path));
@@ -98,5 +98,5 @@ std::unique_ptr<Model> ObjLoader::load_from_obj(const std::string& path) {
         indices.push_back(i);
     }
 
-    return std::make_unique<Model>(positions, normals, indices);
+    return std::make_unique<Model3D>(positions, normals, indices);
 }

@@ -16,40 +16,45 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef GUI_MODELS_MODEL_H
-#define GUI_MODELS_MODEL_H
+#ifndef GUI_MODELS_MODEL_MANAGER_H
+#define GUI_MODELS_MODEL_MANAGER_H
 
+#include <memory>
 #include <stdexcept>
+#include <string>
+#include <unordered_map>
+#include "model.h"
 
-class Model {
+class ModelManager {
+private:
+    std::unordered_map<std::string, std::unique_ptr<Model>> model_map;
+
 public:
     /**
-     * @brief Default constructor
+     * @brief Construct a new Model Manager object
      */
-    Model();
+    ModelManager();
 
     /**
-     * @brief Destroy the Model object
-     */
-    virtual ~Model();
-
-    /**
-     * @brief Load the model to the vertex array object
-     */
-    virtual void load_to_vao();
-
-    /**
-     * @brief Draw the model
-     */
-    virtual void draw();
-
-    /**
-     * @brief Draw the model with two textures
+     * @brief Get pointer to a model
      *
-     * @param texture_a first texture color buffer to draw from
-     * @param texture_b second texture color buffer to draw from
+     * @param name name of the model
+     * @return Model* pointer to model
      */
-    virtual void draw(unsigned int texture_a, unsigned int texture_b);
+    Model* get_model(const std::string& name);
+
+    /**
+     * @brief Add a new model
+     *
+     * @param name model name
+     * @param model model object
+     */
+    void add_model(const std::string& name, std::unique_ptr<Model> model);
+
+    /**
+     * @brief Load all models to their vertex array objects
+     */
+    void load_models_to_vao();
 };
 
-#endif  // GUI_MODELS_MODEL_H
+#endif  // GUI_MODELS_MODEL_MANAGER_H

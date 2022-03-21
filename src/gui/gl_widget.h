@@ -40,12 +40,14 @@
 #include <QWidget>
 #include <QWindow>
 #include "../structure.h"
+#include "../structure_renderer.h"
 #include "../periodic_table/element.h"
 #include "../periodic_table/periodic_table.h"
 #include "../symmetry/operations/operation.h"
 #include "../symmetry/operations/operation_label.h"
 #include "models/geometry.h"
 #include "models/model.h"
+#include "models/model_manager.h"
 #include "models/obj_loader.h"
 #include "models/quad_model.h"
 #include "shaders/shader_program_manager.h"
@@ -70,34 +72,20 @@ private:
 
     QColor bg;
 
+    std::unique_ptr<ModelManager> model_manager;
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
 
-    std::vector<std::unique_ptr<Model>> structure_models;
-    std::vector<std::unique_ptr<Model>> operation_models;
-    std::vector<std::unique_ptr<Model>> silhouette_models;
-    std::unique_ptr<Model> arrow_model;
-    std::unique_ptr<QuadModel> quad_model;
-
+    std::shared_ptr<StructureRenderer> structure_renderer;
     std::shared_ptr<Structure> structure;
-    float structure_span = 0;
-
-    Operation animation_operation;
-    std::chrono::time_point<std::chrono::high_resolution_clock> animation_start_time;
-    bool structure_animating;
 
     QPoint top_left;
 
     QMatrix4x4 projection;
     QMatrix4x4 view;
-    QMatrix4x4 rotation_matrix;
     QMatrix4x4 model;
     QMatrix4x4 mvp;
     QVector3D camera_position;
-    QVector3D camera_translation;
 
-    QMatrix4x4 structure_rotation;
-
-    QMatrix4x4 arcball_rotation;  // temporary rotation while dragging mouse
     bool arcball_rotating = false;  // whether arcball rotation is active
     QPoint mouse_position;  // at start of arcball rotation
 
@@ -120,39 +108,20 @@ public:
      * @brief Set the structure displayed in the widget
      *
      * @param structure
-     */
-    void set_structure(std::shared_ptr<Structure> structure);
-
-    /**
-     * @brief Set the animation matrix for the structure
-     *
-     * @param animation_matrix
-     */
-    void set_structure_animation_matrix(glm::mat3x3 animation_matrix);
-
-    /**
-     * @brief Set the rotation of the structure in the GL widget to correctly
-     * rotate to Cartesian axes
-     *
      * @param cartesian_axes matrix of unit vectors along which the Cartesian
      * axes should lie
      */
-    void set_structure_rotation(glm::mat3x3 cartesian_axes);
+    void set_structure(std::shared_ptr<Structure> structure, glm::mat3x3 cartesian_axes);
 
     /**
-     * @brief Set the operation displayed in the widget
+     * @brief Get the structure renderer object
      *
-     * @param operation
+     * @return const std::shared_ptr<StructureRenderer>
      */
-    void set_operation(Operation operation);
+    const std::shared_ptr<StructureRenderer> get_structure_renderer() const;
 
     /**
-     * @brief Unset the operation displayed in the widget
-     */
-    void unset_operation();
-
-    /**
-     * @brief Reset variables related to the camera
+     * @brief Reset camera
      */
     void reset_camera();
 
@@ -223,13 +192,6 @@ private:
     void resize_frame_buffers(int width, int height);
 
     /**
-     * @brief Display the structure in the widget
-     *
-     * @param animation_matrix
-     */
-    void display_structure(glm::mat3x3 animation_matrix);
-
-    /**
      * @brief Render scene in 2D
      */
     void paintGL_2d();
@@ -260,15 +222,6 @@ private:
     void paint_gizmos();
 
     /**
-     * @brief Compute the rotation matrix to rotate an object aligned along the
-     * z axis towards the given axis
-     *
-     * @param axis
-     * @return glm::mat4x4 rotation matrix
-     */
-    glm::mat4x4 rotation_matrix_from_axis_vector(glm::vec3 axis);
-
-    /**
      * @brief Load OpenGL shaders
      */
     void load_shaders();
@@ -282,22 +235,12 @@ private:
     QVector3D calc_arcball_vector(QPoint pos);
 
     /**
-     * @brief Set arcball vector rotation and update
+     * @brief Convert GLM matrix to QMatrix
      *
-     * @param angle arcball angle
-     * @param vector arcball rotation vector
+     * @param matrix
+     * @return QMatrix4x4
      */
-    void set_arcball_rotation(float angle, const QVector4D& vector);
-
-    /**
-     * @brief Remove all instances of structure models
-     */
-    void remove_structure_model_instances();
-
-    /**
-     * @brief Remove all instances of silhouette models
-     */
-    void remove_silhouette_model_instances();
+    QMatrix4x4 convert_glm_matrix(glm::mat4x4 matrix);
 
 public slots:
     /**
@@ -326,12 +269,6 @@ public slots:
      * @param selected_operation
      */
     void set_operation(bool operation_selected, Operation selected_operation);
-
-private slots:
-    /**
-     * @brief Process any running animations
-     */
-    void process_animations();
 
 signals:
     /**

@@ -30,7 +30,7 @@
 #include <QRegularExpressionMatch>
 #include <QString>
 #include <QTextStream>
-#include "model.h"
+#include "model_3d.h"
 
 class ObjLoader final {
 public:
@@ -38,9 +38,9 @@ public:
      * @brief Create a unique pointer to a model from an obj file
      *
      * @param path path to the obj file (can be Qt resource path)
-     * @return std::unique_ptr<Model>
+     * @return std::unique_ptr<Model3D>
      */
-    static std::unique_ptr<Model> load_from_obj(const std::string& path);
+    static std::unique_ptr<Model3D> load_from_obj(const std::string& path);
 };
 
 #endif  // GUI_MODELS_OBJ_LOADER_H

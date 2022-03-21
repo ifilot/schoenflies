@@ -63,10 +63,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->symmetry = symmetry;
     this->symmetry_set = true;
 
-    this->gl_widget->set_structure(structure);
-    this->gl_widget->set_structure_rotation(symmetry->get_cartesian_axes());
-    this->gl_widget->reset_camera();
-    this->gl_widget->unset_operation();
+    this->gl_widget->set_structure(structure, symmetry->get_cartesian_axes());
 
     this->symmetry_widget->set_symmetry(symmetry);
     this->practice_widget->set_symmetry(symmetry);

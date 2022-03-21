@@ -22,9 +22,9 @@
  * @brief Create a unique pointer to a sphere model
  *
  * @param tesselation_level detail of the sphere
- * @return std::unique_ptr<Model>
+ * @return std::unique_ptr<Model3D>
  */
-std::unique_ptr<Model> Geometry::sphere(unsigned int tesselation_level) {
+std::unique_ptr<Model3D> Geometry::sphere(unsigned int tesselation_level) {
     std::vector<glm::vec3> vertices = {
         glm::vec3( 1.0f,  0.0f,  0.0f),
         glm::vec3(-1.0f,  0.0f,  0.0f),
@@ -73,7 +73,7 @@ std::unique_ptr<Model> Geometry::sphere(unsigned int tesselation_level) {
         indices = new_indices;
     }
 
-    return std::make_unique<Model>(vertices, vertices, indices);
+    return std::make_unique<Model3D>(vertices, vertices, indices);
 }
 
 /**
@@ -82,9 +82,9 @@ std::unique_ptr<Model> Geometry::sphere(unsigned int tesselation_level) {
  * @param include_caps whether to include cylinder caps
  * @param stack_count number of stacks in axial direction
  * @param slice_count number of slices in radial direction
- * @return std::unique_ptr<Model>
+ * @return std::unique_ptr<Model3D>
  */
-std::unique_ptr<Model> Geometry::cylinder(bool include_caps, unsigned int stack_count, unsigned int slice_count) {
+std::unique_ptr<Model3D> Geometry::cylinder(bool include_caps, unsigned int stack_count, unsigned int slice_count) {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<unsigned int> indices;
@@ -182,16 +182,16 @@ std::unique_ptr<Model> Geometry::cylinder(bool include_caps, unsigned int stack_
         }
     }
 
-    return std::make_unique<Model>(vertices, normals, indices);
+    return std::make_unique<Model3D>(vertices, normals, indices);
 }
 
 /**
  * @brief Create a unique pointer to a circle model
  *
  * @param slice_count number of slices
- * @return std::unique_ptr<Model>
+ * @return std::unique_ptr<Model3D>
  */
-std::unique_ptr<Model> Geometry::circle(unsigned int slice_count) {
+std::unique_ptr<Model3D> Geometry::circle(unsigned int slice_count) {
     std::vector<glm::vec3> vertices;
     std::vector<glm::vec3> normals;
     std::vector<unsigned int> indices;
@@ -235,14 +235,25 @@ std::unique_ptr<Model> Geometry::circle(unsigned int slice_count) {
         indices.push_back(slice_count + 1 + slice + 1);
     }
 
-    return std::make_unique<Model>(vertices, normals, indices);
+    return std::make_unique<Model3D>(vertices, normals, indices);
 }
 
 /**
  * @brief Create a unique pointer to a quad model
  *
- * @return std::unique_ptr<QuadModel>
+ * @return std::unique_ptr<Model2D>
  */
-std::unique_ptr<QuadModel> Geometry::quad() {
-    return std::make_unique<QuadModel>();
+std::unique_ptr<Model2D> Geometry::quad() {
+    const std::vector<glm::vec4> vertices = {
+         // positions   // texCoords
+        {-1.0f,  1.0f,  0.0f, 1.0f},
+        {-1.0f, -1.0f,  0.0f, 0.0f},
+        { 1.0f, -1.0f,  1.0f, 0.0f},
+
+        {-1.0f,  1.0f,  0.0f, 1.0f},
+        { 1.0f, -1.0f,  1.0f, 0.0f},
+        { 1.0f,  1.0f,  1.0f, 1.0f}
+    };
+
+    return std::make_unique<Model2D>(vertices);
 }
