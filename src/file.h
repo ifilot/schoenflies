@@ -23,10 +23,10 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <QByteArray>
 #include <QFile>
 #include <QIODevice>
 #include <QString>
-#include <QTextStream>
 
 class File {
 public:

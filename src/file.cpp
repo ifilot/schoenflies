@@ -74,13 +74,12 @@ void File::read_qt_resource(const std::string& path) {
     this->source = Source::QtResource;
 
     QFile file(QString::fromStdString(path));
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly)) {
         throw std::runtime_error("Could not open file: " + path);
     }
 
-    QTextStream ifs(&file);
-    const QString contents = ifs.readAll();
+    QByteArray ba = file.readAll();
     file.close();
 
-    this->stream << contents.toStdString();
+    this->stream << ba.toStdString();
 }
