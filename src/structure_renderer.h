@@ -25,12 +25,16 @@
 #include <memory>
 #include <numeric>
 #include <stdexcept>
+#include <string>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <QObject>
 #include "gui/models/model_instance.h"
+#include "gui/text/character.h"
+#include "gui/text/freetype_font.h"
 #include "periodic_table/element.h"
 #include "periodic_table/periodic_table.h"
 #include "symmetry/operations/operation.h"
@@ -63,11 +67,18 @@ private:
     std::vector<unsigned int> animated_indices;
     std::unordered_set<unsigned int> highlighted_atoms;
 
+    bool default_labels_visible = false;
+    std::vector<std::string> default_labels;
+
+    std::shared_ptr<FreeTypeFont> freetype_font;
+
 public:
     /**
      * @brief Default constructor
+     *
+     * @param freetype_font
      */
-    StructureRenderer();
+    StructureRenderer(const std::shared_ptr<FreeTypeFont> freetype_font);
 
     /**
      * @brief Set the structure
@@ -153,6 +164,13 @@ public:
     std::vector<ModelInstance> get_operation_model_instances();
 
     /**
+     * @brief Get the model instances to draw labels
+     *
+     * @return std::vector<ModelInstance>
+     */
+    std::vector<ModelInstance> get_label_model_instances();
+
+    /**
      * @brief Get whether the structure is animating
      *
      * @return true
@@ -207,6 +225,11 @@ private:
     void create_animated_indices();
 
     /**
+     * @brief Create and set the list of default atom labels
+     */
+    void create_default_labels();
+
+    /**
      * @brief Compute the rotation matrix to rotate an object aligned along the
      * z axis towards the given axis
      *
@@ -227,6 +250,13 @@ public slots:
      * @brief Process any running animations
      */
     void process_animations();
+
+    /**
+     * @brief Set the visibility of the default labels
+     *
+     * @param visible
+     */
+    void set_default_labels_visible(bool visible);
 
 signals:
     /**

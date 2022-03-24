@@ -52,6 +52,7 @@
 #include "models/quad_model.h"
 #include "shaders/shader_program_manager.h"
 #include "shaders/shader_program_type.h"
+#include "text/freetype_font.h"
 #include "stereoscopic_method.h"
 
 class GLWidget: public QOpenGLWidget, protected QOpenGLFunctions {
@@ -65,6 +66,9 @@ private:
         Silhouette2D,
         SilhouetteLeft,
         SilhouetteRight,
+        Labels2D,
+        LabelsLeft,
+        LabelsRight,
         StereoscopicLeft,
         StereoscopicRight,
         Count
@@ -74,6 +78,7 @@ private:
 
     std::unique_ptr<ModelManager> model_manager;
     std::unique_ptr<ShaderProgramManager> shader_program_manager;
+    std::shared_ptr<FreeTypeFont> freetype_font;
 
     std::shared_ptr<StructureRenderer> structure_renderer;
     std::shared_ptr<Structure> structure;
@@ -213,8 +218,15 @@ private:
 
     /**
      * @brief Paint all instances of silhouette models to the screen
+     *
+     * @param ignore_color use black for all models if true
      */
-    void paint_silhouette_models();
+    void paint_silhouette_models(bool ignore_color = false);
+
+    /**
+     * @brief Paint atom labels to the screen
+     */
+    void paint_labels();
 
     /**
      * @brief Paint axis gizmos

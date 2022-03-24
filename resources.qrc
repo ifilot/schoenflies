@@ -18,6 +18,8 @@
         <file>assets/shaders/stereo_interlaced_rows_lr.fs</file>
         <file>assets/shaders/stereo_interlaced_rows_rl.fs</file>
         <file>assets/shaders/stereo.vs</file>
+        <file>assets/shaders/text.fs</file>
+        <file>assets/shaders/text.vs</file>
         <file>assets/structures/library.json</file>
         <file>assets/structures/1,2-difluorocubane.xyz</file>
         <file>assets/structures/1,4-difluorocubane.xyz</file>

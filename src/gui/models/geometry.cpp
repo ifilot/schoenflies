@@ -257,3 +257,26 @@ std::unique_ptr<Model2D> Geometry::quad() {
 
     return std::make_unique<Model2D>(vertices);
 }
+
+/**
+ * @brief Create a unique pointer to a 3D quad model
+ *
+ * @return std::unique_ptr<Model3D>
+ */
+std::unique_ptr<Model3D> Geometry::quad_3d() {
+    const std::vector<glm::vec3> vertices = {
+        {-1.0f,  1.0f, 0.0f},
+        {-1.0f, -1.0f, 0.0f},
+        { 1.0f, -1.0f, 0.0f},
+        { 1.0f,  1.0f, 0.0f}
+    };
+    const std::vector<glm::vec3> normals = {
+        {0.0f, 0.0f, 1.0f},
+        {0.0f, 0.0f, 1.0f},
+        {0.0f, 0.0f, 1.0f},
+        {0.0f, 0.0f, 1.0f}
+    };
+    const std::vector<unsigned int> indices = {0, 1, 2, 0, 2, 3};
+
+    return std::make_unique<Model3D>(vertices, normals, indices);
+}

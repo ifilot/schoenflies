@@ -20,8 +20,12 @@
 
 /**
  * @brief Default constructor
+ *
+ * @param freetype_font
  */
-StructureRenderer::StructureRenderer() {}
+StructureRenderer::StructureRenderer(const std::shared_ptr<FreeTypeFont> freetype_font) {
+    this->freetype_font = freetype_font;
+}
 
 /**
  * @brief Set the structure
@@ -40,6 +44,7 @@ void StructureRenderer::set_structure(const std::shared_ptr<Structure> structure
     this->calculate_structure_span();
     this->calculate_bond_pairs();
     this->create_animated_indices();
+    this->create_default_labels();
 
     this->highlighted_atoms.clear();
 }
@@ -147,7 +152,7 @@ std::vector<ModelInstance> StructureRenderer::get_structure_model_instances() {
 
         glm::mat4x4 transform = glm::scale(glm::translate(this->base_matrix(), coordinates), glm::vec3(el.radius));
 
-        model_instances.push_back({"sphere", transform, glm::vec4(el.colour, 1.0f)});
+        model_instances.push_back({"sphere", transform, glm::vec4(el.colour, 1.0f), -1});
     }
 
     for (std::pair<unsigned int, unsigned int> bond_pair : this->bond_pairs) {
@@ -174,8 +179,8 @@ std::vector<ModelInstance> StructureRenderer::get_structure_model_instances() {
         glm::mat4x4 transform_a = glm::scale(glm::translate(this->base_matrix(), trans_a) * rotation, scale_a);
         glm::mat4x4 transform_b = glm::scale(glm::translate(this->base_matrix(), trans_b) * rotation, scale_b);
 
-        model_instances.push_back({"cylinder", transform_a, glm::vec4(el_a.colour, 1.0f)});
-        model_instances.push_back({"cylinder", transform_b, glm::vec4(el_b.colour, 1.0f)});
+        model_instances.push_back({"cylinder", transform_a, glm::vec4(el_a.colour, 1.0f), -1});
+        model_instances.push_back({"cylinder", transform_b, glm::vec4(el_b.colour, 1.0f), -1});
     }
 
     return model_instances;
@@ -206,7 +211,7 @@ std::vector<ModelInstance> StructureRenderer::get_silhouette_model_instances() {
 
         glm::mat4x4 transform = glm::scale(glm::translate(this->base_matrix(), coordinates), glm::vec3(el.radius));
 
-        model_instances.push_back({"sphere", transform, silhouette_colour});
+        model_instances.push_back({"sphere", transform, silhouette_colour, -1});
     }
 
     for (std::pair<unsigned int, unsigned int> bond_pair : this->bond_pairs) {
@@ -223,9 +228,9 @@ std::vector<ModelInstance> StructureRenderer::get_silhouette_model_instances() {
         glm::vec3 scale = {0.05f, 0.05f, vl};
         glm::mat4 rotation = this->rotation_matrix_from_axis_vector(v);
 
-        glm::mat4x4 transform = glm::scale(glm::translate(this->structure_rotation, trans) * rotation, scale);
+        glm::mat4x4 transform = glm::scale(glm::translate(this->base_matrix(), trans) * rotation, scale);
 
-        model_instances.push_back({"cylinder", transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)});
+        model_instances.push_back({"cylinder", transform, glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), -1});
     }
 
     return model_instances;
@@ -246,7 +251,7 @@ std::vector<ModelInstance> StructureRenderer::get_operation_model_instances() {
 
     if (element == OperationLabel::Element::Inversion) {
         glm::mat4x4 transform = glm::scale(this->base_matrix(), glm::vec3(0.25f));
-        model_instances.push_back({"sphere", transform, glm::vec4(colour, 1.0f)});
+        model_instances.push_back({"sphere", transform, glm::vec4(colour, 1.0f), -1});
     }
 
     if (element == OperationLabel::Element::ProperRotation ||
@@ -254,14 +259,57 @@ std::vector<ModelInstance> StructureRenderer::get_operation_model_instances() {
         glm::vec3 trans = -(this->structure_span + 0.2f) * this->operation.get_axis();
         glm::vec3 scale = glm::vec3(0.04f, 0.04f, 2 * this->structure_span + 0.4f);
         glm::mat4x4 transform = glm::scale(glm::translate(this->base_matrix(), trans) * rotation, scale);
-        model_instances.push_back({"cylinder_capped", transform, glm::vec4(colour, 1.0f)});
+        model_instances.push_back({"cylinder_capped", transform, glm::vec4(colour, 1.0f), -1});
     }
 
     if (element == OperationLabel::Element::Reflection ||
         element == OperationLabel::Element::ImproperRotation) {
         glm::vec3 scale = glm::vec3(this->structure_span + 0.2f);
         glm::mat4x4 transform = glm::scale(this->base_matrix() * rotation, scale);
-        model_instances.push_back({"circle", transform, glm::vec4(colour, 0.5f)});
+        model_instances.push_back({"circle", transform, glm::vec4(colour, 0.5f), -1});
+    }
+
+    return model_instances;
+}
+
+/**
+ * @brief Get the model instances to draw labels
+ *
+ * @return std::vector<ModelInstance>
+ */
+std::vector<ModelInstance> StructureRenderer::get_label_model_instances() {
+    std::vector<ModelInstance> model_instances;
+    if (!this->structure_set || !this->default_labels_visible) return model_instances;
+
+    const float font_scale = 0.004f;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        Element el = PeriodicTable::get_element(this->structure->get_atomic_number(i));
+        glm::vec3 coordinates = this->animation_matrix * this->structure->get_coordinates(i);
+
+        unsigned int ai = this->animated_indices[i];
+        std::string& label = this->default_labels[ai];
+        glm::ivec2 label_size = this->freetype_font->get_string_size(label);
+
+        float x_off = -label_size.x / 2;
+        for (unsigned int ci = 0; ci < label.size(); ++ci) {
+            Character ch = this->freetype_font->get_character(label[ci]);
+            glm::vec3 scale = glm::vec3(font_scale * el.radius * glm::vec2(ch.size), 1.0f);
+
+            glm::vec2 trans = font_scale * el.radius * glm::vec2(
+                x_off + ch.bearing.x + ch.size.x,
+                ch.size.y - 2 * (ch.size.y - ch.bearing.y) - label_size.y
+            );
+
+            glm::mat4x4 transform = glm::translate(this->base_matrix(), coordinates)
+                * glm::transpose(this->base_matrix())
+                * this->rotation_matrix_from_axis_vector(glm::vec3(0.0f, -1.0f, 0.0f));
+            transform = glm::scale(glm::translate(transform, glm::vec3(trans, el.radius)), scale);
+
+            model_instances.push_back({"quad_3d", transform, glm::vec4(1.0f), ch.texture_id});
+
+            x_off += 2 * ch.advance / 64;
+        }
     }
 
     return model_instances;
@@ -355,6 +403,22 @@ void StructureRenderer::create_animated_indices() {
 }
 
 /**
+ * @brief Create and set the list of default atom labels
+ */
+void StructureRenderer::create_default_labels() {
+    this->default_labels.clear();
+    std::unordered_map<unsigned int, unsigned int> element_counter;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        unsigned int atomic_number = this->structure->get_atomic_number(i);
+        unsigned int count = ++element_counter[atomic_number];
+
+        Element el = PeriodicTable::get_element(atomic_number);
+        this->default_labels.push_back(el.symbol + std::to_string(count));
+    }
+}
+
+/**
  * @brief Compute the rotation matrix to rotate an object aligned along the
  * z axis towards the given axis
  *
@@ -415,5 +479,15 @@ void StructureRenderer::process_animations() {
         this->animation_matrix = this->operation.calculate_fractional_matrix(f);
     }
 
+    emit this->update();
+}
+
+/**
+ * @brief Set the visibility of the default labels
+ *
+ * @param visible
+ */
+void StructureRenderer::set_default_labels_visible(bool visible) {
+    this->default_labels_visible = visible;
     emit this->update();
 }

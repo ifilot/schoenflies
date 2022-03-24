@@ -51,3 +51,14 @@ void Model::draw() {
 void Model::draw(unsigned int texture_a, unsigned int texture_b) {
     throw std::logic_error("Do not call methods from the base Model class!");
 }
+
+/**
+ * @brief Draw the model with three textures
+ *
+ * @param texture_a first texture color buffer to draw from
+ * @param texture_b second texture color buffer to draw from
+ * @param texture_c third texture color buffer to draw from
+ */
+void Model::draw(unsigned int texture_a, unsigned int texture_b, unsigned int texture_c) {
+    throw std::logic_error("Do not call methods from the base Model class!");
+}

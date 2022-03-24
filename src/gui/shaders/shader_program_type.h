@@ -23,6 +23,7 @@ enum ShaderProgramType {
     ModelShader,
     AxesShader,
     SilhouetteShader,
+    TextShader,
     CanvasShader,
     StereoscopicShader
 };

@@ -106,11 +106,13 @@ void ShaderProgram::add_uniforms(ShaderProgramType type) {
             this->uniforms.emplace("color", this->m_program->uniformLocation("color"));
             break;
         case ShaderProgramType::SilhouetteShader:
+        case ShaderProgramType::TextShader:
             this->uniforms.emplace("mvp", this->m_program->uniformLocation("mvp"));
             this->uniforms.emplace("color", this->m_program->uniformLocation("color"));
             break;
         case ShaderProgramType::CanvasShader:
             this->uniforms.emplace("silhouette_texture", this->m_program->uniformLocation("silhouette_texture"));
+            this->uniforms.emplace("labels_texture", this->m_program->uniformLocation("labels_texture"));
             this->uniforms.emplace("structure_texture", this->m_program->uniformLocation("structure_texture"));
             break;
         case ShaderProgramType::StereoscopicShader:

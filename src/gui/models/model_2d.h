@@ -61,6 +61,15 @@ public:
      * @param texture_b second texture color buffer to draw from
      */
     void draw(unsigned int texture_a, unsigned int texture_b) override;
+
+    /**
+     * @brief Draw the model with three textures
+     *
+     * @param texture_a first texture color buffer to draw from
+     * @param texture_b second texture color buffer to draw from
+     * @param texture_c third texture color buffer to draw from
+     */
+    void draw(unsigned int texture_a, unsigned int texture_b, unsigned int texture_c) override;
 };
 
 #endif  // GUI_MODELS_MODEL_2D_H

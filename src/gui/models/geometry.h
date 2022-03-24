@@ -61,6 +61,13 @@ public:
      * @return std::unique_ptr<Model2D>
      */
     static std::unique_ptr<Model2D> quad();
+
+    /**
+     * @brief Create a unique pointer to a 3D quad model
+     *
+     * @return std::unique_ptr<Model3D>
+     */
+    static std::unique_ptr<Model3D> quad_3d();
 };
 
 #endif  // GUI_MODELS_GEOMETRY_H

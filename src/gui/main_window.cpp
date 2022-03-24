@@ -145,6 +145,14 @@ MainWindow::MainWindow() {
     connect(action_open_character_table, &QAction::triggered, this, &MainWindow::open_character_table_dialog);
     menu_view->addAction(action_open_character_table);
 
+    menu_view->addSeparator();
+
+    QAction *action_show_default_labels = new QAction(menu_view);
+    action_show_default_labels->setCheckable(true);
+    action_show_default_labels->setText(tr("Show atom labels"));
+    menu_view->addAction(action_show_default_labels);
+    connect(action_show_default_labels, &QAction::triggered, this->central_widget->get_gl_widget()->get_structure_renderer().get(), &StructureRenderer::set_default_labels_visible);
+
     // actions for help menu
     QAction *action_about = new QAction(menu_help);
     action_about->setText(tr("About"));

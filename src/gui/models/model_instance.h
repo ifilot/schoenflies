@@ -26,6 +26,7 @@ struct ModelInstance {
     std::string model_name;
     glm::mat4x4 transform;
     glm::vec4 colour;
+    int texture_id;
 };
 
 #endif  // GUI_MODELS_MODEL_INSTANCE_H

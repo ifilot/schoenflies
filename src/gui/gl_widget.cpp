@@ -27,7 +27,8 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->bg = parent->palette().color(QPalette::ColorRole::Window);
     this->model_manager = std::make_unique<ModelManager>();
     this->shader_program_manager = std::make_unique<ShaderProgramManager>();
-    this->structure_renderer = std::make_shared<StructureRenderer>();
+    this->freetype_font = std::make_shared<FreeTypeFont>();
+    this->structure_renderer = std::make_shared<StructureRenderer>(this->freetype_font);
 
     this->reset_camera();
 
@@ -35,6 +36,7 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->model_manager->add_model("cylinder", Geometry::cylinder());
     this->model_manager->add_model("cylinder_capped", Geometry::cylinder(true));
     this->model_manager->add_model("circle", Geometry::circle());
+    this->model_manager->add_model("quad_3d", Geometry::quad_3d());
 
     this->model_manager->add_model("arrow", ObjLoader::load_from_obj(":/assets/models/arrow.obj"));
     this->model_manager->add_model("quad", Geometry::quad());
@@ -95,6 +97,7 @@ void GLWidget::initializeGL() {
     glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
 
     this->model_manager->load_models_to_vao();
+    this->freetype_font->initialize();
 
     this->load_shaders();
 
@@ -236,6 +239,8 @@ void GLWidget::initialize_frame_buffers() {
         glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[i]);
         glBindTexture(GL_TEXTURE_2D, this->texture_color_buffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this->texture_color_buffers[i], 0);
@@ -289,6 +294,18 @@ void GLWidget::paintGL_2d() {
     // draw silhouette models
     this->paint_silhouette_models();
 
+    // draw to label frame buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[FrameBuffer::Labels2D]);
+    glEnable(GL_DEPTH_TEST);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // draw silhouette models (ignore color)
+    this->paint_silhouette_models(true);
+
+    // draw labels
+    this->paint_labels();
+
     // draw to structure frame buffer
     glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[FrameBuffer::Structure2D]);
     glEnable(GL_DEPTH_TEST);
@@ -310,9 +327,11 @@ void GLWidget::paintGL_2d() {
     canvas_shader->bind();
 
     canvas_shader->set_uniform("silhouette_texture", 0);
-    canvas_shader->set_uniform("structure_texture", 1);
+    canvas_shader->set_uniform("labels_texture", 1);
+    canvas_shader->set_uniform("structure_texture", 2);
 
     quad_model->draw(this->texture_color_buffers[FrameBuffer::Silhouette2D],
+                     this->texture_color_buffers[FrameBuffer::Labels2D],
                      this->texture_color_buffers[FrameBuffer::Structure2D]);
 
     canvas_shader->release();
@@ -324,9 +343,9 @@ void GLWidget::paintGL_2d() {
  * @brief Render scene in stereoscopy
  */
 void GLWidget::paintGL_stereoscopy() {
-    const FrameBuffer framebuffers_side[2][3] = {
-        {FrameBuffer::SilhouetteLeft, FrameBuffer::StructureLeft, FrameBuffer::StereoscopicLeft},
-        {FrameBuffer::SilhouetteRight, FrameBuffer::StructureRight, FrameBuffer::StereoscopicRight}
+    const FrameBuffer framebuffers_side[2][4] = {
+        {FrameBuffer::SilhouetteLeft, FrameBuffer::LabelsLeft, FrameBuffer::StructureLeft, FrameBuffer::StereoscopicLeft},
+        {FrameBuffer::SilhouetteRight, FrameBuffer::LabelsRight, FrameBuffer::StructureRight, FrameBuffer::StereoscopicRight}
     };
 
     Model *quad_model = this->model_manager->get_model("quad");
@@ -342,14 +361,26 @@ void GLWidget::paintGL_stereoscopy() {
         // draw to silhouette frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][0]]);
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // draw silhouette models
         this->paint_silhouette_models();
 
-        // draw to structure frame buffer
+        // draw to label frame buffer
         glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][1]]);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // draw silhouette models (ignore color)
+        this->paint_silhouette_models(true);
+
+        // draw labels
+        this->paint_labels();
+
+        // draw to structure frame buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][2]]);
         glEnable(GL_DEPTH_TEST);
         glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -361,7 +392,7 @@ void GLWidget::paintGL_stereoscopy() {
         this->paint_operation_models();
 
         // draw to eye frame buffer
-        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][2]]);
+        glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffers[framebuffers_side[i][3]]);
         glDisable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -369,10 +400,12 @@ void GLWidget::paintGL_stereoscopy() {
         canvas_shader->bind();
 
         canvas_shader->set_uniform("silhouette_texture", 0);
-        canvas_shader->set_uniform("structure_texture", 1);
+        canvas_shader->set_uniform("labels_texture", 1);
+        canvas_shader->set_uniform("structure_texture", 2);
 
         quad_model->draw(this->texture_color_buffers[framebuffers_side[i][0]],
-                         this->texture_color_buffers[framebuffers_side[i][1]]);
+                         this->texture_color_buffers[framebuffers_side[i][1]],
+                         this->texture_color_buffers[framebuffers_side[i][2]]);
 
         canvas_shader->release();
 
@@ -452,8 +485,10 @@ void GLWidget::paint_operation_models() {
 
 /**
  * @brief Paint all instances of silhouette models to the screen
+ *
+ * @param ignore_color use black for all models if true
  */
-void GLWidget::paint_silhouette_models() {
+void GLWidget::paint_silhouette_models(bool ignore_color) {
     ShaderProgram *silhouette_shader = this->shader_program_manager->get_shader_program("silhouette_shader");
     silhouette_shader->bind();
 
@@ -464,12 +499,42 @@ void GLWidget::paint_silhouette_models() {
         this->mvp = this->projection * this->view * this->model;
 
         silhouette_shader->set_uniform("mvp", this->mvp);
-        silhouette_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+        if (ignore_color) {
+            silhouette_shader->set_uniform("color", QVector4D(0.0f, 0.0f, 0.0f, 1.0f));
+        } else {
+            silhouette_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+        }
 
         model->draw();
     }
 
     silhouette_shader->release();
+}
+
+/**
+ * @brief Paint atom labels to the screen
+ */
+void GLWidget::paint_labels() {
+    ShaderProgram *text_shader = this->shader_program_manager->get_shader_program("text_shader");
+    text_shader->bind();
+
+    for (ModelInstance instance : this->structure_renderer->get_label_model_instances()) {
+        Model *model = this->model_manager->get_model(instance.model_name);
+
+        this->model = this->convert_glm_matrix(instance.transform);
+        this->mvp = this->projection * this->view * this->model;
+
+        text_shader->set_uniform("mvp", this->mvp);
+        text_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+
+        QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+        f->glActiveTexture(GL_TEXTURE0);
+        f->glBindTexture(GL_TEXTURE_2D, instance.texture_id);
+
+        model->draw();
+    }
+
+    text_shader->release();
 }
 
 /**
@@ -546,6 +611,8 @@ void GLWidget::load_shaders() {
     this->shader_program_manager->create_shader_program("silhouette_shader", ShaderProgramType::SilhouetteShader, ":/assets/shaders/silhouette.vs", ":/assets/shaders/silhouette.fs");
 
     this->shader_program_manager->create_shader_program("canvas_shader", ShaderProgramType::CanvasShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/canvas.fs");
+
+    this->shader_program_manager->create_shader_program("text_shader", ShaderProgramType::TextShader, ":/assets/shaders/text.vs", ":/assets/shaders/text.fs");
 
     this->shader_program_manager->create_shader_program("stereo_anaglyph_red_cyan", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_anaglyph_red_cyan.fs");
     this->shader_program_manager->create_shader_program("stereo_interlaced_rows_lr", ShaderProgramType::StereoscopicShader, ":/assets/shaders/stereo.vs", ":/assets/shaders/stereo_interlaced_rows_lr.fs");

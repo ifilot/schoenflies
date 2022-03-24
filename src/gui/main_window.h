@@ -41,6 +41,7 @@
 #include <QString>
 #include "../program.h"
 #include "../structure.h"
+#include "../structure_renderer.h"
 #include "../library/library_item.h"
 #include "central_widget.h"
 #include "character_table_dialog.h"

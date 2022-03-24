@@ -84,3 +84,28 @@ void Model2D::draw(unsigned int texture_a, unsigned int texture_b) {
     f->glDrawArrays(GL_TRIANGLES, 0, this->vertices.size());
     this->vao.release();
 }
+
+/**
+ * @brief Draw the model with three textures
+ *
+ * @param texture_a first texture color buffer to draw from
+ * @param texture_b second texture color buffer to draw from
+ * @param texture_c third texture color buffer to draw from
+ */
+void Model2D::draw(unsigned int texture_a, unsigned int texture_b, unsigned int texture_c) {
+    QOpenGLFunctions *f = QOpenGLContext::currentContext()->functions();
+
+    if (!this->loaded_vao) {
+        throw std::logic_error("This model has not yet been loaded to VAO.");
+    }
+
+    this->vao.bind();
+    f->glActiveTexture(GL_TEXTURE0);
+    f->glBindTexture(GL_TEXTURE_2D, texture_a);
+    f->glActiveTexture(GL_TEXTURE1);
+    f->glBindTexture(GL_TEXTURE_2D, texture_b);
+    f->glActiveTexture(GL_TEXTURE2);
+    f->glBindTexture(GL_TEXTURE_2D, texture_c);
+    f->glDrawArrays(GL_TRIANGLES, 0, this->vertices.size());
+    this->vao.release();
+}
