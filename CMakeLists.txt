@@ -29,10 +29,14 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 # Use json
 find_package(nlohmann_json 3.9.0 REQUIRED)
 
+# Use FreeType
+find_package(Freetype REQUIRED)
+
 # Set include folders
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}
                     ${CMAKE_BINARY_DIR}
-                    ${Boost_INCLUDE_DIRS})
+                    ${Boost_INCLUDE_DIRS}
+                    ${FREETYPE_INCLUDE_DIRS})
 
 # Add test directory
 add_subdirectory(test)
@@ -42,6 +46,6 @@ file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
 add_executable(schoenflies ${SOURCES} ${RESOURCES_WINDOWS})
 
 # Libraries
-target_link_libraries(schoenflies ${Boost_LIBRARIES} glm::glm Qt5::Widgets Eigen3::Eigen nlohmann_json::nlohmann_json)
+target_link_libraries(schoenflies ${Boost_LIBRARIES} glm::glm Qt5::Widgets Eigen3::Eigen nlohmann_json::nlohmann_json ${FREETYPE_LIBRARIES})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

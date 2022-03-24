@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>assets/fonts/OpenSans-Regular.ttf</file>
         <file>assets/icons/schoenflies.ico</file>
         <file>assets/models/arrow.obj</file>
         <file>assets/shaders/axes.fs</file>

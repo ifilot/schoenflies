@@ -11,7 +11,7 @@ Determine and visualise molecular symmetry.
 ## Dependencies (Debian 11)
 
 ```
-sudo apt install build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libglm-dev nlohmann-json3-dev
+sudo apt install build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libfreetype-dev libglm-dev nlohmann-json3-dev
 ```
 
 ## Compilation (Debian 11)

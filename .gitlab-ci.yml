@@ -7,7 +7,7 @@ stages:
   - release
 
 variables:
-  WINEPATH: "Z:/usr/lib/gcc/x86_64-w64-mingw32/10-posix;Z:/usr/x86_64-w64-mingw32/lib;Z:${CI_PROJECT_DIR}/lib/qtbase-mingw-w64-x86-64-posix/bin;Z:${CI_PROJECT_DIR}/lib/qtbase-mingw-w64-x86-64-posix/plugins"
+  WINEPATH: "Z:/usr/lib/gcc/x86_64-w64-mingw32/10-posix;Z:/usr/x86_64-w64-mingw32/lib;Z:${CI_PROJECT_DIR}/lib/qtbase-mingw-w64-x86-64-posix/bin;Z:${CI_PROJECT_DIR}/lib/qtbase-mingw-w64-x86-64-posix/plugins;Z:${CI_PROJECT_DIR}/lib/freetype-mingw-w64-x86-64-posix/bin"
 
 default:
   before_script:
@@ -20,7 +20,7 @@ default:
 build-debian:
   stage: build
   variables:
-    APT_PACKAGES: "build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libglm-dev nlohmann-json3-dev"
+    APT_PACKAGES: "build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libfreetype-dev libglm-dev nlohmann-json3-dev"
   script:
     - cd build
     - cmake ..
@@ -68,6 +68,7 @@ build-windows:
     - ln -s /usr/include/glm /usr/x86_64-w64-mingw32/include/glm
     - cd lib
     - ./download_boost_mingw.sh
+    - ./download_freetype_mingw.sh
     - ./download_json_mingw.sh
     - ./download_qtbase_mingw.sh
     - cd ../build
@@ -86,6 +87,7 @@ test-windows:
     APT_PACKAGES: "bzip2 ca-certificates curl gcc-mingw-w64-x86-64-posix-runtime mingw-w64-x86-64-dev tar wine"
   script:
     - cd lib
+    - ./download_freetype_mingw.sh
     - ./download_qtbase_mingw.sh
     - cd ../build/test
     - wine schoenflies_test.exe
@@ -111,6 +113,7 @@ package-windows:
     - make
     - make install
     - cd ../lib
+    - ./download_freetype_mingw.sh
     - ./download_qtbase_mingw.sh
     - cd ../dist
     - mkdir win
