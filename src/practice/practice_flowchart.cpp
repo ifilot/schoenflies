@@ -26,10 +26,10 @@ PracticeFlowchart::PracticeFlowchart() {}
 /**
  * @brief Construct a new Practice Flowchart object
  *
- * @param symmetry symmetry object to practice
+ * @param practice_structure practice structure object
  */
-PracticeFlowchart::PracticeFlowchart(std::shared_ptr<Symmetry> symmetry) {
-    this->symmetry = symmetry;
+PracticeFlowchart::PracticeFlowchart(std::shared_ptr<PracticeStructure> practice_structure) {
+    this->practice_structure = practice_structure;
     this->add_step(PracticeFlowchartSteps::first_step);
 }
 
@@ -96,7 +96,7 @@ unsigned int PracticeFlowchart::get_latest_step_index() {
  */
 void PracticeFlowchart::add_step(std::string key) {
     auto step = std::make_shared<PracticeFlowchartStep>(PracticeFlowchartSteps::get_step(key));
-    step->calculate_correct_answer(this->symmetry);
+    step->calculate_correct_answer(this->practice_structure->get_symmetry());
     step->set_n(this->n);
     this->steps_taken.push_back(step);
 }

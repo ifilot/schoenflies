@@ -19,40 +19,25 @@
 #ifndef PRACTICE_PRACTICE_IRREPS_H
 #define PRACTICE_PRACTICE_IRREPS_H
 
-#include <iostream>
-
-#include <algorithm>
 #include <memory>
-#include <random>
 #include <stdexcept>
 #include <utility>
 #include <vector>
 #include <glm/glm.hpp>
-#include <nlohmann/json.hpp>
-#include "../orbitals/orbital_label.h"
-#include "../periodic_table/element.h"
-#include "../periodic_table/periodic_table.h"
 #include "../symmetry/irreps/irrep_label.h"
-#include "../symmetry/operations/operation_label.h"
+#include "../symmetry/operations/operation.h"
 #include "../symmetry/operations/operation_label_count.h"
 #include "../symmetry/symmetry.h"
+#include "../basis_set.h"
 #include "../structure.h"
-
-using json = nlohmann::json;
+#include "practice_structure.h"
 
 class PracticeIrreps {
 private:
-    std::shared_ptr<Symmetry> symmetry;
-
-    unsigned int basis_set_atomic_number;
-    std::vector<unsigned int> basis_set_atoms;
-    OrbitalLabel basis_set_orbital_label;
-    glm::vec3 basis_set_orbital_vector;
+    std::shared_ptr<PracticeStructure> practice_structure;
 
     std::vector<std::pair<OperationLabelCount, double>> correct_characters;
     std::vector<std::pair<IrrepLabel, double>> correct_irreps;
-
-    std::mt19937 random_engine;
 
 public:
     /**
@@ -63,30 +48,9 @@ public:
     /**
      * @brief Construct a new Practice Irreps object
      *
-     * @param symmetry symmetry object to practice
+     * @param practice_structure practice structure object
      */
-    PracticeIrreps(std::shared_ptr<Symmetry> symmetry);
-
-    /**
-     * @brief Get the element used as basis set
-     *
-     * @return const Element
-     */
-    const Element get_basis_set_element() const;
-
-    /**
-     * @brief Get the number of atoms in the basis set
-     *
-     * @return const unsigned int
-     */
-    const unsigned int get_basis_set_count() const;
-
-    /**
-     * @brief Get the orbital label of the basis set
-     *
-     * @return const OrbitalLabel&
-     */
-    const OrbitalLabel& get_basis_set_orbital_label() const;
+    PracticeIrreps(std::shared_ptr<PracticeStructure> practice_structure);
 
     /**
      * @brief Get the correct character values
@@ -103,11 +67,6 @@ public:
     std::vector<std::pair<IrrepLabel, double>> get_correct_irreps();
 
 private:
-    /**
-     * @brief Create the basis set
-     */
-    void create_basis_set();
-
     /**
      * @brief Calculate the correct answers to the questions
      */

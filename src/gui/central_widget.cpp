@@ -66,7 +66,7 @@ void CentralWidget::set_structure(std::shared_ptr<Structure> structure) {
     this->gl_widget->set_structure(structure, symmetry->get_cartesian_axes());
 
     this->symmetry_widget->set_symmetry(symmetry);
-    this->practice_widget->set_symmetry(symmetry);
+    this->practice_widget->create_practice_structure(symmetry);
 }
 
 void CentralWidget::set_gui_mode(QAction* action) {

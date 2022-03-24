@@ -26,14 +26,14 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include "../symmetry/symmetry.h"
 #include "practice_flowchart_step.h"
 #include "practice_flowchart_steps.h"
+#include "practice_structure.h"
 
 class PracticeFlowchart {
 private:
 public:
-    std::shared_ptr<Symmetry> symmetry;
+    std::shared_ptr<PracticeStructure> practice_structure;
     std::vector<std::shared_ptr<PracticeFlowchartStep>> steps_taken;
 
     int n = 0;
@@ -47,9 +47,9 @@ public:
     /**
      * @brief Construct a new Practice Flowchart object
      *
-     * @param symmetry symmetry object to practice
+     * @param practice_structure practice structure object
      */
-    PracticeFlowchart(std::shared_ptr<Symmetry> symmetry);
+    PracticeFlowchart(std::shared_ptr<PracticeStructure> practice_structure);
 
     /**
      * @brief Handle an answer given to a step

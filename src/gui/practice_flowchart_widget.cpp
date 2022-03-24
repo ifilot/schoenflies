@@ -39,15 +39,15 @@ PracticeFlowchartWidget::PracticeFlowchartWidget(QWidget* parent) {
 /**
  * @brief Initialize a new flowchart object
  *
- * @param symmetry
+ * @param practice_structure
  */
-void PracticeFlowchartWidget::initialize_flowchart(std::shared_ptr<Symmetry> symmetry) {
+void PracticeFlowchartWidget::initialize_flowchart(std::shared_ptr<PracticeStructure> practice_structure) {
     // remove all existing step widgets
     for (int i = this->step_widgets.size() - 1; i >= 0; --i) {
         this->remove_step_widget(i);
     }
 
-    this->flowchart = PracticeFlowchart(symmetry);
+    this->flowchart = PracticeFlowchart(practice_structure);
     this->add_step_widget();
 }
 

@@ -29,7 +29,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include "../practice/practice_flowchart.h"
-#include "../symmetry/symmetry.h"
+#include "../practice/practice_structure.h"
 #include "practice_flowchart_step_widget.h"
 
 class PracticeFlowchartWidget: public QScrollArea {
@@ -40,7 +40,7 @@ private:
     QVBoxLayout *layout;
     QWidget *container;
 
-    std::shared_ptr<Symmetry> symmetry;
+    std::shared_ptr<PracticeStructure> practice_structure;
     PracticeFlowchart flowchart;
 
 public:
@@ -54,9 +54,9 @@ public:
     /**
      * @brief Initialize a new flowchart
      *
-     * @param symmetry
+     * @param practice_structure
      */
-    void initialize_flowchart(std::shared_ptr<Symmetry> symmetry);
+    void initialize_flowchart(std::shared_ptr<PracticeStructure> practice_structure);
 
 private:
     /**

@@ -34,7 +34,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include "../practice/practice_irreps.h"
-#include "../symmetry/symmetry.h"
+#include "../practice/practice_structure.h"
 
 class PracticeIrrepsWidget: public QScrollArea {
     Q_OBJECT
@@ -68,9 +68,9 @@ public:
     /**
      * @brief Initialize a new exercise
      *
-     * @param symmetry
+     * @param practice_structure
      */
-    void initialize(std::shared_ptr<Symmetry> symmetry);
+    void initialize(std::shared_ptr<PracticeStructure> practice_structure);
 
 private slots:
     /**

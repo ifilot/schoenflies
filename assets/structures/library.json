@@ -75,18 +75,18 @@
                 "enabled": true
             },
             "irreps": {
-                "enabled": true,
-                "basis_sets": [
-                    {
-                        "element": "C",
-                        "orbital": "2s"
-                    },
-                    {
-                        "element": "C",
-                        "orbital": "2pz"
-                    }
-                ]
-            }
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {

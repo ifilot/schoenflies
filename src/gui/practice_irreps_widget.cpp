@@ -89,17 +89,17 @@ PracticeIrrepsWidget::PracticeIrrepsWidget(QWidget* parent) {
 /**
  * @brief Initialize a new exercise
  *
- * @param symmetry
+ * @param practice_structure
  */
-void PracticeIrrepsWidget::initialize(std::shared_ptr<Symmetry> symmetry) {
-    this->irreps = PracticeIrreps(symmetry);
+void PracticeIrrepsWidget::initialize(std::shared_ptr<PracticeStructure> practice_structure) {
+    this->irreps = PracticeIrreps(practice_structure);
 
     this->submit_operation_characters->setVisible(true);
     this->part2->setVisible(false);
 
     this->q1->setText(QString("Consider the %1 atomic orbitals of %2 as basis set. How many orbitals remain in place for each symmetry operation?")
-        .arg(QString::fromStdString(this->irreps.get_basis_set_orbital_label().get_name_html()))
-        .arg(QString::fromStdString(this->irreps.get_basis_set_element().name)));
+        .arg(QString::fromStdString(practice_structure->get_basis_set()->get_orbital_label().get_name_html()))
+        .arg(QString::fromStdString(practice_structure->get_basis_set()->get_element().name)));
 
     while (this->operation_characters_grid->count() > 0) {
         delete this->operation_characters_grid->itemAt(0)->widget();
@@ -118,7 +118,7 @@ void PracticeIrrepsWidget::initialize(std::shared_ptr<Symmetry> symmetry) {
     this->operation_characters_grid->addWidget(identity_label, 0, 0, Qt::AlignmentFlag::AlignRight);
 
     QLineEdit* identity_character = new QLineEdit;
-    identity_character->setText(QString::number(this->irreps.get_basis_set_count()));
+    identity_character->setText(QString::number(practice_structure->get_basis_set()->get_atoms().size()));
     identity_character->setEnabled(false);
     this->operation_characters_grid->addWidget(identity_character, 0, 1);
 

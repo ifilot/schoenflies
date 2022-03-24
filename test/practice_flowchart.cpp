@@ -23,6 +23,7 @@
 #include "../src/structure.h"
 #include "../src/practice/practice_flowchart.h"
 #include "../src/practice/practice_flowchart_step.h"
+#include "../src/practice/practice_structure.h"
 #include "../src/symmetry/symmetry.h"
 #include "../src/symmetry/point_groups/point_group_label.h"
 #include "utils.h"
@@ -33,7 +34,8 @@ BOOST_AUTO_TEST_CASE(Dinfh) {
     std::string file = resolve_path("test/files/carbon-dioxide.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {1, 1};
 
@@ -54,7 +56,8 @@ BOOST_AUTO_TEST_CASE(Cinfv) {
     std::string file = resolve_path("test/files/hydrogen-chloride.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {1, 0};
 
@@ -73,7 +76,8 @@ BOOST_AUTO_TEST_CASE(Ih) {
     std::string file = resolve_path("test/files/buckminsterfullerene.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 1, 1, 1};
 
@@ -95,7 +99,8 @@ BOOST_AUTO_TEST_CASE(Oh) {
     std::string file = resolve_path("test/files/cubane.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 1, 1, 0};
 
@@ -114,7 +119,8 @@ BOOST_AUTO_TEST_CASE(Td) {
     std::string file = resolve_path("test/files/methane.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 1, 0};
 
@@ -133,7 +139,8 @@ BOOST_AUTO_TEST_CASE(D3h) {
     std::string file = resolve_path("test/files/prismane.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 1, 3, 1, 1};
 
@@ -156,7 +163,8 @@ BOOST_AUTO_TEST_CASE(D2d) {
     std::string file = resolve_path("test/files/cyclooctatetraene.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 1, 2, 1, 0, 1};
 
@@ -176,7 +184,8 @@ BOOST_AUTO_TEST_CASE(D3) {
     std::string file = resolve_path("test/files/bicyclooctane.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 1, 3, 1, 0, 0};
 
@@ -195,7 +204,8 @@ BOOST_AUTO_TEST_CASE(C3h) {
     std::string file = resolve_path("test/files/boric-acid.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 1, 3, 0, 1};
 
@@ -215,7 +225,8 @@ BOOST_AUTO_TEST_CASE(C4v) {
     std::string file = resolve_path("test/files/pentaborane-9.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 1, 4, 0, 0, 1};
 
@@ -235,7 +246,8 @@ BOOST_AUTO_TEST_CASE(C3) {
     std::string file = resolve_path("test/files/triethylamine.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 1, 3, 0, 0, 0, 0};
 
@@ -255,7 +267,8 @@ BOOST_AUTO_TEST_CASE(Cs) {
     std::string file = resolve_path("test/files/thionyl-chloride.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 0, 1};
 
@@ -275,7 +288,8 @@ BOOST_AUTO_TEST_CASE(Ci) {
     std::string file = resolve_path("test/files/E-hex-3-ene.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 0, 0, 1};
 
@@ -295,7 +309,8 @@ BOOST_AUTO_TEST_CASE(C1) {
     std::string file = resolve_path("test/files/fluorochlorobromomethane.xyz");
     auto struc = std::make_shared<Structure>(file);
     auto symmetry = std::make_shared<Symmetry>(struc);
-    PracticeFlowchart flowchart(symmetry);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
 
     std::vector<int> answers = {0, 0, 0, 0, 0};
 

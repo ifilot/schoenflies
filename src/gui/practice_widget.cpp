@@ -63,12 +63,12 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
 }
 
 /**
- * @brief Set the symmetry object
+ * @brief Create a practice structure object
  *
  * @param symmetry
  */
-void PracticeWidget::set_symmetry(const std::shared_ptr<Symmetry> symmetry) {
-    this->symmetry = symmetry;
+void PracticeWidget::create_practice_structure(const std::shared_ptr<Symmetry> symmetry) {
+    this->practice_structure = std::make_shared<PracticeStructure>(symmetry);
 }
 
 /**
@@ -118,11 +118,11 @@ void PracticeWidget::create_exercise() {
 
     switch (practice_module) {
         case PracticeModule::Flowchart:
-            this->flowchart_widget->initialize_flowchart(this->symmetry);
+            this->flowchart_widget->initialize_flowchart(this->practice_structure);
             this->subwidgets->setCurrentWidget(this->flowchart_widget);
             break;
         case PracticeModule::Irreps:
-            this->irreps_widget->initialize(this->symmetry);
+            this->irreps_widget->initialize(this->practice_structure);
             this->subwidgets->setCurrentWidget(this->irreps_widget);
         default:
             std::runtime_error("Invalid practice module encountered.");

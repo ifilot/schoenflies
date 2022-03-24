@@ -31,6 +31,7 @@
 #include "../library/library_item.h"
 #include "../practice/practice_config.h"
 #include "../practice/practice_module.h"
+#include "../practice/practice_structure.h"
 #include "practice_config_widget.h"
 #include "practice_flowchart_widget.h"
 #include "practice_irreps_widget.h"
@@ -51,7 +52,7 @@ private:
     PracticeIrrepsWidget* irreps_widget;
 
     std::shared_ptr<PracticeConfig> practice_config;
-    std::shared_ptr<Symmetry> symmetry;
+    std::shared_ptr<PracticeStructure> practice_structure;
     std::shared_ptr<Library> library;
 
 public:
@@ -63,11 +64,11 @@ public:
     PracticeWidget(QWidget* parent);
 
     /**
-     * @brief Set the symmetry object
+     * @brief Create a practice structure object
      *
      * @param symmetry
      */
-    void set_symmetry(const std::shared_ptr<Symmetry> symmetry);
+    void create_practice_structure(const std::shared_ptr<Symmetry> symmetry);
 
     /**
      * @brief Set the library object
