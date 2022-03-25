@@ -43,8 +43,11 @@ private:
 public:
     /**
      * @brief Construct a new Library object
+     *
+     * @param include_built_in_library whether to immediately load the library
+     * built in to this program. Only set this to `false` for testing purposes!
      */
-    Library();
+    Library(bool include_built_in_library = true);
 
     /**
      * @brief Get the items in the library
@@ -67,7 +70,6 @@ public:
      */
     void set_practice_config(const std::shared_ptr<PracticeConfig> practice_config);
 
-private:
     /**
      * @brief Add items from a package
      *
@@ -75,6 +77,7 @@ private:
      */
     void add_items_from_package(const std::string path);
 
+private:
     /**
      * @brief Generate the subset of library items available for practice
      */

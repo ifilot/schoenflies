@@ -20,9 +20,12 @@
 
 /**
  * @brief Construct a new Library object
+ *
+ * @param include_built_in_library whether to immediately load the library
+ * built in to this program. Only set this to `false` for testing purposes!
  */
-Library::Library() {
-    this->add_items_from_package(":/assets/structures/library.json");
+Library::Library(bool include_built_in_library) {
+    if (include_built_in_library) this->add_items_from_package(":/assets/structures/library.json");
 
     std::random_device device;
     this->random_engine = std::mt19937(device());
