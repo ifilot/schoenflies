@@ -33,6 +33,7 @@ using json = nlohmann::json;
 class PracticeStructure {
 private:
     std::shared_ptr<Symmetry> symmetry;
+    bool use_random;
 
     bool basis_set_generated = false;
     std::shared_ptr<BasisSet> basis_set;
@@ -47,8 +48,10 @@ public:
      * @brief Construct a new PracticeStructure object
      *
      * @param symmetry
+     * @param use_random whether to use a RNG to generate practice properties.
+     * Only set this to `false` for testing purposes!
      */
-    PracticeStructure(std::shared_ptr<Symmetry> symmetry);
+    PracticeStructure(std::shared_ptr<Symmetry> symmetry, bool use_random = true);
 
     /**
      * @brief Get the symmetry object

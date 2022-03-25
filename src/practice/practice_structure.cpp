@@ -22,9 +22,12 @@
  * @brief Construct a new PracticeStructure object
  *
  * @param symmetry
+ * @param use_random whether to use a RNG to generate practice properties.
+ * Only set this to `false` for testing purposes!
  */
-PracticeStructure::PracticeStructure(std::shared_ptr<Symmetry> symmetry) {
+PracticeStructure::PracticeStructure(std::shared_ptr<Symmetry> symmetry, bool use_random) {
     this->symmetry = symmetry;
+    this->use_random = use_random;
 
     std::random_device device;
     this->random_engine = std::mt19937(device());
@@ -74,7 +77,7 @@ void PracticeStructure::generate_basis_set() {
     json& basis_sets = practice_config["basis_sets"];
 
     std::uniform_int_distribution<> dist(0, basis_sets.size() - 1);
-    int index = dist(this->random_engine);
+    int index = (this->use_random) ? dist(this->random_engine) : 0;
 
     this->basis_set = std::make_shared<BasisSet>(basis_sets[index], structure);
     this->basis_set_generated = true;
@@ -91,7 +94,7 @@ void PracticeStructure::generate_base_atom() {
     const std::vector<unsigned int>& basis_set_atoms = this->basis_set->get_atoms();
 
     std::uniform_int_distribution<> dist(0, basis_set_atoms.size() - 1);
-    int index = dist(this->random_engine);
+    int index = (this->use_random) ? dist(this->random_engine) : 0;
 
     this->base_atom = index;  // with respect to basis set
     this->base_atom_generated = true;
