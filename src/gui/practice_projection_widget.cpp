@@ -33,7 +33,7 @@ PracticeProjectionWidget::PracticeProjectionWidget(QWidget* parent) {
     connect(this->verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(scroll_to_bottom()));
 
     this->question = new QLabel;
-    this->question->setText("Apply the projection operator to the xxx atomic orbital of the atom labelled xxx. How does this orbital transform under each symmetry operation of the point group?");
+    this->question->setText("Apply the projection operator to the <b>xxx</b> atomic orbital of the atom labelled <b>xxx</b>. How does this orbital transform under each symmetry operation of the point group?");
     this->question->setTextFormat(Qt::TextFormat::RichText);
     this->question->setWordWrap(true);
     this->layout->addWidget(this->question);
@@ -58,7 +58,7 @@ PracticeProjectionWidget::PracticeProjectionWidget(QWidget* parent) {
 void PracticeProjectionWidget::initialize(std::shared_ptr<PracticeStructure> practice_structure) {
     this->projection = PracticeProjection(practice_structure);
 
-    this->question->setText(QString("Apply the projection operator to the %1 atomic orbital of the atom labelled %2. How does this orbital transform under each symmetry operation of the point group?")
+    this->question->setText(QString("Apply the projection operator to the <b>%1</b> atomic orbital of the atom labelled <b>%2</b>. How does this orbital transform under each symmetry operation of the point group?")
         .arg(QString::fromStdString(practice_structure->get_basis_set()->get_orbital_label().get_name_html()))
         .arg(practice_structure->get_base_atom() + 1));
 
