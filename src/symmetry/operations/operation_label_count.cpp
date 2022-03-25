@@ -68,7 +68,7 @@ OperationLabel& OperationLabelCount::get_label() {
  * @return const std::string
  */
 const std::string OperationLabelCount::get_name() const {
-    return this->get_count_prefix() + this->label.get_name();
+    return this->get_count_prefix() + this->label.get_name() + ((this->count > 1) ? "s" : "");
 }
 
 /**
@@ -77,7 +77,7 @@ const std::string OperationLabelCount::get_name() const {
  * @return const std::string
  */
 const std::string OperationLabelCount::get_name_html() const {
-    return this->get_count_prefix() + this->label.get_name_html();
+    return this->get_count_prefix() + this->label.get_name_html() + ((this->count > 1) ? "s" : "");
 }
 
 /**
