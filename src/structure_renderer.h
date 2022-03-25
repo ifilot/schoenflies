@@ -70,6 +70,8 @@ private:
     bool default_labels_visible = false;
     std::vector<std::string> default_labels;
 
+    std::unordered_map<unsigned int, std::string> custom_labels;
+
     std::shared_ptr<FreeTypeFont> freetype_font;
 
 public:
@@ -125,6 +127,19 @@ public:
      * @brief Unhighlight all atoms
      */
     void unhighlight_atoms();
+
+    /**
+     * @brief Set a custom label
+     *
+     * @param index
+     * @param label
+     */
+    void set_custom_label(unsigned int index, const std::string& label);
+
+    /**
+     * @brief Clear all custom labels
+     */
+    void clear_custom_labels();
 
     /**
      * @brief Start animating an operation
@@ -233,6 +248,14 @@ private:
      * @brief Create and set the list of default atom labels
      */
     void create_default_labels();
+
+    /**
+     * @brief Get whether custom labels should be visible
+     *
+     * @return true
+     * @return false
+     */
+    bool get_custom_labels_visible();
 
     /**
      * @brief Compute the rotation matrix to rotate an object aligned along the

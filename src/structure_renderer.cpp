@@ -47,6 +47,7 @@ void StructureRenderer::set_structure(const std::shared_ptr<Structure> structure
     this->create_default_labels();
 
     this->unhighlight_atoms();
+    this->clear_custom_labels();
 }
 
 /**
@@ -113,6 +114,29 @@ void StructureRenderer::unhighlight_atom(unsigned int index) {
  */
 void StructureRenderer::unhighlight_atoms() {
     this->highlighted_atoms.clear();
+}
+
+/**
+ * @brief Set a custom atom label
+ *
+ * @param index
+ * @param label
+ */
+void StructureRenderer::set_custom_label(unsigned int index, const std::string& label) {
+    if (!this->structure_set) throw std::runtime_error("No structure set.");
+
+    if (index < this->structure->get_num_atoms()) {
+        this->custom_labels[index] = label;
+    } else {
+        throw std::runtime_error("Requested invalid atom index.");
+    }
+}
+
+/**
+ * @brief Clear all custom atom labels
+ */
+void StructureRenderer::clear_custom_labels() {
+    this->custom_labels.clear();
 }
 
 /**
@@ -286,7 +310,8 @@ std::vector<ModelInstance> StructureRenderer::get_operation_model_instances() {
  */
 std::vector<ModelInstance> StructureRenderer::get_label_model_instances() {
     std::vector<ModelInstance> model_instances;
-    if (!this->structure_set || !this->default_labels_visible) return model_instances;
+    if (!this->structure_set || (!this->default_labels_visible && !this->get_custom_labels_visible()))
+        return model_instances;
 
     const float font_scale = 0.004f;
 
@@ -295,7 +320,17 @@ std::vector<ModelInstance> StructureRenderer::get_label_model_instances() {
         glm::vec3 coordinates = this->animation_matrix * this->structure->get_coordinates(i);
 
         unsigned int ai = this->animated_indices[i];
-        std::string& label = this->default_labels[ai];
+
+        std::string label;
+        if (this->get_custom_labels_visible()) {
+            auto it = this->custom_labels.find(ai);
+            if (it == this->custom_labels.end()) continue;
+            label = it->second;
+        } else if (this->default_labels_visible) {  // custom labels override default labels
+            label = this->default_labels[ai];
+        } else {
+            continue;
+        }
         glm::ivec2 label_size = this->freetype_font->get_string_size(label);
 
         float x_off = -label_size.x / 2;
@@ -423,6 +458,16 @@ void StructureRenderer::create_default_labels() {
         Element el = PeriodicTable::get_element(atomic_number);
         this->default_labels.push_back(el.symbol + std::to_string(count));
     }
+}
+
+/**
+ * @brief Get whether custom labels should be visible
+ *
+ * @return true
+ * @return false
+ */
+bool StructureRenderer::get_custom_labels_visible() {
+    return this->custom_labels.size() > 0;
 }
 
 /**
