@@ -740,3 +740,16 @@ void GLWidget::highlight_atoms(const QList<unsigned int>& atoms) {
     }
     this->update();
 }
+
+/**
+ * @brief Label atoms in the GL widget
+ *
+ * @param labels map of atom indices and labels
+ */
+void GLWidget::label_atoms(const QMap<unsigned int, std::string>& labels) {
+    this->structure_renderer->clear_custom_labels();
+    for (auto it = labels.constBegin(); it != labels.constEnd(); ++it) {
+        this->structure_renderer->set_custom_label(it.key(), it.value());
+    }
+    this->update();
+}

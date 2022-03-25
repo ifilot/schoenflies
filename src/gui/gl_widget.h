@@ -22,6 +22,7 @@
 #include <chrono>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -29,6 +30,7 @@
 #include <QtMath>
 #include <QAction>
 #include <QList>
+#include <QMap>
 #include <QMatrix4x4>
 #include <QMouseEvent>
 #include <QOpenGLContext>
@@ -289,6 +291,13 @@ public slots:
      * @param atoms atom indices to highlight
      */
     void highlight_atoms(const QList<unsigned int>& atoms);
+
+    /**
+     * @brief Label atoms in the GL widget
+     *
+     * @param labels map of atom indices and labels
+     */
+    void label_atoms(const QMap<unsigned int, std::string>& labels);
 
 signals:
     /**

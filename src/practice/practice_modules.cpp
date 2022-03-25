@@ -23,7 +23,8 @@
  */
 const std::unordered_map<PracticeModule, std::string> PracticeModules::keys = {
     {PracticeModule::Flowchart, "flowchart"},
-    {PracticeModule::Irreps, "irreps"}
+    {PracticeModule::Irreps, "irreps"},
+    {PracticeModule::Projection, "projection"}
 };
 
 /**

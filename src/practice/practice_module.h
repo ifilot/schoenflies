@@ -21,7 +21,8 @@
 
 enum PracticeModule {
     Flowchart,
-    Irreps
+    Irreps,
+    Projection
 };
 
 #endif  // PRACTICE_PRACTICE_MODULE_H

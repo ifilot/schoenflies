@@ -38,6 +38,7 @@ private:
 
     QCheckBox *flowchart_checkbox;
     QCheckBox *irreps_checkbox;
+    QCheckBox *projection_checkbox;
     QPushButton *start_button;
 
     std::shared_ptr<PracticeConfig> practice_config;

@@ -45,6 +45,12 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
     connect(this->irreps_widget, SIGNAL(finished_exercise()), this, SLOT(finished_exercise()));
     connect(this->irreps_widget, SIGNAL(highlight_atoms(QList<unsigned int>)), this, SIGNAL(highlight_atoms(QList<unsigned int>)));
 
+    this->projection_widget = new PracticeProjectionWidget(this);
+    this->subwidgets->addWidget(this->projection_widget);
+    connect(this->projection_widget, SIGNAL(finished_exercise()), this, SLOT(finished_exercise()));
+    connect(this->projection_widget, SIGNAL(highlight_atoms(QList<unsigned int>)), this, SIGNAL(highlight_atoms(QList<unsigned int>)));
+    connect(this->projection_widget, SIGNAL(label_atoms(QMap<unsigned int, std::string>)), this, SIGNAL(label_atoms(QMap<unsigned int, std::string>)));
+
     this->buttons_widget = new QWidget;
     QHBoxLayout *buttons_layout = new QHBoxLayout;
     buttons_layout->setContentsMargins(0, 0, 0, 0);
@@ -106,6 +112,7 @@ void PracticeWidget::stop_practice() {
     this->subwidgets->setCurrentWidget(this->config_widget);
 
     emit this->highlight_atoms({});
+    emit this->label_atoms({});
 }
 
 /**
@@ -119,6 +126,7 @@ void PracticeWidget::create_exercise() {
         emit request_new_structure();
     } else {
         emit this->highlight_atoms({});
+        emit this->label_atoms({});
     }
 
     switch (practice_module) {
@@ -129,6 +137,11 @@ void PracticeWidget::create_exercise() {
         case PracticeModule::Irreps:
             this->irreps_widget->initialize(this->practice_structure);
             this->subwidgets->setCurrentWidget(this->irreps_widget);
+            break;
+        case PracticeModule::Projection:
+            this->projection_widget->initialize(this->practice_structure);
+            this->subwidgets->setCurrentWidget(this->projection_widget);
+            break;
         default:
             std::runtime_error("Invalid practice module encountered.");
     }

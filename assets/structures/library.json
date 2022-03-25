@@ -77,6 +77,9 @@
             "irreps": {
                 "enabled": true
             },
+            "projection": {
+                "enabled": true
+            },
             "basis_sets": [
                 {
                     "element": "C",

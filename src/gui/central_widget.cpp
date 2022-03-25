@@ -51,6 +51,7 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     connect(this->practice_widget, SIGNAL(request_new_structure()), mw, SLOT(load_library_practice_structure()));
     connect(this->practice_widget, SIGNAL(open_character_table_dialog()), mw, SLOT(open_character_table_dialog()));
     connect(this->practice_widget, SIGNAL(highlight_atoms(QList<unsigned int>)), this->gl_widget, SLOT(highlight_atoms(QList<unsigned int>)));
+    connect(this->practice_widget, SIGNAL(label_atoms(QMap<unsigned int, std::string>)), this->gl_widget, SLOT(label_atoms(QMap<unsigned int, std::string>)));
 }
 
 /**

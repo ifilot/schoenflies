@@ -37,6 +37,9 @@ private:
     bool basis_set_generated = false;
     std::shared_ptr<BasisSet> basis_set;
 
+    bool base_atom_generated = false;
+    unsigned int base_atom;
+
     std::mt19937 random_engine;
 
 public:
@@ -61,11 +64,24 @@ public:
      */
     const std::shared_ptr<BasisSet> get_basis_set();
 
+    /**
+     * @brief Get the base atom index (generate one if none exists yet)
+     * The base atom index is with respect to the basis set, not the structure!
+     *
+     * @return const unsigned int
+     */
+    const unsigned int get_base_atom();
+
 private:
     /**
      * @brief Generate a random basis set object
      */
     void generate_basis_set();
+
+    /**
+     * @brief Generate a random base atom index
+     */
+    void generate_base_atom();
 };
 
 #endif  // PRACTICE_PRACTICE_STRUCTURE_H

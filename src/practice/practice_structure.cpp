@@ -50,6 +50,17 @@ const std::shared_ptr<BasisSet> PracticeStructure::get_basis_set() {
 }
 
 /**
+ * @brief Get the base atom index (generate one if none exists yet)
+ * The base atom index is with respect to the basis set, not the structure!
+ *
+ * @return const unsigned int
+ */
+const unsigned int PracticeStructure::get_base_atom() {
+    if (!this->base_atom_generated) this->generate_base_atom();
+    return this->base_atom;
+}
+
+/**
  * @brief Generate a random basis set object
  */
 void PracticeStructure::generate_basis_set() {
@@ -67,4 +78,21 @@ void PracticeStructure::generate_basis_set() {
 
     this->basis_set = std::make_shared<BasisSet>(basis_sets[index], structure);
     this->basis_set_generated = true;
+}
+
+/**
+ * @brief Generate a random base atom index
+ */
+void PracticeStructure::generate_base_atom() {
+    if (!this->basis_set_generated) {
+        throw std::runtime_error("Cannot generate base atom without basis set");
+    }
+
+    const std::vector<unsigned int>& basis_set_atoms = this->basis_set->get_atoms();
+
+    std::uniform_int_distribution<> dist(0, basis_set_atoms.size() - 1);
+    int index = dist(this->random_engine);
+
+    this->base_atom = index;  // with respect to basis set
+    this->base_atom_generated = true;
 }

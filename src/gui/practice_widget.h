@@ -21,9 +21,11 @@
 
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QList>
+#include <QMap>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -36,6 +38,7 @@
 #include "practice_config_widget.h"
 #include "practice_flowchart_widget.h"
 #include "practice_irreps_widget.h"
+#include "practice_projection_widget.h"
 
 class PracticeWidget: public QWidget {
     Q_OBJECT
@@ -51,6 +54,7 @@ private:
     PracticeConfigWidget* config_widget;
     PracticeFlowchartWidget* flowchart_widget;
     PracticeIrrepsWidget* irreps_widget;
+    PracticeProjectionWidget *projection_widget;
 
     std::shared_ptr<PracticeConfig> practice_config;
     std::shared_ptr<PracticeStructure> practice_structure;
@@ -116,6 +120,13 @@ signals:
      * @param atoms atom indices to highlight
      */
     void highlight_atoms(const QList<unsigned int>& atoms);
+
+    /**
+     * @brief Label atoms in the GL widget
+     *
+     * @param labels map of atom indices and labels
+     */
+    void label_atoms(const QMap<unsigned int, std::string>& labels);
 };
 
 #endif  // GUI_PRACTICE_WIDGET_H

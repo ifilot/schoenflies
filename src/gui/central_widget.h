@@ -20,10 +20,12 @@
 #define GUI_CENTRAL_WIDGET_H
 
 #include <memory>
+#include <string>
 #include <Qt>
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QList>
+#include <QMap>
 #include <QModelIndex>
 #include <QSizePolicy>
 #include <QStackedWidget>

@@ -44,6 +44,11 @@ PracticeConfigWidget::PracticeConfigWidget(QWidget* parent) {
     this->irreps_checkbox->setChecked(true);
     this->layout->addWidget(this->irreps_checkbox);
 
+    this->projection_checkbox = new QCheckBox;
+    this->projection_checkbox->setText("Projection operator");
+    this->projection_checkbox->setChecked(true);
+    this->layout->addWidget(this->projection_checkbox);
+
     this->start_button = new QPushButton;
     this->start_button->setText("Start practice");
     this->layout->addWidget(this->start_button);
@@ -69,6 +74,7 @@ void PracticeConfigWidget::create_practice_config() {
 
     if (this->flowchart_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Flowchart);
     if (this->irreps_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Irreps);
+    if (this->projection_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Projection);
 
     emit start();
 }
