@@ -43,6 +43,7 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
     this->irreps_widget = new PracticeIrrepsWidget(this);
     this->subwidgets->addWidget(this->irreps_widget);
     connect(this->irreps_widget, SIGNAL(finished_exercise()), this, SLOT(finished_exercise()));
+    connect(this->irreps_widget, SIGNAL(highlight_atoms(QList<unsigned int>)), this, SIGNAL(highlight_atoms(QList<unsigned int>)));
 
     this->buttons_widget = new QWidget;
     QHBoxLayout *buttons_layout = new QHBoxLayout;
@@ -103,6 +104,8 @@ void PracticeWidget::finished_exercise() {
 void PracticeWidget::stop_practice() {
     this->buttons_widget->setVisible(false);
     this->subwidgets->setCurrentWidget(this->config_widget);
+
+    emit this->highlight_atoms({});
 }
 
 /**
@@ -114,6 +117,8 @@ void PracticeWidget::create_exercise() {
     PracticeModule practice_module = this->practice_config->get_next_module();
     if (this->practice_config->get_select_new_structure()) {
         emit request_new_structure();
+    } else {
+        emit this->highlight_atoms({});
     }
 
     switch (practice_module) {

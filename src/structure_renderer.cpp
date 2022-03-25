@@ -46,7 +46,7 @@ void StructureRenderer::set_structure(const std::shared_ptr<Structure> structure
     this->create_animated_indices();
     this->create_default_labels();
 
-    this->highlighted_atoms.clear();
+    this->unhighlight_atoms();
 }
 
 /**
@@ -106,6 +106,13 @@ void StructureRenderer::unhighlight_atom(unsigned int index) {
     } else {
         throw std::runtime_error("Requested invalid atom index.");
     }
+}
+
+/**
+ * @brief Unhighlight all atoms
+ */
+void StructureRenderer::unhighlight_atoms() {
+    this->highlighted_atoms.clear();
 }
 
 /**

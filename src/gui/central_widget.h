@@ -23,6 +23,7 @@
 #include <Qt>
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QList>
 #include <QModelIndex>
 #include <QSizePolicy>
 #include <QStackedWidget>

@@ -727,3 +727,16 @@ void GLWidget::set_operation(bool operation_selected, Operation selected_operati
         this->update();
     }
 }
+
+/**
+ * @brief Highlight atoms in the GL widget
+ *
+ * @param atoms atom indices to highlight
+ */
+void GLWidget::highlight_atoms(const QList<unsigned int>& atoms) {
+    this->structure_renderer->unhighlight_atoms();
+    for (unsigned int atom : atoms) {
+        this->structure_renderer->highlight_atom(atom);
+    }
+    this->update();
+}

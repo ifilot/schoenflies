@@ -19,14 +19,16 @@
 #ifndef GUI_PRACTICE_IRREPS_WIDGET_H
 #define GUI_PRACTICE_IRREPS_WIDGET_H
 
-#include <iostream>
-
+#include <algorithm>
+#include <iterator>
+#include <vector>
 #include <boost/algorithm/string.hpp>
 #include <Qt>
 #include <QDoubleValidator>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QList>
 #include <QPushButton>
 #include <QScrollArea>
 #include <QScrollBar>
@@ -98,6 +100,13 @@ signals:
      * @brief Emitted when the user has finished the exercise
      */
     void finished_exercise();
+
+    /**
+     * @brief Highlight atoms in the GL widget
+     *
+     * @param atoms atom indices to highlight
+     */
+    void highlight_atoms(const QList<unsigned int>& atoms);
 };
 
 #endif  // GUI_PRACTICE_IRREPS_WIDGET_H

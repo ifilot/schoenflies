@@ -122,6 +122,11 @@ public:
     void unhighlight_atom(unsigned int index);
 
     /**
+     * @brief Unhighlight all atoms
+     */
+    void unhighlight_atoms();
+
+    /**
      * @brief Start animating an operation
      *
      * @param operation

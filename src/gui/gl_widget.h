@@ -28,6 +28,7 @@
 #include <Qt>
 #include <QtMath>
 #include <QAction>
+#include <QList>
 #include <QMatrix4x4>
 #include <QMouseEvent>
 #include <QOpenGLContext>
@@ -281,6 +282,13 @@ public slots:
      * @param selected_operation
      */
     void set_operation(bool operation_selected, Operation selected_operation);
+
+    /**
+     * @brief Highlight atoms in the GL widget
+     *
+     * @param atoms atom indices to highlight
+     */
+    void highlight_atoms(const QList<unsigned int>& atoms);
 
 signals:
     /**

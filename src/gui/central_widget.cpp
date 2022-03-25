@@ -50,6 +50,7 @@ CentralWidget::CentralWidget(MainWindow* mw) {
     connect(this->symmetry_widget, SIGNAL(operation_changed(bool, Operation)), this->gl_widget, SLOT(set_operation(bool, Operation)));
     connect(this->practice_widget, SIGNAL(request_new_structure()), mw, SLOT(load_library_practice_structure()));
     connect(this->practice_widget, SIGNAL(open_character_table_dialog()), mw, SLOT(open_character_table_dialog()));
+    connect(this->practice_widget, SIGNAL(highlight_atoms(QList<unsigned int>)), this->gl_widget, SLOT(highlight_atoms(QList<unsigned int>)));
 }
 
 /**

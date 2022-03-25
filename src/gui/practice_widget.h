@@ -23,6 +23,7 @@
 #include <stdexcept>
 #include <QFrame>
 #include <QHBoxLayout>
+#include <QList>
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -108,6 +109,13 @@ signals:
      * @brief Open the character table dialog
      */
     void open_character_table_dialog();
+
+    /**
+     * @brief Highlight atoms in the GL widget
+     *
+     * @param atoms atom indices to highlight
+     */
+    void highlight_atoms(const QList<unsigned int>& atoms);
 };
 
 #endif  // GUI_PRACTICE_WIDGET_H
