@@ -149,7 +149,9 @@ void PracticeProjectionWidget::initialize(std::shared_ptr<PracticeStructure> pra
     }
 
     // highlight 'basis' atom
-    emit this->highlight_atoms({practice_structure->get_base_atom()});
+    // note that the base atom index is with respect to the basis set
+    unsigned int highlight_idx = practice_structure->get_basis_set()->get_atoms()[practice_structure->get_base_atom()];
+    emit this->highlight_atoms({highlight_idx});
 
     // label basis set atoms
     const std::vector<unsigned int>& basis_set_atoms = practice_structure->get_basis_set()->get_atoms();
