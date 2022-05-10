@@ -28,6 +28,7 @@
 #include "orbitals/orbital_label.h"
 #include "periodic_table/element.h"
 #include "periodic_table/periodic_table.h"
+#include "symmetry/symmetry.h"
 #include "structure.h"
 
 using json = nlohmann::json;
@@ -38,7 +39,6 @@ private:
     OrbitalLabel orbital_label;
     glm::vec3 orbital_vector;
 
-    std::shared_ptr<Structure> structure;
     std::vector<unsigned int> atoms;
 
 public:
@@ -46,9 +46,9 @@ public:
      * @brief Construct a new BasisSet object
      *
      * @param basis_set JSON basis set configuration
-     * @param structure structure
+     * @param symmetry symmetry
      */
-    BasisSet(json& basis_set, std::shared_ptr<Structure> structure);
+    BasisSet(json& basis_set, std::shared_ptr<Symmetry> symmetry);
 
     /**
      * @brief Get the element

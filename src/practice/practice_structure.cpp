@@ -79,7 +79,7 @@ void PracticeStructure::generate_basis_set() {
     std::uniform_int_distribution<> dist(0, basis_sets.size() - 1);
     int index = (this->use_random) ? dist(this->random_engine) : 0;
 
-    this->basis_set = std::make_shared<BasisSet>(basis_sets[index], structure);
+    this->basis_set = std::make_shared<BasisSet>(basis_sets[index], this->symmetry);
     this->basis_set_generated = true;
 }
 

@@ -22,9 +22,9 @@
  * @brief Construct a new BasisSet object
  *
  * @param basis_set JSON basis set configuration
- * @param structure structure
+ * @param symmetry symmetry
  */
-BasisSet::BasisSet(json& basis_set, std::shared_ptr<Structure> structure) {
+BasisSet::BasisSet(json& basis_set, std::shared_ptr<Symmetry> symmetry) {
     if (!basis_set.contains("element")) {
         throw std::runtime_error("Invalid basis set: element is missing");
     }
@@ -42,21 +42,19 @@ BasisSet::BasisSet(json& basis_set, std::shared_ptr<Structure> structure) {
     if (this->orbital_label.get_azimuthal() == 1) {  // p
         switch (this->orbital_label.get_magnetic()) {
             case -1:  // y
-                this->orbital_vector = glm::vec3(0, 1, 0);
+                this->orbital_vector = symmetry->get_y_axis();
                 break;
             case 0:  // z
-                this->orbital_vector = glm::vec3(0, 0, 1);
+                this->orbital_vector = symmetry->get_z_axis();
                 break;
             case 1:  // x
-                this->orbital_vector = glm::vec3(1, 0, 0);
+                this->orbital_vector = symmetry->get_x_axis();
                 break;
         }
     }
 
-    this->structure = structure;
-
-    for (unsigned int i = 0; i < structure->get_num_atoms(); ++i) {
-        if (structure->get_atomic_number(i) == atomic_number) this->atoms.push_back(i);
+    for (unsigned int i = 0; i < symmetry->get_structure()->get_num_atoms(); ++i) {
+        if (symmetry->get_structure()->get_atomic_number(i) == atomic_number) this->atoms.push_back(i);
     }
 }
 
