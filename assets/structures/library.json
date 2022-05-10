@@ -7,7 +7,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "F",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -18,7 +34,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "F",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -29,7 +61,20 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -40,7 +85,31 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                },
+                {
+                    "element": "O",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "O",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -51,7 +120,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -62,7 +143,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "H",
+                    "orbital": "1s"
+                }
+            ]
         }
     },
     {
@@ -100,7 +193,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "H",
+                    "orbital": "1s"
+                }
+            ]
         }
     },
     {
@@ -111,7 +216,16 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -122,7 +236,20 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -133,7 +260,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -144,7 +283,16 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -155,7 +303,16 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -166,7 +323,16 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -177,7 +343,43 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
+        }
+    },
+    {
+        "path": "dodecaborate.xyz",
+        "name": "Dodecaborate",
+        "chemical_formula": "[B<sub>12</sub>H<sub>12</sub>]<sup>2−</sup>",
+        "point_group": ["Ih"],
+        "practice_config": {
+            "flowchart": {
+                "enabled": true
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "B",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -199,18 +401,16 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
-        }
-    },
-    {
-        "path": "dodecaborate.xyz",
-        "name": "Dodecaborate",
-        "chemical_formula": "[B<sub>12</sub>H<sub>12</sub>]<sup>2−</sup>",
-        "point_group": ["Ih"],
-        "practice_config": {
-            "flowchart": {
+            },
+            "irreps": {
                 "enabled": true
-            }
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -232,7 +432,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -243,7 +459,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -254,7 +486,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "F",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -287,7 +531,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "H",
+                    "orbital": "1s"
+                }
+            ]
         }
     },
     {
@@ -309,7 +565,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "O",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "Si",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -320,7 +592,31 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                },
+                {
+                    "element": "O",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "O",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -331,7 +627,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -342,7 +654,19 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "F",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {
@@ -375,7 +699,20 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -386,7 +723,20 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "C",
+                    "orbital": "2pz"
+                }
+            ]
         }
     },
     {
@@ -408,7 +758,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "F",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "F",
+                    "orbital": "2pz"
+                }
+            ]
         }
     }
 ]
