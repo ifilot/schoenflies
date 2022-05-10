@@ -234,6 +234,18 @@ public:
      */
     const bool matches(OperationLabel& other) const;
 
+    /**
+     * @brief Check whether this symmetry operation matches another symmetry
+     * operation
+     *
+     * This check takes the absolute value of the multiplicity into account.
+     *
+     * @param other other symmetry operation
+     * @return true if operations match
+     * @return false if operations don't match
+     */
+    const bool matches_strict(OperationLabel& other) const;
+
 private:
     /**
      * @brief Format a number for string output

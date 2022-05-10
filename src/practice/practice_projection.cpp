@@ -63,7 +63,7 @@ void PracticeProjection::calculate_coefficients() {
         for (auto& point_group_operation : operations) {
             Operation& operation = point_group_operation.second;
 
-            if (!operation.get_label().matches(operation_label_count.get_label())) continue;
+            if (!operation.get_label().matches_strict(operation_label_count.get_label())) continue;
             num_operations_found++;
 
             // determine the transformation

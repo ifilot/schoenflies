@@ -396,6 +396,21 @@ const bool OperationLabel::matches(OperationLabel& other) const {
 }
 
 /**
+ * @brief Check whether this symmetry operation matches another symmetry
+ * operation
+ *
+ * This check takes the absolute value of the multiplicity into account.
+ *
+ * @param other other symmetry operation
+ * @return true if operations match
+ * @return false if operations don't match
+ */
+const bool OperationLabel::matches_strict(OperationLabel& other) const {
+    return this->matches(other) &&
+        (this->multiple == other.multiple || this->multiple == -other.multiple);
+}
+
+/**
  * @brief Format a number for string output
  *
  * @param number number to format
