@@ -54,7 +54,7 @@ def parse_log(log):
 
 
 def parse_line(line):
-    if 'load_native_dll' not in line:
+    if not ('build_module' in line and 'native' in line):
         return None
 
     result = PATH_REGEX.search(line)

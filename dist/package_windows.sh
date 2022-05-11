@@ -4,7 +4,7 @@
 
 echo "Getting requirements..."
 wine ${CI_PROJECT_DIR}/build/schoenflies.exe 2> winedebug.log &
-sleep 10
+sleep 30
 wineserver -k
 
 echo "Copying requirements..."
