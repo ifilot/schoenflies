@@ -21,6 +21,6 @@
 
 #define PROGRAM_NAME "Schoenflies"
 #define PROGRAM_DESC "determine and visualise molecular symmetry"
-#define PROGRAM_VERSION "1.0.0"
+#define PROGRAM_VERSION "1.1.0"
 
 #endif  // PROGRAM_H
