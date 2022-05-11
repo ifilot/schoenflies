@@ -40,7 +40,7 @@ PracticeIrrepsWidget::PracticeIrrepsWidget(QWidget* parent) {
     this->layout->addWidget(this->part1);
 
     this->q1 = new QLabel;
-    this->q1->setText("Consider the <b>xxx</b> atomic orbitals of <b>xxx</b> (the highlighted atoms) as basis set. How many orbitals remain in place for each symmetry operation?");
+    this->q1->setText("Consider the <b>xxx</b> atomic orbitals of <b>xxx</b> (the highlighted atoms) as basis set. How many orbitals remain in place for each symmetry operation? (Take the direction of the orbital into account!)");
     this->q1->setTextFormat(Qt::TextFormat::RichText);
     this->q1->setWordWrap(true);
     part1_layout->addWidget(this->q1);
