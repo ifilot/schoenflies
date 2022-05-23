@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+### Fixed
+- The program no longer crashes when practice is started without any modules
+  selected (see issue #3)
+
 ## [1.1.0] - 2022-05-10
 ### Added
 - Built-in library of 36 example structures (File → Open from library)

@@ -76,5 +76,5 @@ void PracticeConfigWidget::create_practice_config() {
     if (this->irreps_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Irreps);
     if (this->projection_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Projection);
 
-    emit start();
+    if (this->practice_config->get_enabled_modules().size() > 0) emit start();
 }
