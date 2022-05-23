@@ -489,7 +489,7 @@ const std::vector<PointGroup> PointGroups::point_groups = {
     {
         Label(Class::Dh, 2) , 8 , 1, {{2, 3}}                  , {}               , 3,
         {{1, O(E::C, 2)}, {1, O(E::C, 2, OPrime::Single)}, {1, O(E::C, 2, OPrime::Double)}, {1, O(E::I)},
-            {1, O(E::sigma, OPlane::h)}, {1, O(E::sigma, OPlane::v)}, {1, O(E::sigma, OPlane::d)}},
+            {1, O(E::sigma, OPlane::h)}, {1, O(E::sigma, OPlane::v)}, {1, O(E::sigma, OPlane::v, OPrime::Single)}},
         {I(M::A, IParity::g), I(M::B, 1, IParity::g), I(M::B, 2, IParity::g), I(M::B, 3, IParity::g),
             I(M::A, IParity::u), I(M::B, 1, IParity::u), I(M::B, 2, IParity::u), I(M::B, 3, IParity::u)},
         {{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0},

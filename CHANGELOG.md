@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 ### Fixed
+- The _σ_<sub>v</sub>&#x2032; symmetry operation is now correctly visible for
+  the _D_<sub>2h</sub> point group (see issue #2)
 - The program no longer crashes when practice is started without any modules
   selected (see issue #3)
 
