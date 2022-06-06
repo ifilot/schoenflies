@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the _D_<sub>2h</sub> point group (see issue #2)
 - The program no longer crashes when practice is started without any modules
   selected (see issue #3)
+- The flowchart practice module now shows the correct answer to the question
+  whether a molecule has two or more _C<sub>n</sub>_ (_n_ > 2) for point groups
+  with many higher-order rotations (see issue #4)
 
 ## [1.1.0] - 2022-05-10
 ### Added

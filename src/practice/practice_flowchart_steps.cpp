@@ -44,12 +44,16 @@ const std::unordered_map<std::string, PracticeFlowchartStep> PracticeFlowchartSt
         Type::NoYes,
         {"C", "high_sym"},
         [](std::shared_ptr<Symmetry> symmetry) {
-            unsigned int count = 0;
+            std::unordered_map<unsigned int, unsigned int> operation_counter;
             for (Operation& operation : symmetry->get_operation_manager()->get_operations()) {
                 if (operation.get_label().get_element() == OperationLabel::Element::ProperRotation &&
-                    operation.get_label().get_degree() > 2) count++;
+                    operation.get_label().get_degree() > 2)
+                    ++operation_counter[operation.get_label().get_degree()];
             }
-            return (int) (count >= 2);
+            for (auto& it : operation_counter) {
+                if (it.second >= 2) return 1;
+            }
+            return 0;
         }
     }},
     {"high_sym", {
