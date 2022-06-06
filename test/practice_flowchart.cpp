@@ -159,6 +159,27 @@ BOOST_AUTO_TEST_CASE(D3h) {
     BOOST_TEST(flowchart.get_step(answers.size())->get_correct_point_group().matches(correct));
 }
 
+BOOST_AUTO_TEST_CASE(D6h) {
+    std::string file = resolve_path("test/files/benzene.xyz");
+    auto struc = std::make_shared<Structure>(file);
+    auto symmetry = std::make_shared<Symmetry>(struc);
+    auto practice_structure = std::make_shared<PracticeStructure>(symmetry);
+    PracticeFlowchart flowchart(practice_structure);
+
+    std::vector<int> answers = {0, 0, 1, 6, 1, 1};
+
+    for (unsigned int i = 0; i < answers.size(); ++i) {
+        BOOST_TEST(flowchart.get_step(i)->get_correct_answer() == answers[i]);
+        flowchart.handle_answer(i, answers[i]);
+    }
+
+    BOOST_TEST(flowchart.get_step(4)->get_text() == "Are there 6 <i>C</i><sub>2</sub> axes perpendicular to the highest-order axis?");
+    BOOST_TEST(flowchart.get_step(answers.size())->get_type() == PracticeFlowchartStep::Type::Result);
+    PointGroupLabel correct = PointGroupLabel(PointGroupLabel::Class::Dh, 6);
+    BOOST_TEST(flowchart.get_step(answers.size())->get_result_point_group().matches(correct));
+    BOOST_TEST(flowchart.get_step(answers.size())->get_correct_point_group().matches(correct));
+}
+
 BOOST_AUTO_TEST_CASE(D2d) {
     std::string file = resolve_path("test/files/cyclooctatetraene.xyz");
     auto struc = std::make_shared<Structure>(file);
