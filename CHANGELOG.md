@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+## [1.1.1] - 2022-06-06
 ### Fixed
 - The _σ_<sub>v</sub>&#x2032; symmetry operation is now correctly visible for
   the _D_<sub>2h</sub> point group (see issue #2)
@@ -32,6 +33,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.0...main
+[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...main
+[1.1.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.0...1.1.1
 [1.1.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.0.0...1.1.0
 [1.0.0]: https://gitlab.com/lkkmpn/schoenflies/-/releases/1.0.0
