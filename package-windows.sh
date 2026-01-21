@@ -67,6 +67,8 @@ else
   exit 1
 fi
 
+: "${MINGW_PREFIX:=/mingw64}"
+
 QMAKE_QT5="$MINGW_PREFIX/bin/qmake-qt5.exe"
 QMAKE_SHIM="$MINGW_PREFIX/bin/qmake.exe"
 
@@ -80,6 +82,9 @@ if [[ ! -x "$QMAKE_SHIM" ]]; then
   echo "[INFO] Creating qmake.exe shim"
   ln -s qmake-qt5.exe "$QMAKE_SHIM" 2>/dev/null || cp "$QMAKE_QT5" "$QMAKE_SHIM"
 fi
+
+# Canonical qmake path from here on
+QMAKE="$QMAKE_SHIM"
 
 "$WINDEPLOYQT" \
   --qmake "$QMAKE" \
