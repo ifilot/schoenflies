@@ -6,3 +6,5 @@ lib/*
 Testing
 build-deb
 build-errors.txt
+dist
+*.exe

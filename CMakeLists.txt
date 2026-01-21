@@ -68,10 +68,23 @@ set_property(TARGET schoenflies_core PROPERTY CXX_SCAN_FOR_MODULES OFF)
 # =========================
 # Main executable
 # =========================
-add_executable(schoenflies
+
+set(APP_SOURCES
     src/main.cpp
     resources.qrc
 )
+
+if (WIN32)
+    list(APPEND APP_SOURCES resources.rc)
+endif()
+
+add_executable(schoenflies ${APP_SOURCES})
+
+if (WIN32)
+    set_target_properties(schoenflies PROPERTIES
+        WIN32_EXECUTABLE TRUE
+    )
+endif()
 
 target_link_libraries(schoenflies PRIVATE schoenflies_core Qt5::Widgets)
 set_property(TARGET schoenflies PROPERTY CXX_SCAN_FOR_MODULES OFF)

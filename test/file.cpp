@@ -47,7 +47,7 @@ BOOST_AUTO_TEST_CASE(load_file_qt) {
     file.get_stream().seekg(0, std::ios::end);
     int size = file.get_stream().tellg();
 
-    BOOST_TEST(size == 107 || size == 112); // Windows and POSIX difference
+    BOOST_TEST((size == 107 || size == 112)); // Windows and POSIX difference
 }
 
 BOOST_AUTO_TEST_CASE(load_nonexistant_file_disk) {
