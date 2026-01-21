@@ -15,13 +15,6 @@ BUILD_TYPE="Release"
 # Sanity checks
 # ============================
 command -v cmake >/dev/null || { echo "cmake not found"; exit 1; }
-: "${MINGW_PREFIX:=/mingw64}"
-WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt-qt5.exe"
-
-if [[ ! -x "$WINDEPLOYQT" ]]; then
-  echo "windeployqt not found at $WINDEPLOYQT"
-  exit 1
-fi
 command -v makensis >/dev/null || { echo "makensis not found"; exit 1; }
 
 if [[ -z "${MINGW_PREFIX:-}" ]]; then
@@ -74,6 +67,7 @@ else
   exit 1
 fi
 
+export QT_QMAKE_EXECUTABLE="${MINGW_PREFIX}/bin/qmake-qt5.exe"
 echo "[INFO] Using windeployqt: $WINDEPLOYQT"
 "${WINDEPLOYQT}" \
   --no-angle \
