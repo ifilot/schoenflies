@@ -15,7 +15,13 @@ BUILD_TYPE="Release"
 # Sanity checks
 # ============================
 command -v cmake >/dev/null || { echo "cmake not found"; exit 1; }
-command -v windeployqt >/dev/null || { echo "windeployqt not found"; exit 1; }
+: "${MINGW_PREFIX:=/mingw64}"
+WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt.exe"
+
+if [[ ! -x "$WINDEPLOYQT" ]]; then
+  echo "windeployqt not found at $WINDEPLOYQT"
+  exit 1
+fi
 command -v makensis >/dev/null || { echo "makensis not found"; exit 1; }
 
 if [[ -z "${MINGW_PREFIX:-}" ]]; then
@@ -56,13 +62,6 @@ cp "${BUILD_DIR}/${APP_EXE}" "${DIST_DIR}/"
 # Deploy Qt
 # ============================
 echo "[INFO] Running windeployqt"
-
-WINDEPLOYQT="${MINGW_PREFIX:-/mingw64}/bin/windeployqt.exe"
-
-if [[ ! -x "$WINDEPLOYQT" ]]; then
-  echo "windeployqt not found at $WINDEPLOYQT"
-  exit 1
-fi
 
 "${WINDEPLOYQT}" \
   --no-angle \
