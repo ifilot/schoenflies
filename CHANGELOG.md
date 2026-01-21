@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- Refactored the build and compilation workflow across platforms
+- Migrated the codebase to require C++20
+- Improved cross-platform consistency for Linux and Windows (MinGW)
+- Modernized CMake configuration and dependency handling
+
+### Fixed
+- Resolved multiple build and packaging issues on Windows (MinGW)
+- Improved robustness of the deployment and release process
+
 ## [1.1.1] - 2022-06-06
 ### Fixed
 - The _σ_<sub>v</sub>&#x2032; symmetry operation is now correctly visible for

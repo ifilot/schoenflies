@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches: [ "**" ]
+    tags: [ "v*" ]
   pull_request:
 
 jobs:
@@ -61,25 +63,58 @@ jobs:
           install: >-
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
-            mingw-w64-x86_64-make
+            mingw-w64-x86_64-ninja
             mingw-w64-x86_64-qt5-base
+            mingw-w64-x86_64-qt5-tools
             mingw-w64-x86_64-boost
             mingw-w64-x86_64-eigen3
             mingw-w64-x86_64-glm
             mingw-w64-x86_64-freetype
             mingw-w64-x86_64-nlohmann-json
             mingw-w64-x86_64-mesa
-            mingw-w64-x86_64-ninja
+            mingw-w64-x86_64-nsis
 
-      - name: Configure
+      - name: Build & Package
         run: |
-          cmake -S . -B build -G Ninja
+          ./package-windows.sh
 
-      - name: Build
-        run: |
-          cmake --build build
+      # Keep artifact for debugging
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            *.exe
 
-      - name: Test
+      # ----------------------------
+      # 🚀 Upload to Cloudflare R2
+      # ----------------------------
+      - name: Install AWS CLI (Windows)
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: powershell
         run: |
-          cd build
-          ctest --output-on-failure
+          Invoke-WebRequest `
+            https://awscli.amazonaws.com/AWSCLIV2.msi `
+            -OutFile AWSCLIV2.msi
+          Start-Process msiexec.exe `
+            -Wait `
+            -ArgumentList '/i AWSCLIV2.msi /quiet'
+          Remove-Item AWSCLIV2.msi
+
+      - name: Upload installer to R2
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: powershell
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+        run: |
+          $version = "${{ github.ref_name }}".Substring(1)
+          $installer = "Schoenflies-$version-Setup.exe"
+
+          aws s3 cp `
+            $installer `
+            "s3://$env:R2_BUCKET/$installer" `
+            --endpoint-url $env:R2_ENDPOINT
