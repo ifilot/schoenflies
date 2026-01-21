@@ -67,9 +67,15 @@ else
   exit 1
 fi
 
-export QT_QMAKE_EXECUTABLE="${MINGW_PREFIX}/bin/qmake-qt5.exe"
-echo "[INFO] Using windeployqt: $WINDEPLOYQT"
-"${WINDEPLOYQT}" \
+QMAKE="${MINGW_PREFIX}/bin/qmake-qt5.exe"
+
+if [[ ! -x "$QMAKE" ]]; then
+  echo "qmake not found at $QMAKE"
+  exit 1
+fi
+
+"$WINDEPLOYQT" \
+  --qmake "$QMAKE" \
   --no-angle \
   --no-opengl-sw \
   "${DIST_DIR}/${APP_EXE}"
