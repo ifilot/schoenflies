@@ -42,7 +42,6 @@ jobs:
           cd build
           ctest --output-on-failure
 
-
   windows-mingw:
     name: Windows (MSYS2 MinGW64)
     runs-on: windows-latest
@@ -60,6 +59,7 @@ jobs:
         with:
           msystem: MINGW64
           update: true
+          path-type: inherit
           install: >-
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake

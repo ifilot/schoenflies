@@ -56,8 +56,14 @@ cp "${BUILD_DIR}/${APP_EXE}" "${DIST_DIR}/"
 # Deploy Qt
 # ============================
 echo "[INFO] Running windeployqt"
-: "${MINGW_PREFIX:=/mingw64}"
-WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt.exe"
+
+WINDEPLOYQT="${MINGW_PREFIX:-/mingw64}/bin/windeployqt.exe"
+
+if [[ ! -x "$WINDEPLOYQT" ]]; then
+  echo "windeployqt not found at $WINDEPLOYQT"
+  exit 1
+fi
+
 "${WINDEPLOYQT}" \
   --no-angle \
   --no-opengl-sw \
