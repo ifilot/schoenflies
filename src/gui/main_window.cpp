@@ -47,7 +47,7 @@ MainWindow::MainWindow() {
 
     QAction *action_open_library = new QAction(menu_file);
     action_open_library->setText(tr("Open from library"));
-    action_open_library->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT + Qt::Key_O));
+    action_open_library->setShortcut(QKeySequence("Ctrl+Alt+O"));
     connect(action_open_library, &QAction::triggered, this, &MainWindow::open_library_dialog);
     menu_file->addAction(action_open_library);
 
@@ -141,7 +141,7 @@ MainWindow::MainWindow() {
 
     QAction *action_open_character_table = new QAction(menu_view);
     action_open_character_table->setText(tr("Character tables"));
-    action_open_character_table->setShortcut(QKeySequence(Qt::CTRL | Qt::ALT + Qt::Key_T));
+    action_open_character_table->setShortcut(QKeySequence("Ctrl+Alt+T"));
     connect(action_open_character_table, &QAction::triggered, this, &MainWindow::open_character_table_dialog);
     menu_view->addAction(action_open_character_table);
 
@@ -264,12 +264,32 @@ void MainWindow::exit() {
  */
 void MainWindow::about() {
     QMessageBox message_box;
-    message_box.setText(PROGRAM_NAME ": " PROGRAM_DESC ", version " PROGRAM_VERSION "\n"
-                        "Copyright (c) 2021 Luuk Kempen\n"
-                        PROGRAM_NAME " is licensed under the GPLv3 license.\n"
-                        PROGRAM_NAME " is partially funded by the BOOST! program "
-                        "of Eindhoven University of Technology (https://boost.tue.nl).");
+
+    message_box.setText(
+        "<b>" PROGRAM_NAME "</b><br>"
+        PROGRAM_DESC "<br><br>"
+
+        "<b>Version:</b> " PROGRAM_VERSION "<br><br>"
+
+        "<b>Original implementation:</b><br>"
+        "Luuk Kempen (2021)<br><br>"
+
+        "<b>Port and maintenance:</b><br>"
+        "Ivo Filot (v1.2 and later)<br><br>"
+
+        "<b>License:</b> GNU General Public License v3<br><br>"
+
+        "<small>"
+        "The original project was partially funded by the BOOST! program of "
+        "Eindhoven University of Technology "
+        "(<a href=\"https://boost.tue.nl\">boost.tue.nl</a>)."
+        "</small>"
+    );
+
     message_box.setWindowTitle("About " PROGRAM_NAME);
     message_box.setWindowIcon(QIcon(":/assets/icons/schoenflies.ico"));
+    message_box.setTextFormat(Qt::RichText);
+    message_box.setTextInteractionFlags(Qt::TextBrowserInteraction);
+
     message_box.exec();
 }

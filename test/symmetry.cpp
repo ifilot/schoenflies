@@ -18,9 +18,11 @@
 
 #include <memory>
 #include <vector>
+#include <numbers>
 #include <boost/test/unit_test.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_access.hpp>
+#include <glm/gtc/epsilon.hpp>
 #include "../src/structure.h"
 #include "../src/symmetry/rotor_class.h"
 #include "../src/symmetry/symmetry.h"

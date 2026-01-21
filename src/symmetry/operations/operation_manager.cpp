@@ -24,6 +24,11 @@
 OperationManager::OperationManager() {}
 
 /**
+ * @brief Default deconstructor
+ */
+OperationManager::~OperationManager() {}
+
+/**
  * @brief Construct a new Operation Manager object
  *
  * @param structure

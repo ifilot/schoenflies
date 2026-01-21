@@ -3,3 +3,6 @@ build/*
 lib/*
 !lib/*.sh
 .vscode
+Testing
+build-deb
+build-errors.txt

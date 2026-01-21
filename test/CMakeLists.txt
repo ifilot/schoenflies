@@ -1,8 +1,22 @@
-# Add sources
-file(GLOB TEST_SOURCES "*.cpp" "resources.qrc")
-file(GLOB SRC_SOURCES "../src/*.cpp" "../src/*/*.cpp" "../src/*/*/*.cpp" "../resources.qrc")
-list(FILTER SRC_SOURCES EXCLUDE REGEX ".*/src/main.cpp$")
-add_executable(schoenflies_test ${TEST_SOURCES} ${SRC_SOURCES})
+file(GLOB TEST_SOURCES CONFIGURE_DEPENDS *.cpp)
 
-# Libraries
-target_link_libraries(schoenflies_test ${Boost_LIBRARIES} glm::glm Qt5::Widgets Eigen3::Eigen nlohmann_json::nlohmann_json ${FREETYPE_LIBRARIES})
+add_executable(schoenflies_test ${TEST_SOURCES} ../resources.qrc)
+
+target_link_libraries(schoenflies_test
+    PRIVATE
+        schoenflies_core
+        Boost::unit_test_framework
+        Qt5::Core
+)
+
+target_compile_definitions(schoenflies_test
+    PRIVATE
+        BOOST_TEST_NO_DLL
+)
+
+set_property(TARGET schoenflies_test PROPERTY CXX_SCAN_FOR_MODULES OFF)
+
+add_test(
+    NAME schoenflies_tests
+    COMMAND schoenflies_test
+)

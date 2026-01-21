@@ -1,51 +1,84 @@
-cmake_minimum_required(VERSION 3.1.0)
-project(schoenflies)
+cmake_minimum_required(VERSION 3.22)
 
-set(CMAKE_CXX_STANDARD 17)
+# IMPORTANT: must be set before project()
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
+project(schoenflies LANGUAGES CXX)
+
+# =========================
+# C++ setup
+# =========================
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Extra safety: tell GCC not to use modules TS
+add_compile_options(-fno-modules-ts)
+add_compile_definitions(
+    EIGEN_NO_DEBUG
+    EIGEN_DONT_VECTORIZE
+    EIGEN_MAX_ALIGN_BYTES=0
+)
+
+# Qt automoc/uic/rcc
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-# Use Boost
-set(Boost_NO_SYSTEM_PATHS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_LIBS ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-set(BOOST_ALL_DYN_LINK OFF)
-
-find_package(Boost 1.67.0 COMPONENTS filesystem program_options unit_test_framework REQUIRED)
-
-# Use GLM
+# =========================
+# Dependencies
+# =========================
+find_package(Boost CONFIG REQUIRED filesystem program_options unit_test_framework)
 find_package(glm REQUIRED)
-
-# Use Qt5
-find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
-
-# Use Eigen
-find_package(Eigen3 3.3 REQUIRED NO_MODULE)
-
-# Use json
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(nlohmann_json 3.9.0 REQUIRED)
-
-# Use FreeType
 find_package(Freetype REQUIRED)
 
-# Set include folders
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}
-                    ${CMAKE_BINARY_DIR}
-                    ${Boost_INCLUDE_DIRS}
-                    ${FREETYPE_INCLUDE_DIRS})
+# =========================
+# Core library (ALL project code except main)
+# =========================
+file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS src/*.cpp)
+list(FILTER CORE_SOURCES EXCLUDE REGEX ".*/main\\.cpp$")
 
-# Add test directory
+add_library(schoenflies_core STATIC
+    ${CORE_SOURCES}
+    resources.qrc
+)
+
+target_include_directories(schoenflies_core
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_BINARY_DIR}
+)
+
+target_link_libraries(schoenflies_core
+    PUBLIC
+        Boost::filesystem
+        Boost::program_options
+        glm::glm
+        Qt5::Widgets
+        Eigen3::Eigen
+        nlohmann_json::nlohmann_json
+        Freetype::Freetype
+)
+
+set_property(TARGET schoenflies_core PROPERTY CXX_SCAN_FOR_MODULES OFF)
+
+# =========================
+# Main executable
+# =========================
+add_executable(schoenflies
+    src/main.cpp
+    resources.qrc
+)
+
+target_link_libraries(schoenflies PRIVATE schoenflies_core Qt5::Widgets)
+set_property(TARGET schoenflies PROPERTY CXX_SCAN_FOR_MODULES OFF)
+
+# =========================
+# Tests
+# =========================
+include(CTest)
+enable_testing()
 add_subdirectory(test)
-
-# Add sources
-file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp" "resources.qrc")
-add_executable(schoenflies ${SOURCES} ${RESOURCES_WINDOWS})
-
-# Libraries
-target_link_libraries(schoenflies ${Boost_LIBRARIES} glm::glm Qt5::Widgets Eigen3::Eigen nlohmann_json::nlohmann_json ${FREETYPE_LIBRARIES})
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")

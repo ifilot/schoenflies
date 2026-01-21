@@ -1,9 +1,0 @@
-Package: schoenflies
-Version: {VERSION}
-Section: science
-Priority: optional
-Architecture: amd64
-Depends: libqt5core5a (>= 5.12), libqt5gui5 (>= 5.12), libqt5widgets5 (>= 5.12), libfreetype6 (>= 2.10)
-Installed-Size: {SIZE}
-Maintainer: Luuk Kempen <schoenflies@lkkmpn.nl>
-Description: Determine and visualise molecular symmetry

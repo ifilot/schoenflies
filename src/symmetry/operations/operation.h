@@ -27,6 +27,7 @@
 #include <string>
 #include <unordered_map>
 #include <utility>
+#include <numbers>
 #include <glm/glm.hpp>
 #include "../../structure.h"
 #include "operation_label.h"
@@ -50,6 +51,8 @@ private:
 public:
     std::vector<unsigned int> result_indices_forwards;
     std::vector<unsigned int> result_indices_backwards;
+
+    bool operator==(const Operation&) const = default;
 
 public:
     /**

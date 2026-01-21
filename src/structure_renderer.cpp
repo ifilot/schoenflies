@@ -73,8 +73,8 @@ void StructureRenderer::unset_operation() {
  */
 void StructureRenderer::reset_camera() {
     this->camera_rotation = glm::mat4x4(1.0f);
-    this->camera_rotation = glm::rotate(this->camera_rotation, 60.0f * (float) M_PI / 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-    this->camera_rotation = glm::rotate(this->camera_rotation, 20.0f * (float) M_PI / 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+    this->camera_rotation = glm::rotate(this->camera_rotation, 60.0f * (float) std::numbers::pi / 180.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+    this->camera_rotation = glm::rotate(this->camera_rotation, 20.0f * (float) std::numbers::pi / 180.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
     this->arcball_rotation = glm::mat4x4(1.0f);
 }
@@ -483,7 +483,7 @@ glm::mat4x4 StructureRenderer::rotation_matrix_from_axis_vector(const glm::vec3 
 
     if (std::fabs(axis_n.z) > .9999f) {
         if (axis_n.z < -.5f) {
-            rotation = glm::rotate(glm::mat4x4(1.0f), -(float) M_PI, glm::vec3(0.0f, 1.0f, 0.0f));
+            rotation = glm::rotate(glm::mat4x4(1.0f), -(float) std::numbers::pi, glm::vec3(0.0f, 1.0f, 0.0f));
         }
     } else {
         float angle = std::acos(axis_n.z);

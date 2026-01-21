@@ -340,7 +340,7 @@ const glm::mat3x3 Operation::calculate_matrix_proper_rotation(double f) const {
         return glm::mat3x3(1.0f);
     }
 
-    float angle = 2 * M_PI / this->degree * this->label.get_multiple() * f;
+    float angle = 2 * std::numbers::pi / this->degree * this->label.get_multiple() * f;
 
     float sin = std::sin(angle);
     float cos = std::cos(angle);

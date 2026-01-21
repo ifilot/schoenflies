@@ -22,6 +22,7 @@
 #include <cmath>
 #include <math.h>
 #include <vector>
+#include <numbers>
 #include "../irreps/irrep_label.h"
 #include "../operations/operation.h"
 #include "../operations/operation_label.h"
@@ -39,20 +40,20 @@ typedef IrrepLabel::Mulliken M;
 typedef IrrepLabel::Parity IParity;
 typedef IrrepLabel::Prime IPrime;
 
-#define TC1P4  (2.0 * std::cos(1.0 * M_PI / 4.0))   // 1.4142
-#define TC1P5  (2.0 * std::cos(1.0 * M_PI / 5.0))   // 1.6180
-#define TC2P5  (2.0 * std::cos(2.0 * M_PI / 5.0))   // 0.6180
-#define TC1P6  (2.0 * std::cos(1.0 * M_PI / 6.0))   // 1.7321
-#define TC1P7  (2.0 * std::cos(1.0 * M_PI / 7.0))   // 1.8019
-#define TC2P7  (2.0 * std::cos(2.0 * M_PI / 7.0))   // 1.2470
-#define TC3P7  (2.0 * std::cos(3.0 * M_PI / 7.0))   // 0.4450
-#define TC1P8  (2.0 * std::cos(1.0 * M_PI / 8.0))   // 1.8478
-#define TC3P8  (2.0 * std::cos(3.0 * M_PI / 8.0))   // 0.7654
-#define TC1P9  (2.0 * std::cos(1.0 * M_PI / 9.0))   // 1.8794
-#define TC2P9  (2.0 * std::cos(2.0 * M_PI / 9.0))   // 1.5321
-#define TC4P9  (2.0 * std::cos(4.0 * M_PI / 9.0))   // 0.3473
-#define TC1P10 (2.0 * std::cos(1.0 * M_PI / 10.0))  // 1.9021
-#define TC3P10 (2.0 * std::cos(3.0 * M_PI / 10.0))  // 1.1756
+#define TC1P4  (2.0 * std::cos(1.0 * std::numbers::pi / 4.0))   // 1.4142
+#define TC1P5  (2.0 * std::cos(1.0 * std::numbers::pi / 5.0))   // 1.6180
+#define TC2P5  (2.0 * std::cos(2.0 * std::numbers::pi / 5.0))   // 0.6180
+#define TC1P6  (2.0 * std::cos(1.0 * std::numbers::pi / 6.0))   // 1.7321
+#define TC1P7  (2.0 * std::cos(1.0 * std::numbers::pi / 7.0))   // 1.8019
+#define TC2P7  (2.0 * std::cos(2.0 * std::numbers::pi / 7.0))   // 1.2470
+#define TC3P7  (2.0 * std::cos(3.0 * std::numbers::pi / 7.0))   // 0.4450
+#define TC1P8  (2.0 * std::cos(1.0 * std::numbers::pi / 8.0))   // 1.8478
+#define TC3P8  (2.0 * std::cos(3.0 * std::numbers::pi / 8.0))   // 0.7654
+#define TC1P9  (2.0 * std::cos(1.0 * std::numbers::pi / 9.0))   // 1.8794
+#define TC2P9  (2.0 * std::cos(2.0 * std::numbers::pi / 9.0))   // 1.5321
+#define TC4P9  (2.0 * std::cos(4.0 * std::numbers::pi / 9.0))   // 0.3473
+#define TC1P10 (2.0 * std::cos(1.0 * std::numbers::pi / 10.0))  // 1.9021
+#define TC3P10 (2.0 * std::cos(3.0 * std::numbers::pi / 10.0))  // 1.1756
 
 class PointGroups final {
 public:

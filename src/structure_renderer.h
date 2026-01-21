@@ -24,6 +24,7 @@
 #include <math.h>
 #include <memory>
 #include <numeric>
+#include <numbers>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
