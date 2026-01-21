@@ -87,7 +87,6 @@ fi
 QMAKE="$QMAKE_SHIM"
 
 "$WINDEPLOYQT" \
-  --qmake "$QMAKE" \
   --no-angle \
   --no-opengl-sw \
   "${DIST_DIR}/${APP_EXE}"
