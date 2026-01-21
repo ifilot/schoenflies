@@ -74,6 +74,10 @@ jobs:
             mingw-w64-x86_64-mesa
             mingw-w64-x86_64-nsis
 
+      - name: List Qt deploy tools
+        run: |
+          ls /mingw64/bin/windeployqt*
+
       - name: Build & Package
         run: |
           ./package-windows.sh

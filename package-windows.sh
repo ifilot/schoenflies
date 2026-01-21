@@ -59,11 +59,22 @@ mkdir -p "${DIST_DIR}"
 cp "${BUILD_DIR}/${APP_EXE}" "${DIST_DIR}/"
 
 # ============================
-# Deploy Qt
+# Locate windeployqt
 # ============================
-echo "[INFO] Running windeployqt"
+: "${MINGW_PREFIX:=/mingw64}"
 
-WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt-qt5.exe"
+if command -v windeployqt >/dev/null 2>&1; then
+  WINDEPLOYQT="$(command -v windeployqt)"
+elif [[ -x "$MINGW_PREFIX/bin/windeployqt-qt5.exe" ]]; then
+  WINDEPLOYQT="$MINGW_PREFIX/bin/windeployqt-qt5.exe"
+elif [[ -x "$MINGW_PREFIX/bin/windeployqt-qt6.exe" ]]; then
+  WINDEPLOYQT="$MINGW_PREFIX/bin/windeployqt-qt6.exe"
+else
+  echo "ERROR: windeployqt not found"
+  exit 1
+fi
+
+echo "[INFO] Using windeployqt: $WINDEPLOYQT"
 "${WINDEPLOYQT}" \
   --no-angle \
   --no-opengl-sw \
