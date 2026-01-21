@@ -16,7 +16,7 @@ BUILD_TYPE="Release"
 # ============================
 command -v cmake >/dev/null || { echo "cmake not found"; exit 1; }
 : "${MINGW_PREFIX:=/mingw64}"
-WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt.exe"
+WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt-qt5.exe"
 
 if [[ ! -x "$WINDEPLOYQT" ]]; then
   echo "windeployqt not found at $WINDEPLOYQT"
@@ -63,6 +63,7 @@ cp "${BUILD_DIR}/${APP_EXE}" "${DIST_DIR}/"
 # ============================
 echo "[INFO] Running windeployqt"
 
+WINDEPLOYQT="${MINGW_PREFIX}/bin/windeployqt-qt5.exe"
 "${WINDEPLOYQT}" \
   --no-angle \
   --no-opengl-sw \
