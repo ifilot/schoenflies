@@ -58,6 +58,8 @@ private:
     CentralWidget* central_widget;
     LibraryDialog* library_dialog;
     CharacterTableDialog* character_table_dialog = nullptr;
+    QAction* action_practice;
+    QAction* action_determine_point_group;
 
 public:
     /**
@@ -110,6 +112,12 @@ private slots:
      * @brief Load a random practice structure from the library
      */
     void load_library_practice_structure();
+
+    /**
+     * @brief Start guided point-group determination for the currently loaded
+     * library molecule
+     */
+    void determine_current_point_group();
 
     /**
      * @brief Open the character table dialog

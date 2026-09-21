@@ -28,6 +28,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPushButton>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QString>
@@ -50,6 +51,7 @@ private:
     QLineEdit* search_field;
 
     std::shared_ptr<Library> library;
+    bool practice_selected = false;
 
 public:
     /**
@@ -74,6 +76,9 @@ public:
      */
     const std::string get_selected_item_path() const;
 
+    /** @brief Whether the selected molecule should open in guided mode. */
+    bool get_practice_selected() const;
+
 private:
     /**
      * @brief Update the widget contents
@@ -87,6 +92,9 @@ private slots:
      * @param index
      */
     void double_click(QModelIndex index);
+
+    /** @brief Accept the selection and start point-group determination. */
+    void accept_for_practice();
 };
 
 #endif  // GUI_LIBRARY_DIALOG_H

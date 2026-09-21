@@ -113,6 +113,7 @@ void GLWidget::paintGL() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_MULTISAMPLE);
     glEnable(GL_BLEND);
     glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
     glBlendEquation(GL_FUNC_ADD);
@@ -440,20 +441,29 @@ void GLWidget::paint_structure_models() {
     ShaderProgram *model_shader = this->shader_program_manager->get_shader_program("model_shader");
     model_shader->bind();
 
-    for (ModelInstance instance : this->structure_renderer->get_structure_model_instances()) {
-        Model *model = this->model_manager->get_model(instance.model_name);
+    auto paint_instances = [this, model_shader](const std::vector<ModelInstance>& instances) {
+        for (const ModelInstance& instance : instances) {
+            Model *model = this->model_manager->get_model(instance.model_name);
 
-        this->model = this->convert_glm_matrix(instance.transform);
-        this->mvp = this->projection * this->view * this->model;
+            this->model = this->convert_glm_matrix(instance.transform);
+            this->mvp = this->projection * this->view * this->model;
 
-        model_shader->set_uniform("mvp", this->mvp);
-        model_shader->set_uniform("view", this->view);
-        model_shader->set_uniform("model", this->model);
-        model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
-        model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
+            model_shader->set_uniform("mvp", this->mvp);
+            model_shader->set_uniform("view", this->view);
+            model_shader->set_uniform("model", this->model);
+            model_shader->set_uniform("color", QVector4D(instance.colour.x, instance.colour.y, instance.colour.z, instance.colour.a));
+            model_shader->set_uniform("lightpos", QVector3D(0.0f, -1000.0f, 1.0f));
 
-        model->draw();
-    }
+            model->draw();
+        }
+    };
+
+    // Ghosts must not write depth: the opaque, moving molecule drawn next
+    // should always be able to occlude its translucent starting position.
+    glDepthMask(GL_FALSE);
+    paint_instances(this->structure_renderer->get_ghost_model_instances());
+    glDepthMask(GL_TRUE);
+    paint_instances(this->structure_renderer->get_structure_model_instances());
 
     model_shader->release();
 }

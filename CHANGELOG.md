@@ -5,7 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- Added anti-aliasing to the molecular renderer
+- Added translucent starting-position guides during symmetry-operation animations
+- Added guided point-group determination directly from the molecule library
+- Added a Practice menu command to start guided point-group determination for the currently loaded library molecule
+- Added a synchronized, resizable full-tree overview alongside the focused route lens
+- Added a light SVG decision-tree map in a dedicated three-column practice layout; it highlights the active route and unavailable branches
+
 ### Changed
+- Redesigned point-group questions as clearer interactive cards with visual feedback
 - Refactored the build and compilation workflow across platforms
 - Migrated the codebase to require C++20
 - Improved cross-platform consistency for Linux and Windows (MinGW)

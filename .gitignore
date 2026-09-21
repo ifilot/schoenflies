@@ -8,3 +8,4 @@ build-deb
 build-errors.txt
 dist
 *.exe
+build*

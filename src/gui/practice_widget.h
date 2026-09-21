@@ -59,6 +59,7 @@ private:
     std::shared_ptr<PracticeConfig> practice_config;
     std::shared_ptr<PracticeStructure> practice_structure;
     std::shared_ptr<Library> library;
+    bool current_structure_flowchart = false;
 
 public:
     /**
@@ -82,6 +83,12 @@ public:
      */
     void set_library(const std::shared_ptr<Library> library);
 
+    /** @brief Start guided point-group determination for the loaded molecule. */
+    void start_current_structure_flowchart();
+
+    /** @brief Whether the point-group decision tree is the active exercise. */
+    bool get_flowchart_visible() const;
+
 private slots:
     /**
      * @brief Configure the practice module and start the practice session
@@ -104,6 +111,12 @@ private slots:
     void create_exercise();
 
 signals:
+    /** @brief Update the standalone decision-tree column. */
+    void flowchart_route_changed(const std::vector<std::string>& path);
+
+    /** @brief Show or hide the standalone decision-tree column. */
+    void flowchart_visibility_changed(bool visible);
+
     /**
      * @brief Emitted when a new structure should be loaded from the library
      */

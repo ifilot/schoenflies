@@ -23,11 +23,13 @@
 #include <string>
 #include <Qt>
 #include <QFrame>
+#include <QDialog>
 #include <QHBoxLayout>
 #include <QList>
 #include <QMap>
 #include <QModelIndex>
 #include <QSizePolicy>
+#include <QPushButton>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QWidget>
@@ -39,6 +41,7 @@
 #include "gui_mode.h"
 #include "main_window.h"
 #include "practice_widget.h"
+#include "practice_flowchart_diagram.h"
 #include "symmetry_widget.h"
 
 class MainWindow;  // forward declaration
@@ -47,6 +50,9 @@ class CentralWidget: public QWidget {
     Q_OBJECT
 
 private:
+    QHBoxLayout *main_layout;
+    QWidget *practice_diagram_panel;
+    PracticeFlowchartDiagram *practice_diagram;
     GLWidget *gl_widget;
     QStackedWidget *side_widget;
     PracticeWidget *practice_widget;
@@ -110,6 +116,16 @@ public:
      * @return std::shared_ptr<Library>&
      */
     std::shared_ptr<Library>& get_library();
+
+    /** @brief Show guided point-group determination for the loaded molecule. */
+    void start_current_structure_flowchart();
+
+public slots:
+    /** @brief Toggle the left decision-tree column. */
+    void set_flowchart_visible(bool visible);
+
+    /** @brief Open a large synchronized view of the complete decision tree. */
+    void show_full_flowchart();
 };
 
 #endif  // GUI_CENTRAL_WIDGET_H

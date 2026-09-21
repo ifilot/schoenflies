@@ -46,7 +46,7 @@ class StructureRenderer: public QObject {
     Q_OBJECT
 
 private:
-    bool structure_set;
+    bool structure_set = false;
 
     glm::mat4x4 camera_rotation;
     glm::mat4x4 arcball_rotation;
@@ -59,10 +59,10 @@ private:
 
     float structure_span = 0;
 
-    bool operation_set;
+    bool operation_set = false;
     Operation operation;
 
-    bool animating;
+    bool animating = false;
     std::chrono::time_point<std::chrono::high_resolution_clock> animation_start_time;
 
     std::vector<unsigned int> animated_indices;
@@ -169,6 +169,14 @@ public:
      * @return std::vector<ModelInstance>
      */
     std::vector<ModelInstance> get_structure_model_instances();
+
+    /**
+     * @brief Get a translucent snapshot of the structure at the position from
+     * which the current symmetry-operation animation started.
+     *
+     * @return std::vector<ModelInstance>
+     */
+    std::vector<ModelInstance> get_ghost_model_instances();
 
     /**
      * @brief Get the model instances to draw the silhouette

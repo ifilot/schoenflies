@@ -36,6 +36,7 @@ MainWindow::MainWindow() {
     QMenu *menu_file = menu_bar->addMenu(tr("&File"));
     QMenu *menu_stereoscopy = menu_bar->addMenu(tr("&Stereoscopy"));
     QMenu *menu_view = menu_bar->addMenu(tr("&View"));
+    QMenu *menu_practice = menu_bar->addMenu(tr("&Practice"));
     QMenu *menu_help = menu_bar->addMenu(tr("&Help"));
 
     // actions for file menu
@@ -126,15 +127,15 @@ MainWindow::MainWindow() {
     action_viewer->setData(GuiMode::SymmetryViewer);
     menu_view->addAction(action_viewer);
 
-    QAction *action_practice = new QAction(menu_view);
-    action_practice->setCheckable(true);
-    action_practice->setText(tr("Practice"));
-    action_practice->setData(GuiMode::Practice);
-    menu_view->addAction(action_practice);
+    this->action_practice = new QAction(menu_view);
+    this->action_practice->setCheckable(true);
+    this->action_practice->setText(tr("Practice"));
+    this->action_practice->setData(GuiMode::Practice);
+    menu_view->addAction(this->action_practice);
 
     QActionGroup *action_group_mode = new QActionGroup(this);
     action_group_mode->addAction(action_viewer);
-    action_group_mode->addAction(action_practice);
+    action_group_mode->addAction(this->action_practice);
     connect(action_group_mode, &QActionGroup::triggered, this->central_widget, &CentralWidget::set_gui_mode);
 
     menu_view->addSeparator();
@@ -152,6 +153,17 @@ MainWindow::MainWindow() {
     action_show_default_labels->setText(tr("Show atom labels"));
     menu_view->addAction(action_show_default_labels);
     connect(action_show_default_labels, &QAction::triggered, this->central_widget->get_gl_widget()->get_structure_renderer().get(), &StructureRenderer::set_default_labels_visible);
+
+    // actions for practice menu
+    this->action_determine_point_group = new QAction(menu_practice);
+    this->action_determine_point_group->setText(tr("Determine point group for current molecule"));
+    this->action_determine_point_group->setShortcut(QKeySequence("Ctrl+Shift+G"));
+    this->action_determine_point_group->setToolTip(
+        tr("Open the guided decision tree for the current library molecule"));
+    this->action_determine_point_group->setEnabled(false);
+    connect(this->action_determine_point_group, &QAction::triggered,
+            this, &MainWindow::determine_current_point_group);
+    menu_practice->addAction(this->action_determine_point_group);
 
     // actions for help menu
     QAction *action_about = new QAction(menu_help);
@@ -183,6 +195,7 @@ void MainWindow::load_structure(const std::string& filename) {
     auto structure = std::make_shared<Structure>(filename);
     statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
     this->central_widget->set_structure(structure);
+    this->action_determine_point_group->setEnabled(false);
 }
 
 /**
@@ -195,6 +208,7 @@ void MainWindow::load_structure(const LibraryItem& item) {
     structure->set_library_item(std::make_shared<LibraryItem>(item));
     statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
     this->central_widget->set_structure(structure);
+    this->action_determine_point_group->setEnabled(true);
 }
 
 /**
@@ -226,7 +240,17 @@ void MainWindow::handle_library_dialog(int result) {
         const std::string& filename = this->library_dialog->get_selected_item_path();
         if (filename.empty()) return;
 
-        this->load_structure(filename);
+        // Preserve the LibraryItem metadata. Loading just the embedded path
+        // loses the practice configuration associated with the molecule.
+        for (const LibraryItem& item : this->central_widget->get_library()->get_items()) {
+            if (item.get_path() != filename) continue;
+
+            this->load_structure(item);
+            if (this->library_dialog->get_practice_selected()) {
+                this->determine_current_point_group();
+            }
+            return;
+        }
     }
 }
 
@@ -236,6 +260,14 @@ void MainWindow::handle_library_dialog(int result) {
 void MainWindow::load_library_practice_structure() {
     LibraryItem& item = this->central_widget->get_library()->get_practice_item();
     this->load_structure(item);
+}
+
+void MainWindow::determine_current_point_group() {
+    if (!this->action_determine_point_group->isEnabled()) return;
+
+    this->action_practice->setChecked(true);
+    this->central_widget->start_current_structure_flowchart();
+    statusBar()->showMessage(tr("Guided point-group determination"));
 }
 
 /**

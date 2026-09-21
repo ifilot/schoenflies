@@ -84,24 +84,26 @@ int main_gui(int argc, char** argv) {
     QApplication::setAttribute(Qt::ApplicationAttribute::AA_EnableHighDpiScaling);
     QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
-    // create application
-    QApplication app(argc, argv);
-
-    // configure OpenGL
+    // Configure OpenGL before QApplication is created. Some platforms create
+    // their global share context in the QApplication constructor, in which
+    // case a later sample-count request is silently ignored.
     QSurfaceFormat fmt;
     fmt.setDepthBufferSize(24);
-    fmt.setSamples(4);
+    fmt.setSamples(8);
     fmt.setVersion(3, 3);
     fmt.setProfile(QSurfaceFormat::CoreProfile);
     fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
     QSurfaceFormat::setDefaultFormat(fmt);
+
+    // create application
+    QApplication app(argc, argv);
 
     std::unique_ptr<MainWindow> main_window;
 
     try {
         // build main window
         main_window = std::make_unique<MainWindow>();
-        main_window->resize(800, 600);
+        main_window->resize(1440, 820);
     } catch (std::exception& e) {
         std::cout << e.what() << std::endl;
         return -1;

@@ -218,6 +218,48 @@ std::vector<ModelInstance> StructureRenderer::get_structure_model_instances() {
 }
 
 /**
+ * @brief Get the model instances for the translucent pre-operation snapshot
+ *
+ * @return std::vector<ModelInstance>
+ */
+std::vector<ModelInstance> StructureRenderer::get_ghost_model_instances() {
+    std::vector<ModelInstance> model_instances;
+    if (!this->structure_set || !this->animating) return model_instances;
+
+    constexpr float ghost_opacity = 0.32f;
+
+    for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+        Element el = PeriodicTable::get_element(this->structure->get_atomic_number(i));
+        glm::vec3 coordinates = this->structure->get_coordinates(i);
+        glm::mat4x4 transform = glm::scale(glm::translate(this->base_matrix(), coordinates), glm::vec3(el.radius));
+        model_instances.push_back({"sphere", transform, glm::vec4(el.colour, ghost_opacity), -1});
+    }
+
+    for (const auto& bond_pair : this->bond_pairs) {
+        Element el_a = PeriodicTable::get_element(this->structure->get_atomic_number(bond_pair.first));
+        Element el_b = PeriodicTable::get_element(this->structure->get_atomic_number(bond_pair.second));
+        glm::vec3 coords_a = this->structure->get_coordinates(bond_pair.first);
+        glm::vec3 coords_b = this->structure->get_coordinates(bond_pair.second);
+        glm::vec3 v = coords_b - coords_a;
+        float vl = glm::length(v);
+        float scale_factor = 0.5f + (el_a.radius - el_b.radius) / vl / 2.0f;
+        glm::mat4x4 rotation = this->rotation_matrix_from_axis_vector(v);
+
+        glm::mat4x4 transform_a = glm::scale(
+            glm::translate(this->base_matrix(), coords_a) * rotation,
+            glm::vec3(0.05f, 0.05f, scale_factor * vl));
+        glm::mat4x4 transform_b = glm::scale(
+            glm::translate(this->base_matrix(), coords_a + scale_factor * v) * rotation,
+            glm::vec3(0.05f, 0.05f, (1.0f - scale_factor) * vl));
+
+        model_instances.push_back({"cylinder", transform_a, glm::vec4(el_a.colour, ghost_opacity), -1});
+        model_instances.push_back({"cylinder", transform_b, glm::vec4(el_b.colour, ghost_opacity), -1});
+    }
+
+    return model_instances;
+}
+
+/**
  * @brief Get the model instances to draw the silhouette
  *
  * @return std::vector<ModelInstance>

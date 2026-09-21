@@ -30,7 +30,7 @@ set(CMAKE_AUTOUIC ON)
 # =========================
 find_package(Boost CONFIG REQUIRED filesystem program_options unit_test_framework)
 find_package(glm REQUIRED)
-find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Svg)
 find_package(Eigen3 REQUIRED NO_MODULE)
 find_package(nlohmann_json 3.9.0 REQUIRED)
 find_package(Freetype REQUIRED)
@@ -58,6 +58,7 @@ target_link_libraries(schoenflies_core
         Boost::program_options
         glm::glm
         Qt5::Widgets
+        Qt5::Svg
         Eigen3::Eigen
         nlohmann_json::nlohmann_json
         Freetype::Freetype

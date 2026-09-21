@@ -23,15 +23,24 @@
  *
  * @param parent pointer to parent widget
  */
-PracticeFlowchartWidget::PracticeFlowchartWidget(QWidget* parent) {
+PracticeFlowchartWidget::PracticeFlowchartWidget(QWidget* parent): QWidget(parent) {
+    QVBoxLayout *main_layout = new QVBoxLayout(this);
+    main_layout->setContentsMargins(0, 0, 0, 0);
+    main_layout->setSpacing(8);
+
+    this->steps_scroll = new QScrollArea(this);
+    this->steps_scroll->setWidgetResizable(true);
+    this->steps_scroll->setFrameShape(QFrame::NoFrame);
+    main_layout->addWidget(this->steps_scroll);
+
     this->container = new QWidget;
     this->layout = new QVBoxLayout;
     this->layout->setContentsMargins(0, 0, 0, 0);
-    this->setWidget(container);
-    this->setWidgetResizable(true);
+    this->layout->setSpacing(8);
+    this->steps_scroll->setWidget(container);
     this->container->setLayout(this->layout);
 
-    connect(this->verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(scroll_to_bottom()));
+    connect(this->steps_scroll->verticalScrollBar(), SIGNAL(rangeChanged(int, int)), this, SLOT(scroll_to_bottom()));
 
     layout->addStretch();
 }
@@ -48,6 +57,7 @@ void PracticeFlowchartWidget::initialize_flowchart(std::shared_ptr<PracticeStruc
     }
 
     this->flowchart = PracticeFlowchart(practice_structure);
+    emit this->route_changed(this->flowchart.get_step_keys());
     this->add_step_widget();
 }
 
@@ -86,6 +96,7 @@ void PracticeFlowchartWidget::handle_answer(int step_index, int answer) {
         }
 
         this->add_step_widget();
+        emit this->route_changed(this->flowchart.get_step_keys());
     }
 
     if (answer == -1) {
@@ -106,5 +117,5 @@ void PracticeFlowchartWidget::handle_answer(int step_index, int answer) {
  * @brief Scroll the widget to the bottom
  */
 void PracticeFlowchartWidget::scroll_to_bottom() {
-    this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
+    this->steps_scroll->verticalScrollBar()->setValue(this->steps_scroll->verticalScrollBar()->maximum());
 }
