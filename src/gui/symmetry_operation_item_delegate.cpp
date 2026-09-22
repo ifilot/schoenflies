@@ -56,8 +56,7 @@ bool SymmetryOperationItemDelegate::editorEvent(QEvent* event, QAbstractItemMode
         QMouseEvent *e = (QMouseEvent *) event;
         QRect button_rect = this->button_rect(option_in);
 
-        if (e->x() >= button_rect.left() && e->x() <= button_rect.right() &&
-            e->y() >= button_rect.top() && e->y() <= button_rect.bottom()) {
+        if (button_rect.contains(e->position().toPoint())) {
             model->setData(index, true, ItemDataRole::ButtonClickedRole);
         }
     }

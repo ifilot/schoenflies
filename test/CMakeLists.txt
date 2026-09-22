@@ -6,7 +6,7 @@ target_link_libraries(schoenflies_test
     PRIVATE
         schoenflies_core
         Boost::unit_test_framework
-        Qt5::Core
+        Qt6::Core
 )
 
 target_compile_definitions(schoenflies_test

@@ -14,7 +14,7 @@ Versions ≥ 1.2: maintained as a port by Ivo Filot
 Install the required packages
 
 ```bash
-sudo apt install build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libfreetype-dev libglm-dev nlohmann-json3-dev
+sudo apt install build-essential cmake qt6-base-dev qt6-base-dev-tools qt6-svg-dev libqt6opengl6-dev libboost-all-dev libeigen3-dev libfreetype-dev libglm-dev nlohmann-json3-dev
 ```
 
 and then compile using
@@ -40,7 +40,9 @@ pacman -S --needed \
   mingw-w64-x86_64-gcc \
   mingw-w64-x86_64-cmake \
   mingw-w64-x86_64-make \
-  mingw-w64-x86_64-qt5-base \
+  mingw-w64-x86_64-qt6-base \
+  mingw-w64-x86_64-qt6-tools \
+  mingw-w64-x86_64-qt6-svg \
   mingw-w64-x86_64-boost \
   mingw-w64-x86_64-eigen3 \
   mingw-w64-x86_64-glm \

@@ -149,7 +149,7 @@ void GLWidget::resizeGL(int width, int height) {
 void GLWidget::mousePressEvent(QMouseEvent* event) {
     if (event->buttons() & Qt::MouseButton::LeftButton) {
         this->arcball_rotating = true;
-        this->mouse_position = event->pos();
+        this->mouse_position = event->position().toPoint();
     }
 }
 
@@ -174,10 +174,11 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
     if (this->arcball_rotating) {
         // implementation from
         // https://en.wikibooks.org/wiki/OpenGL_Programming/Modern_OpenGL_Tutorial_Arcball
-        if (event->x() != this->mouse_position.x() || event->y() != this->mouse_position.y()) {
+        const QPoint current_position = event->position().toPoint();
+        if (current_position != this->mouse_position) {
             // calculate arcball vectors
             QVector3D va = this->calc_arcball_vector(this->mouse_position);
-            QVector3D vb = this->calc_arcball_vector(event->pos());
+            QVector3D vb = this->calc_arcball_vector(current_position);
 
             // calculate angle between vectors
             float dotprod = QVector3D::dotProduct(va, vb);
@@ -191,7 +192,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent* event) {
             QMatrix3x3 cam_to_model_trans = this->view.inverted().toGenericMatrix<3, 3>();
 
             // rotation vector in model space
-            QVector3D axis_model_space = QMatrix4x4(cam_to_model_trans) * axis_cam_space;
+            QVector3D axis_model_space = QMatrix4x4(cam_to_model_trans).mapVector(axis_cam_space);
             glm::vec3 axis_model_space_ = glm::vec3(
                 axis_model_space.x(),
                 axis_model_space.y(),

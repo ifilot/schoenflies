@@ -24,9 +24,10 @@ jobs:
           sudo apt install -y \
             build-essential \
             cmake \
-            qtbase5-dev \
-            qtbase5-dev-tools \
-            libqt5svg5-dev \
+            qt6-base-dev \
+            qt6-base-dev-tools \
+            qt6-svg-dev \
+            libqt6opengl6-dev \
             libboost-all-dev \
             libeigen3-dev \
             libfreetype-dev \
@@ -68,9 +69,9 @@ jobs:
             mingw-w64-x86_64-gcc
             mingw-w64-x86_64-cmake
             mingw-w64-x86_64-ninja
-            mingw-w64-x86_64-qt5-base
-            mingw-w64-x86_64-qt5-tools
-            mingw-w64-x86_64-qt5-svg
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-tools
+            mingw-w64-x86_64-qt6-svg
             mingw-w64-x86_64-boost
             mingw-w64-x86_64-eigen3
             mingw-w64-x86_64-glm

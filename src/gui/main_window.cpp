@@ -182,6 +182,12 @@ MainWindow::MainWindow() {
     menu_practice->addAction(this->action_determine_point_group);
 
     // actions for help menu
+    QAction *action_welcome = new QAction(menu_help);
+    action_welcome->setText(tr("Welcome screen"));
+    action_welcome->setIcon(QIcon(":/assets/icons/schoenflies-v2.png"));
+    connect(action_welcome, &QAction::triggered, this, &MainWindow::show_welcome_dialog);
+    menu_help->addAction(action_welcome);
+
     QAction *action_about = new QAction(menu_help);
     action_about->setText(tr("About"));
     action_about->setIcon(QIcon(":/assets/icons/bluecurve/stock-about.svg"));
@@ -192,6 +198,29 @@ MainWindow::MainWindow() {
 
     // status bar
     statusBar()->showMessage(PROGRAM_NAME);
+}
+
+void MainWindow::show_welcome_dialog() {
+    WelcomeDialog dialog(this);
+    const int action = dialog.exec();
+
+    switch (action) {
+        case WelcomeDialog::OpenStructure:
+            this->open();
+            break;
+        case WelcomeDialog::BrowseLibrary:
+            this->open_library_dialog();
+            break;
+        case WelcomeDialog::StartPractice:
+            this->action_practice->trigger();
+            statusBar()->showMessage(tr("Choose one or more practice modules to begin"));
+            break;
+        case WelcomeDialog::ViewCharacterTables:
+            this->open_character_table_dialog();
+            break;
+        default:
+            break;
+    }
 }
 
 /**

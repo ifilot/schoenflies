@@ -46,5 +46,10 @@ bool LibraryItemFilterModel::filterAcceptsRow(int source_row, const QModelIndex&
 void LibraryItemFilterModel::set_string_filter(QString string_filter) {
     this->string_filter = string_filter;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 9, 0)
+    this->beginFilterChange();
+    this->endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#else
     this->invalidateFilter();
+#endif
 }

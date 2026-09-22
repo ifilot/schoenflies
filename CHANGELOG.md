@@ -3,6 +3,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [1.2.1] - 2026-09-22
+
+### Added
+- Added a welcoming startup screen with four shortcuts to the application's main workflows
+- Added helpful interaction and guided point-group tips to the startup screen
+- Added a Help menu command for reopening the welcome screen
+
+### Changed
+- Updated the Windows package to include the application version in the installer filename
+- Fully migrated the application, build system, documentation, and CI workflows to Qt 6
+- Changed the library selection highlight to blue for better contrast and readability
+- Improved Windows deployment to bundle and verify all required runtime DLLs
+
 ## [1.2.0] - 2026-09-22
 
 ### Added
@@ -52,7 +65,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...main
+[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.1...main
+[1.2.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...1.2.1
 [1.2.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...1.2.0
 [1.1.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.0...1.1.1
 [1.1.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.0.0...1.1.0

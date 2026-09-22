@@ -3,11 +3,11 @@
 ; ============================
 
 !define APP_NAME "Schoenflies"
-!define APP_VERSION "1.2.0"
+!define APP_VERSION "1.2.1"
 !define APP_PUBLISHER "Ivo Filot"
 !define APP_EXE "schoenflies.exe"
 
-OutFile "${APP_NAME}-Setup.exe"
+OutFile "${APP_NAME}-${APP_VERSION}-Setup.exe"
 InstallDir "$PROGRAMFILES64\${APP_NAME}"
 InstallDirRegKey HKLM "Software\${APP_NAME}" "InstallDir"
 
