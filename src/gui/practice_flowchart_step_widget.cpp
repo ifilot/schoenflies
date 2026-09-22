@@ -27,6 +27,18 @@ PracticeFlowchartStepWidget::PracticeFlowchartStepWidget(QWidget* parent, int st
     this->parent = parent;
     this->step_index = step_index;
     this->step = step;
+    this->setObjectName("flowchartQuestionCard");
+    this->setStyleSheet(
+        "QWidget#flowchartQuestionCard {"
+        "  background: #f7f9fc; border: 1px solid #d7dfeb;"
+        "  border-radius: 12px; }"
+        "QLabel { border: none; background: transparent; color: #172033; }"
+        "QPushButton { min-height: 30px; padding: 3px 14px; border-radius: 7px;"
+        "  border: 1px solid #9aa9bf; background: white; font-weight: 600; }"
+        "QPushButton:hover { border-color: #0ea5e9; background: #eaf8ff; }"
+        "QPushButton:checked { border-color: #0284c7; color: white; background: #0284c7; }"
+        "QComboBox { min-height: 30px; padding: 2px 8px; border-radius: 7px;"
+        "  border: 1px solid #9aa9bf; background: white; }");
     this->build_widget();
 }
 
@@ -36,22 +48,26 @@ PracticeFlowchartStepWidget::PracticeFlowchartStepWidget(QWidget* parent, int st
 void PracticeFlowchartStepWidget::show_answer() {
     if (this->step->get_type() != PracticeFlowchartStep::Type::Result) {
         if (this->step->get_correct_answer() == this->answer) {
-            answer_label->setText("Correct!");
+            answer_label->setText("✓ Correct — that branch matches the molecule.");
+            answer_label->setStyleSheet("color: #047857; font-weight: 700; padding: 6px;");
         } else {
             if (this->step->get_type() == PracticeFlowchartStep::Type::ChooseN) {
-                answer_label->setText(QString("Incorrect; the correct answer is %1.").arg(this->step->get_correct_answer()));
+                answer_label->setText(QString("Not quite — the highest order is %1.").arg(this->step->get_correct_answer()));
             } else {
-                answer_label->setText("Incorrect.");
+                answer_label->setText("Not quite — review the highlighted route above.");
             }
+            answer_label->setStyleSheet("color: #b45309; font-weight: 700; padding: 6px;");
         }
     } else {
         PointGroupLabel correct_group = this->step->get_correct_point_group();
         PointGroupLabel result_group = this->step->get_result_point_group();
 
         if (correct_group.matches(result_group)) {
-            answer_label->setText("Correct!");
+            answer_label->setText("✓ Correct — point group determined!");
+            answer_label->setStyleSheet("color: #047857; font-weight: 700; padding: 6px;");
         } else {
-            answer_label->setText(QString("Incorrect; the correct answer is %1.").arg(QString::fromStdString(correct_group.get_name_html())));
+            answer_label->setText(QString("The route needs another look; the correct group is %1.").arg(QString::fromStdString(correct_group.get_name_html())));
+            answer_label->setStyleSheet("color: #b45309; font-weight: 700; padding: 6px;");
         }
     }
 
@@ -74,11 +90,18 @@ void PracticeFlowchartStepWidget::build_widget() {
     if (this->widget_built) return;
 
     this->main_layout = new QVBoxLayout;
+    this->main_layout->setContentsMargins(14, 12, 14, 12);
+    this->main_layout->setSpacing(9);
+
+    QLabel *step_label = new QLabel(QString("STEP %1").arg(this->step_index + 1));
+    step_label->setStyleSheet("color: #0284c7; font-size: 10px; font-weight: 800; letter-spacing: 1px;");
+    this->main_layout->addWidget(step_label);
 
     QLabel *text_label = new QLabel;
     text_label->setWordWrap(true);
     text_label->setTextFormat(Qt::TextFormat::RichText);
     text_label->setText(QString::fromStdString(this->step->get_text()));
+    text_label->setStyleSheet("font-size: 14px; font-weight: 600;");
     this->main_layout->addWidget(text_label);
 
     this->input_layout = new QHBoxLayout;

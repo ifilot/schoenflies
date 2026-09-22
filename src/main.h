@@ -22,8 +22,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <boost/program_options.hpp>
 #include <QApplication>
+#include <boost/program_options.hpp>
 #include <QPushButton>
 #include <QSurfaceFormat>
 #include "cmd_handler.h"

@@ -44,6 +44,12 @@ BOOST_AUTO_TEST_CASE(Dinfh) {
         flowchart.handle_answer(i, answers[i]);
     }
 
+    const std::vector<std::string>& route = flowchart.get_step_keys();
+    BOOST_REQUIRE_EQUAL(route.size(), 3);
+    BOOST_TEST(route[0] == "start");
+    BOOST_TEST(route[1] == "linear");
+    BOOST_TEST(route[2] == "Dinfh");
+
     BOOST_TEST(flowchart.get_step(0)->get_text() == "Is this molecule linear?");
     BOOST_TEST(flowchart.get_step(1)->get_text() == "Does this molecule contain an inversion center?");
     BOOST_TEST(flowchart.get_step(answers.size())->get_type() == PracticeFlowchartStep::Type::Result);

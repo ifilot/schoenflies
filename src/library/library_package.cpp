@@ -48,7 +48,7 @@ LibraryItem LibraryPackage::get_item(unsigned int index) {
         if (!item.contains(field)) throw std::runtime_error("Key " + field + " not found in JSON object");
     }
 
-    std::string path = (this->root / boost::filesystem::path(item["path"])).string();
+    std::string path = (this->root / boost::filesystem::path(item["path"].get<std::string>())).string();
     std::string name = item["name"];
     std::string chemical_formula = item["chemical_formula"];
 

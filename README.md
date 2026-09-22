@@ -4,33 +4,65 @@
 
 Determine and visualise molecular symmetry.
 
-## Releases
+Versions ≤ 1.1: [original implementation](https://gitlab.com/lkkmpn/schoenflies) by Luuk Kempen (2021)  
+Versions ≥ 1.2: maintained as a port by Ivo Filot
 
-[Click here to download pre-built Schoenflies binaries.](https://gitlab.com/lkkmpn/schoenflies/-/releases)
+## Compilation
 
-## Dependencies (Debian 11)
+### Ubuntu / Debian
 
-```
+Install the required packages
+
+```bash
 sudo apt install build-essential cmake qtbase5-dev qtbase5-dev-tools libboost-all-dev libeigen3-dev libfreetype-dev libglm-dev nlohmann-json3-dev
 ```
 
-## Compilation (Debian 11)
+and then compile using
 
 ```
-$ cd build
-$ cmake ..
-$ make -j5
+cd build
+cmake ..
+make -j
 ```
 
-## Testing
+and test via
 
-After compilation, run `build/test/schoenflies_test`. Ensure that the working
-directory is a descendant of the project's root directory (or the project's
-root directory itself) so that required test files can be found.
+```bash
+make test
+```
 
-## License
+### Windows / MSYS2 MinGW64
 
-This project is licensed under [the GNU GPL v3 license.](LICENSE.md)
+Install the required packages
+
+```bash
+pacman -S --needed \
+  mingw-w64-x86_64-gcc \
+  mingw-w64-x86_64-cmake \
+  mingw-w64-x86_64-make \
+  mingw-w64-x86_64-qt5-base \
+  mingw-w64-x86_64-boost \
+  mingw-w64-x86_64-eigen3 \
+  mingw-w64-x86_64-glm \
+  mingw-w64-x86_64-freetype \
+  mingw-w64-x86_64-nlohmann-json \
+  mingw-w64-x86_64-mesa \
+  mingw-w64-x86_64-ninja
+```
+
+and then compile using
+
+```bash
+cd build
+cmake ..
+make -j
+```
+
+and test via
+
+```bash
+cmake --build . --target test
+```
 
 ## Funding
 

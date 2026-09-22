@@ -3,7 +3,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [1.2.0] - 2026-09-22
+
+### Added
+- Added anti-aliasing to the molecular renderer
+- Added translucent starting-position guides during symmetry-operation animations
+- Added guided point-group determination directly from the molecule library
+- Added a Practice menu command to start guided point-group determination for the currently loaded library molecule
+- Added a synchronized, resizable full-tree overview alongside the focused route lens
+- Added a light SVG decision-tree map in a dedicated three-column practice layout; it highlights the active route and unavailable branches
+
+### Changed
+- Redesigned point-group questions as clearer interactive cards with visual feedback
+- Refactored the build and compilation workflow across platforms
+- Migrated the codebase to require C++20
+- Improved cross-platform consistency for Linux and Windows (MinGW)
+- Modernized CMake configuration and dependency handling
+
+### Fixed
+- Resolved multiple build and packaging issues on Windows (MinGW)
+- Improved robustness of the deployment and release process
 
 ## [1.1.1] - 2022-06-06
 ### Fixed
@@ -33,7 +52,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...main
+[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...main
+[1.2.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...1.2.0
 [1.1.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.0...1.1.1
 [1.1.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.0.0...1.1.0
 [1.0.0]: https://gitlab.com/lkkmpn/schoenflies/-/releases/1.0.0

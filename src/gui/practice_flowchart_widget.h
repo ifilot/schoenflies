@@ -32,13 +32,14 @@
 #include "../practice/practice_structure.h"
 #include "practice_flowchart_step_widget.h"
 
-class PracticeFlowchartWidget: public QScrollArea {
+class PracticeFlowchartWidget: public QWidget {
     Q_OBJECT
 
 private:
     std::vector<PracticeFlowchartStepWidget*> step_widgets;
     QVBoxLayout *layout;
     QWidget *container;
+    QScrollArea *steps_scroll;
 
     std::shared_ptr<PracticeStructure> practice_structure;
     PracticeFlowchart flowchart;
@@ -87,6 +88,9 @@ private slots:
     void scroll_to_bottom();
 
 signals:
+    /** @brief Emitted whenever the highlighted route changes. */
+    void route_changed(const std::vector<std::string>& path);
+
     /**
      * @brief Emitted when the user has finished the exercise
      */

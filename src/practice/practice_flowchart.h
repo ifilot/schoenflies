@@ -35,6 +35,7 @@ private:
 public:
     std::shared_ptr<PracticeStructure> practice_structure;
     std::vector<std::shared_ptr<PracticeFlowchartStep>> steps_taken;
+    std::vector<std::string> step_keys_taken;
 
     int n = 0;
 
@@ -74,6 +75,9 @@ public:
      * @return unsigned int
      */
     unsigned int get_latest_step_index();
+
+    /** @brief Get the keys along the route currently taken. */
+    const std::vector<std::string>& get_step_keys() const;
 
 private:
     /**

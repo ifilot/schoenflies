@@ -47,6 +47,11 @@ public:
     OperationManager();
 
     /**
+     * @brief Default deconstructor
+     */
+    virtual ~OperationManager();  // declared
+
+    /**
      * @brief Construct a new Operation Manager object
      *
      * @param structure

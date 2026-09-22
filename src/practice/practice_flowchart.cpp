@@ -44,6 +44,7 @@ bool PracticeFlowchart::handle_answer(int step_index, int answer) {
     // clear steps after this step
     for (int i = this->steps_taken.size() - 1; i > step_index; --i) {
         this->steps_taken.erase(this->steps_taken.begin() + i);
+        this->step_keys_taken.erase(this->step_keys_taken.begin() + i);
     }
 
     auto step = this->steps_taken[step_index];
@@ -89,6 +90,10 @@ unsigned int PracticeFlowchart::get_latest_step_index() {
     return this->steps_taken.size() - 1;
 }
 
+const std::vector<std::string>& PracticeFlowchart::get_step_keys() const {
+    return this->step_keys_taken;
+}
+
 /**
  * @brief Add a step to the flowchart by key
  *
@@ -99,4 +104,5 @@ void PracticeFlowchart::add_step(std::string key) {
     step->calculate_correct_answer(this->practice_structure->get_symmetry());
     step->set_n(this->n);
     this->steps_taken.push_back(step);
+    this->step_keys_taken.push_back(key);
 }

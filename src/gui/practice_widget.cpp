@@ -39,6 +39,8 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
     this->flowchart_widget = new PracticeFlowchartWidget(this);
     this->subwidgets->addWidget(this->flowchart_widget);
     connect(this->flowchart_widget, SIGNAL(finished_exercise()), this, SLOT(finished_exercise()));
+    connect(this->flowchart_widget, &PracticeFlowchartWidget::route_changed,
+            this, &PracticeWidget::flowchart_route_changed);
 
     this->irreps_widget = new PracticeIrrepsWidget(this);
     this->subwidgets->addWidget(this->irreps_widget);
@@ -87,10 +89,28 @@ void PracticeWidget::set_library(const std::shared_ptr<Library> library) {
     this->library = library;
 }
 
+void PracticeWidget::start_current_structure_flowchart() {
+    if (!this->practice_structure) return;
+
+    this->current_structure_flowchart = true;
+    this->practice_config = std::make_shared<PracticeConfig>();
+    this->practice_config->add_module(PracticeModule::Flowchart);
+    this->buttons_widget->setVisible(true);
+    this->next_button->setText("Restart route");
+    this->flowchart_widget->initialize_flowchart(this->practice_structure);
+    this->subwidgets->setCurrentWidget(this->flowchart_widget);
+    emit this->flowchart_visibility_changed(true);
+}
+
+bool PracticeWidget::get_flowchart_visible() const {
+    return this->subwidgets->currentWidget() == this->flowchart_widget;
+}
+
 /**
  * @brief Configure the practice module and start the practice session
  */
 void PracticeWidget::start_practice() {
+    this->current_structure_flowchart = false;
     this->practice_config = this->config_widget->get_practice_config();
     this->library->set_practice_config(this->practice_config);
     this->buttons_widget->setVisible(true);
@@ -101,15 +121,17 @@ void PracticeWidget::start_practice() {
  * @brief Set the practice widget in a state where the exercise is finished
  */
 void PracticeWidget::finished_exercise() {
-    this->next_button->setText("Next exercise");
+    this->next_button->setText(this->current_structure_flowchart ? "Restart route" : "Next exercise");
 }
 
 /**
  * @brief Stop the current practice session
  */
 void PracticeWidget::stop_practice() {
+    this->current_structure_flowchart = false;
     this->buttons_widget->setVisible(false);
     this->subwidgets->setCurrentWidget(this->config_widget);
+    emit this->flowchart_visibility_changed(false);
 
     emit this->highlight_atoms({});
     emit this->label_atoms({});
@@ -119,6 +141,14 @@ void PracticeWidget::stop_practice() {
  * @brief Create and show a new exercise
  */
 void PracticeWidget::create_exercise() {
+    if (this->current_structure_flowchart) {
+        this->next_button->setText("Restart route");
+        this->flowchart_widget->initialize_flowchart(this->practice_structure);
+        this->subwidgets->setCurrentWidget(this->flowchart_widget);
+        emit this->flowchart_visibility_changed(true);
+        return;
+    }
+
     this->next_button->setText("Skip exercise");
 
     PracticeModule practice_module = this->practice_config->get_next_module();
@@ -133,14 +163,17 @@ void PracticeWidget::create_exercise() {
         case PracticeModule::Flowchart:
             this->flowchart_widget->initialize_flowchart(this->practice_structure);
             this->subwidgets->setCurrentWidget(this->flowchart_widget);
+            emit this->flowchart_visibility_changed(true);
             break;
         case PracticeModule::Irreps:
             this->irreps_widget->initialize(this->practice_structure);
             this->subwidgets->setCurrentWidget(this->irreps_widget);
+            emit this->flowchart_visibility_changed(false);
             break;
         case PracticeModule::Projection:
             this->projection_widget->initialize(this->practice_structure);
             this->subwidgets->setCurrentWidget(this->projection_widget);
+            emit this->flowchart_visibility_changed(false);
             break;
         default:
             std::runtime_error("Invalid practice module encountered.");

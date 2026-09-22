@@ -1,7 +1,24 @@
 <RCC>
     <qresource prefix="/">
         <file>assets/fonts/OpenSans-Regular.ttf</file>
-        <file>assets/icons/schoenflies.ico</file>
+        <file>assets/icons/schoenflies-v2.ico</file>
+        <file>assets/icons/schoenflies-v2.png</file>
+        <file>assets/icons/bluecurve/application-exit.png</file>
+        <file>assets/icons/bluecurve/folder-library.svg</file>
+        <file>assets/icons/bluecurve/stock-about.svg</file>
+        <file>assets/icons/bluecurve/stock-execute.svg</file>
+        <file>assets/icons/bluecurve/stock-font.svg</file>
+        <file>assets/icons/bluecurve/stock-insert-table.svg</file>
+        <file>assets/icons/bluecurve/stock-open.svg</file>
+        <file>assets/icons/bluecurve/stock-view-tree.svg</file>
+        <file>assets/icons/stereoscopy/anaglyph_red_cyan_32.png</file>
+        <file>assets/icons/stereoscopy/interlaced_checkerboard_lr_32.png</file>
+        <file>assets/icons/stereoscopy/interlaced_checkerboard_rl_32.png</file>
+        <file>assets/icons/stereoscopy/interlaced_columns_lr_32.png</file>
+        <file>assets/icons/stereoscopy/interlaced_columns_rl_32.png</file>
+        <file>assets/icons/stereoscopy/interlaced_rows_lr_32.png</file>
+        <file>assets/icons/stereoscopy/interlaced_rows_rl_32.png</file>
+        <file>assets/icons/stereoscopy/two_dimensional_32.png</file>
         <file>assets/models/arrow.obj</file>
         <file>assets/shaders/axes.fs</file>
         <file>assets/shaders/axes.vs</file>
@@ -30,18 +47,21 @@
         <file>assets/structures/benzene.xyz</file>
         <file>assets/structures/borane.xyz</file>
         <file>assets/structures/buckminsterfullerene.xyz</file>
+        <file>assets/structures/cis-1,2-dichloroethene.xyz</file>
         <file>assets/structures/coronene.xyz</file>
         <file>assets/structures/cubane.xyz</file>
         <file>assets/structures/cubylcubane.xyz</file>
         <file>assets/structures/cyclohexane-boat.xyz</file>
         <file>assets/structures/cyclohexane-chair.xyz</file>
         <file>assets/structures/cyclopentadienyl.xyz</file>
+        <file>assets/structures/cyclopropenyl-radical.xyz</file>
         <file>assets/structures/dodecaborate.xyz</file>
         <file>assets/structures/dodecaethyleneoctamine.xyz</file>
         <file>assets/structures/dodecahedrane.xyz</file>
         <file>assets/structures/ethylene.xyz</file>
         <file>assets/structures/ferrocene-eclipsed.xyz</file>
         <file>assets/structures/ferrocene-staggered.xyz</file>
+        <file>assets/structures/hydrogen-peroxide.xyz</file>
         <file>assets/structures/iodine-heptafluoride.xyz</file>
         <file>assets/structures/iron-phthalocyanine.xyz</file>
         <file>assets/structures/iron-porphyrin.xyz</file>
@@ -53,6 +73,7 @@
         <file>assets/structures/sulfur-hexafluoride.xyz</file>
         <file>assets/structures/tetrairidium-dodecacarbonyl.xyz</file>
         <file>assets/structures/tetraphenylmethane.xyz</file>
+        <file>assets/structures/trans-1,2-dichloroethene.xyz</file>
         <file>assets/structures/triphenylene.xyz</file>
         <file>assets/structures/uranocene.xyz</file>
         <file>assets/structures/water.xyz</file>

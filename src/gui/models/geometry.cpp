@@ -92,7 +92,7 @@ std::unique_ptr<Model3D> Geometry::cylinder(bool include_caps, unsigned int stac
     // construct vertices and normals
     for (unsigned int stack = 0; stack < stack_count; ++stack) {
         for (unsigned int slice = 0; slice < slice_count; ++slice) {
-            float angle = (2.0f * (float) M_PI * slice) / slice_count;
+            float angle = (2.0f * (float) std::numbers::pi * slice) / slice_count;
             float x = std::sin(angle);
             float y = std::cos(angle);
             float z = stack / (stack_count - 1.0f);
@@ -147,7 +147,7 @@ std::unique_ptr<Model3D> Geometry::cylinder(bool include_caps, unsigned int stac
             normals.push_back(glm::normalize(glm::vec3(0, 0, 2 * z - 1)));
 
             for (unsigned int slice = 0; slice < slice_count; ++slice) {
-                float angle = (2.0f * (float) M_PI * slice) / slice_count;
+                float angle = (2.0f * (float) std::numbers::pi * slice) / slice_count;
                 float x = std::sin(angle);
                 float y = std::cos(angle);
 
@@ -203,7 +203,7 @@ std::unique_ptr<Model3D> Geometry::circle(unsigned int slice_count) {
         normals.push_back(glm::vec3(0, 0, 2 * (float) i - 1));
 
         for (unsigned int slice = 0; slice < slice_count; ++slice) {
-            float angle = (2.0f * (float) M_PI * slice) / slice_count;
+            float angle = (2.0f * (float) std::numbers::pi * slice) / slice_count;
             float x = std::sin(angle);
             float y = std::cos(angle);
 

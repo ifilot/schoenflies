@@ -229,6 +229,17 @@
         }
     },
     {
+        "path": "cis-1,2-dichloroethene.xyz",
+        "name": "cis-1,2-Dichloroethene",
+        "chemical_formula": "C<sub>2</sub>H<sub>2</sub>Cl<sub>2</sub>",
+        "point_group": ["Cv", 2],
+        "practice_config": {
+            "flowchart": {
+                "enabled": true
+            }
+        }
+    },
+    {
         "path": "coronene.xyz",
         "name": "Coronene",
         "chemical_formula": "C<sub>24</sub>H<sub>12</sub>",
@@ -363,6 +374,17 @@
         }
     },
     {
+        "path": "cyclopropenyl-radical.xyz",
+        "name": "Cyclopropenyl radical",
+        "chemical_formula": "C<sub>3</sub>H<sub>3</sub><sup>•</sup>",
+        "point_group": ["Dh", 3],
+        "practice_config": {
+            "flowchart": {
+                "enabled": true
+            }
+        }
+    },
+    {
         "path": "dodecaborate.xyz",
         "name": "Dodecaborate",
         "chemical_formula": "[B<sub>12</sub>H<sub>12</sub>]<sup>2−</sup>",
@@ -476,6 +498,17 @@
                     "orbital": "2pz"
                 }
             ]
+        }
+    },
+    {
+        "path": "hydrogen-peroxide.xyz",
+        "name": "Hydrogen peroxide",
+        "chemical_formula": "H<sub>2</sub>O<sub>2</sub>",
+        "point_group": ["C", 2],
+        "practice_config": {
+            "flowchart": {
+                "enabled": true
+            }
         }
     },
     {
@@ -685,6 +718,17 @@
         "name": "Tetraphenylmethane",
         "chemical_formula": "C<sub>25</sub>H<sub>20</sub>",
         "point_group": ["S", 4],
+        "practice_config": {
+            "flowchart": {
+                "enabled": true
+            }
+        }
+    },
+    {
+        "path": "trans-1,2-dichloroethene.xyz",
+        "name": "trans-1,2-Dichloroethene",
+        "chemical_formula": "C<sub>2</sub>H<sub>2</sub>Cl<sub>2</sub>",
+        "point_group": ["Ch", 2],
         "practice_config": {
             "flowchart": {
                 "enabled": true

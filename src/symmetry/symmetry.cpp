@@ -781,7 +781,7 @@ void Symmetry::label_proper_rotational_axes_dihedral() {
 
         // D/Dh point groups with even n: angle between x axis and C2' is integer multiple of 360°/n
         double theta_x = std::acos(glm::dot(operation.get_axis(), this->x_axis));
-        double divisor = 2 * M_PI / point_group_label.get_order();
+        double divisor = 2 * std::numbers::pi / point_group_label.get_order();
         double remainder = std::fmod(theta_x, divisor);
 
         if (remainder <= .25 * divisor | remainder > .75 * divisor) {
@@ -884,7 +884,7 @@ void Symmetry::label_reflection_planes_cyclic_dihedral() {
         // even n: angle between y axis and normal (xz plane and reflection plane)
         // of σv is integer multiple of 360°/n
         double theta_y = std::acos(glm::dot(operation.get_axis(), this->y_axis));
-        double divisor = 2 * M_PI / point_group_label.get_order();
+        double divisor = 2 * std::numbers::pi / point_group_label.get_order();
         double remainder = std::fmod(theta_y, divisor);
 
         if (remainder <= .25 * divisor || remainder > .75 * divisor) {

@@ -55,8 +55,13 @@ LibraryDialog::LibraryDialog(QWidget* parent)
     QDialogButtonBox* button_box = new QDialogButtonBox(
         QDialogButtonBox::StandardButton::Ok | QDialogButtonBox::StandardButton::Cancel);
 
+    QPushButton *practice_button = new QPushButton("Open & determine point group");
+    practice_button->setToolTip("Open this molecule and follow the guided point-group decision tree");
+    button_box->addButton(practice_button, QDialogButtonBox::ActionRole);
+
     connect(button_box, SIGNAL(accepted()), this, SLOT(accept()));
     connect(button_box, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(practice_button, SIGNAL(clicked()), this, SLOT(accept_for_practice()));
 
     layout->addWidget(button_box);
 
@@ -88,6 +93,10 @@ const std::string LibraryDialog::get_selected_item_path() const {
 
     QStandardItem *item = this->model->itemFromIndex(this->proxy_model->mapToSource(indices[0]));
     return item->data(LibraryItemDelegate::ItemDataRole::PathRole).toString().toStdString();
+}
+
+bool LibraryDialog::get_practice_selected() const {
+    return this->practice_selected;
 }
 
 /**
@@ -135,4 +144,10 @@ void LibraryDialog::update_widget() {
  */
 void LibraryDialog::double_click(QModelIndex index) {
     emit this->accept();
+}
+
+void LibraryDialog::accept_for_practice() {
+    if (this->get_selected_item_path().empty()) return;
+    this->practice_selected = true;
+    this->accept();
 }
