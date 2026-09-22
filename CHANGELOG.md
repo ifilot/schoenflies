@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Changed the library selection highlight to blue for better contrast and readability
 - Improved Windows deployment to bundle and verify all required runtime DLLs
 
+### Fixed
+- Restored the Yes/No controls in the point-group decision tree under Qt 6
+
 ## [1.2.0] - 2026-09-22
 
 ### Added

@@ -27,7 +27,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QSignalMapper>
 #include <QString>
 #include <QVBoxLayout>
 #include <QWidget>

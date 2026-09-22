@@ -114,28 +114,26 @@ void PracticeFlowchartStepWidget::build_widget() {
     this->main_layout->addWidget(answer_label);
 
     if (this->step->get_type() == PracticeFlowchartStep::Type::NoYes) {
-        QSignalMapper *signal_mapper = new QSignalMapper;
-
         QPushButton *yes_button = new QPushButton;
         yes_button->setCheckable(true);
         yes_button->setText("Yes");
         this->input_layout->addWidget(yes_button);
-        signal_mapper->setMapping(yes_button, 1);
-        connect(yes_button, SIGNAL(released()), signal_mapper, SLOT(map()));
+        connect(yes_button, &QPushButton::clicked, this, [this]() {
+            this->handle_no_yes_answer(1);
+        });
 
         QPushButton *no_button = new QPushButton;
         no_button->setCheckable(true);
         no_button->setText("No");
         this->input_layout->addWidget(no_button);
-        signal_mapper->setMapping(no_button, 0);
-        connect(no_button, SIGNAL(released()), signal_mapper, SLOT(map()));
+        connect(no_button, &QPushButton::clicked, this, [this]() {
+            this->handle_no_yes_answer(0);
+        });
 
-        QButtonGroup *button_group = new QButtonGroup;
+        QButtonGroup *button_group = new QButtonGroup(this);
         button_group->setExclusive(true);
         button_group->addButton(yes_button);
         button_group->addButton(no_button);
-
-        connect(signal_mapper, SIGNAL(mapped(int)), this, SLOT(handle_no_yes_answer(int)));
     } else if (this->step->get_type() == PracticeFlowchartStep::Type::ChooseN) {
         this->combobox = new QComboBox;
         for (int i = 2; i <= 10; ++i) {
