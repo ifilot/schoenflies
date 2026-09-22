@@ -7,6 +7,10 @@ Determine and visualise molecular symmetry.
 Versions ≤ 1.1: [original implementation](https://gitlab.com/lkkmpn/schoenflies) by Luuk Kempen (2021)  
 Versions ≥ 1.2: maintained as a port by Ivo Filot
 
+## Download
+
+[Download the latest Windows installer](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-1.2.1-Setup.exe)
+
 ## Compilation
 
 ### Ubuntu / Debian
