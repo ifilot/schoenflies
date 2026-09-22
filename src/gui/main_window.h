@@ -37,6 +37,7 @@
 #include <QMessageBox>
 #include <QMoveEvent>
 #include <QObject>
+#include <QPixmap>
 #include <QStatusBar>
 #include <QString>
 #include "../program.h"

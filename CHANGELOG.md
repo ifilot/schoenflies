@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [1.2.0] - 2026-09-22
 
 ### Added
 - Added anti-aliasing to the molecular renderer
@@ -52,7 +52,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...main
+[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...main
+[1.2.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...1.2.0
 [1.1.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.0...1.1.1
 [1.1.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.0.0...1.1.0
 [1.0.0]: https://gitlab.com/lkkmpn/schoenflies/-/releases/1.0.0

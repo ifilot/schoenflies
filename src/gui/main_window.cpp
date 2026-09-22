@@ -23,7 +23,7 @@
  */
 MainWindow::MainWindow() {
     this->setWindowTitle(QString(PROGRAM_NAME));
-    this->setWindowIcon(QIcon(":/assets/icons/schoenflies.ico"));
+    this->setWindowIcon(QIcon(":/assets/icons/schoenflies-v2.ico"));
 
     // central widget
     this->central_widget = new CentralWidget(this);
@@ -42,18 +42,21 @@ MainWindow::MainWindow() {
     // actions for file menu
     QAction *action_open = new QAction(menu_file);
     action_open->setText(tr("Open"));
+    action_open->setIcon(QIcon(":/assets/icons/bluecurve/stock-open.svg"));
     action_open->setShortcuts(QKeySequence::Open);
     connect(action_open, &QAction::triggered, this, &MainWindow::open);
     menu_file->addAction(action_open);
 
     QAction *action_open_library = new QAction(menu_file);
     action_open_library->setText(tr("Open from library"));
+    action_open_library->setIcon(QIcon(":/assets/icons/bluecurve/folder-library.svg"));
     action_open_library->setShortcut(QKeySequence("Ctrl+Alt+O"));
     connect(action_open_library, &QAction::triggered, this, &MainWindow::open_library_dialog);
     menu_file->addAction(action_open_library);
 
     QAction *action_exit = new QAction(menu_file);
     action_exit->setText(tr("Exit"));
+    action_exit->setIcon(QIcon(":/assets/icons/bluecurve/application-exit.png"));
     action_exit->setShortcuts(QKeySequence::Quit);
     connect(action_exit, &QAction::triggered, this, &MainWindow::exit);
     menu_file->addAction(action_exit);
@@ -63,48 +66,56 @@ MainWindow::MainWindow() {
     action_two_dimensional->setCheckable(true);
     action_two_dimensional->setChecked(true);
     action_two_dimensional->setText(tr("Two-dimensional (off)"));
+    action_two_dimensional->setIcon(QIcon(":/assets/icons/stereoscopy/two_dimensional_32.png"));
     action_two_dimensional->setData(StereoscopicMethod::None);
     menu_stereoscopy->addAction(action_two_dimensional);
 
     QAction *action_anaglyph_red_cyan = new QAction(menu_stereoscopy);
     action_anaglyph_red_cyan->setCheckable(true);
     action_anaglyph_red_cyan->setText(tr("Anaglyph (red/cyan)"));
+    action_anaglyph_red_cyan->setIcon(QIcon(":/assets/icons/stereoscopy/anaglyph_red_cyan_32.png"));
     action_anaglyph_red_cyan->setData(StereoscopicMethod::AnaglyphRedCyan);
     menu_stereoscopy->addAction(action_anaglyph_red_cyan);
 
     QAction *action_interlaced_rows_lr = new QAction(menu_stereoscopy);
     action_interlaced_rows_lr->setCheckable(true);
     action_interlaced_rows_lr->setText(tr("Interlaced rows (left first)"));
+    action_interlaced_rows_lr->setIcon(QIcon(":/assets/icons/stereoscopy/interlaced_rows_lr_32.png"));
     action_interlaced_rows_lr->setData(StereoscopicMethod::InterlacedRowsLR);
     menu_stereoscopy->addAction(action_interlaced_rows_lr);
 
     QAction *action_interlaced_rows_rl = new QAction(menu_stereoscopy);
     action_interlaced_rows_rl->setCheckable(true);
     action_interlaced_rows_rl->setText(tr("Interlaced rows (right first)"));
+    action_interlaced_rows_rl->setIcon(QIcon(":/assets/icons/stereoscopy/interlaced_rows_rl_32.png"));
     action_interlaced_rows_rl->setData(StereoscopicMethod::InterlacedRowsRL);
     menu_stereoscopy->addAction(action_interlaced_rows_rl);
 
     QAction *action_interlaced_columns_lr = new QAction(menu_stereoscopy);
     action_interlaced_columns_lr->setCheckable(true);
     action_interlaced_columns_lr->setText(tr("Interlaced columns (left first)"));
+    action_interlaced_columns_lr->setIcon(QIcon(":/assets/icons/stereoscopy/interlaced_columns_lr_32.png"));
     action_interlaced_columns_lr->setData(StereoscopicMethod::InterlacedColumnsLR);
     menu_stereoscopy->addAction(action_interlaced_columns_lr);
 
     QAction *action_interlaced_columns_rl = new QAction(menu_stereoscopy);
     action_interlaced_columns_rl->setCheckable(true);
     action_interlaced_columns_rl->setText(tr("Interlaced columns (right first)"));
+    action_interlaced_columns_rl->setIcon(QIcon(":/assets/icons/stereoscopy/interlaced_columns_rl_32.png"));
     action_interlaced_columns_rl->setData(StereoscopicMethod::InterlacedColumnsRL);
     menu_stereoscopy->addAction(action_interlaced_columns_rl);
 
     QAction *action_interlaced_checkerboard_lr = new QAction(menu_stereoscopy);
     action_interlaced_checkerboard_lr->setCheckable(true);
     action_interlaced_checkerboard_lr->setText(tr("Interlaced checkerboard (left first)"));
+    action_interlaced_checkerboard_lr->setIcon(QIcon(":/assets/icons/stereoscopy/interlaced_checkerboard_lr_32.png"));
     action_interlaced_checkerboard_lr->setData(StereoscopicMethod::InterlacedCheckerboardLR);
     menu_stereoscopy->addAction(action_interlaced_checkerboard_lr);
 
     QAction *action_interlaced_checkerboard_rl = new QAction(menu_stereoscopy);
     action_interlaced_checkerboard_rl->setCheckable(true);
     action_interlaced_checkerboard_rl->setText(tr("Interlaced checkerboard (right first)"));
+    action_interlaced_checkerboard_rl->setIcon(QIcon(":/assets/icons/stereoscopy/interlaced_checkerboard_rl_32.png"));
     action_interlaced_checkerboard_rl->setData(StereoscopicMethod::InterlacedCheckerboardRL);
     menu_stereoscopy->addAction(action_interlaced_checkerboard_rl);
 
@@ -124,12 +135,14 @@ MainWindow::MainWindow() {
     action_viewer->setCheckable(true);
     action_viewer->setChecked(true);
     action_viewer->setText(tr("Symmetry viewer"));
+    action_viewer->setIcon(QIcon(":/assets/icons/bluecurve/stock-view-tree.svg"));
     action_viewer->setData(GuiMode::SymmetryViewer);
     menu_view->addAction(action_viewer);
 
     this->action_practice = new QAction(menu_view);
     this->action_practice->setCheckable(true);
     this->action_practice->setText(tr("Practice"));
+    this->action_practice->setIcon(QIcon(":/assets/icons/bluecurve/stock-execute.svg"));
     this->action_practice->setData(GuiMode::Practice);
     menu_view->addAction(this->action_practice);
 
@@ -142,6 +155,7 @@ MainWindow::MainWindow() {
 
     QAction *action_open_character_table = new QAction(menu_view);
     action_open_character_table->setText(tr("Character tables"));
+    action_open_character_table->setIcon(QIcon(":/assets/icons/bluecurve/stock-insert-table.svg"));
     action_open_character_table->setShortcut(QKeySequence("Ctrl+Alt+T"));
     connect(action_open_character_table, &QAction::triggered, this, &MainWindow::open_character_table_dialog);
     menu_view->addAction(action_open_character_table);
@@ -151,12 +165,14 @@ MainWindow::MainWindow() {
     QAction *action_show_default_labels = new QAction(menu_view);
     action_show_default_labels->setCheckable(true);
     action_show_default_labels->setText(tr("Show atom labels"));
+    action_show_default_labels->setIcon(QIcon(":/assets/icons/bluecurve/stock-font.svg"));
     menu_view->addAction(action_show_default_labels);
     connect(action_show_default_labels, &QAction::triggered, this->central_widget->get_gl_widget()->get_structure_renderer().get(), &StructureRenderer::set_default_labels_visible);
 
     // actions for practice menu
     this->action_determine_point_group = new QAction(menu_practice);
     this->action_determine_point_group->setText(tr("Determine point group for current molecule"));
+    this->action_determine_point_group->setIcon(QIcon(":/assets/icons/bluecurve/stock-view-tree.svg"));
     this->action_determine_point_group->setShortcut(QKeySequence("Ctrl+Shift+G"));
     this->action_determine_point_group->setToolTip(
         tr("Open the guided decision tree for the current library molecule"));
@@ -168,6 +184,7 @@ MainWindow::MainWindow() {
     // actions for help menu
     QAction *action_about = new QAction(menu_help);
     action_about->setText(tr("About"));
+    action_about->setIcon(QIcon(":/assets/icons/bluecurve/stock-about.svg"));
     connect(action_about, &QAction::triggered, this, &MainWindow::about);
     menu_help->addAction(action_about);
 
@@ -303,11 +320,11 @@ void MainWindow::about() {
 
         "<b>Version:</b> " PROGRAM_VERSION "<br><br>"
 
-        "<b>Original implementation:</b><br>"
-        "Luuk Kempen (2021)<br><br>"
-
         "<b>Port and maintenance:</b><br>"
         "Ivo Filot (v1.2 and later)<br><br>"
+
+        "<b>Original implementation:</b><br>"
+        "Luuk Kempen (2021)<br><br>"
 
         "<b>License:</b> GNU General Public License v3<br><br>"
 
@@ -319,7 +336,9 @@ void MainWindow::about() {
     );
 
     message_box.setWindowTitle("About " PROGRAM_NAME);
-    message_box.setWindowIcon(QIcon(":/assets/icons/schoenflies.ico"));
+    message_box.setWindowIcon(QIcon(":/assets/icons/schoenflies-v2.ico"));
+    message_box.setIconPixmap(QPixmap(":/assets/icons/schoenflies-v2.png").scaled(
+        96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     message_box.setTextFormat(Qt::RichText);
     message_box.setTextInteractionFlags(Qt::TextBrowserInteraction);
 

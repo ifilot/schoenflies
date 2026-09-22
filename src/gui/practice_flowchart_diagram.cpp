@@ -109,7 +109,7 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
         "<defs>"
         "<linearGradient id='done' x1='0' y1='0' x2='1' y2='1'>"
         "<stop offset='0' stop-color='#dcfce7'/><stop offset='1' stop-color='#86efac'/></linearGradient>"
-        "</defs><rect x='2' y='2' width='616' height='896' rx='24' fill='#fffdf7' stroke='#d9d5c9' stroke-width='3'/>"
+        "</defs>"
         "<text x='30' y='42' fill='#20242b' font-family='Segoe UI' font-size='25' font-weight='700'>"
         "Your route</text>"
         "<text x='30' y='69' fill='#667085' font-family='Segoe UI' font-size='14'>"
@@ -203,11 +203,6 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
             .arg(active_y + 76);
     }
 
-    svg += QStringLiteral(
-        "<rect x='30' y='840' width='560' height='34' rx='17' fill='#f3f4f6'/>"
-        "<text x='310' y='858' text-anchor='middle' dominant-baseline='middle' fill='#667085' "
-        "font-family='Segoe UI' font-size='12'>Faded pills show alternatives you have already ruled out.</text>");
-
     svg += "</svg>";
     this->load(svg.toUtf8());
 }
@@ -264,8 +259,7 @@ void PracticeFlowchartDiagram::render_overview(const std::vector<std::string>& p
         "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 930'>"
         "<defs><linearGradient id='done' x1='0' y1='0' x2='1' y2='1'>"
         "<stop offset='0' stop-color='#dcfce7'/><stop offset='1' stop-color='#86efac'/></linearGradient>"
-        "</defs><rect x='2' y='2' width='1396' height='926' rx='22' fill='#fffdf7' "
-        "stroke='#d9d5c9' stroke-width='3'/>"
+        "</defs>"
         "<text x='28' y='38' fill='#20242b' font-family='Segoe UI' font-size='24' font-weight='700'>"
         "Complete point-group decision tree</text>"
         "<text x='28' y='62' fill='#667085' font-family='Segoe UI' font-size='13'>"
@@ -285,7 +279,7 @@ void PracticeFlowchartDiagram::render_overview(const std::vector<std::string>& p
             .arg(from.first).arg(from.second + 23).arg(middle_y)
             .arg(to.first).arg(to.second - 23).arg(colour).arg(selected ? 4 : 2).arg(dash);
         svg += QString("<text x='%1' y='%2' text-anchor='middle' fill='%3' font-family='Segoe UI' "
-                       "font-size='11' font-weight='700'>%4</text>")
+                       "font-size='14' font-weight='700'>%4</text>")
             .arg((from.first + to.first) / 2).arg(middle_y - 4).arg(colour).arg(edge.answer);
     }
 
