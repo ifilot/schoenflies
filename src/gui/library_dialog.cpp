@@ -18,6 +18,9 @@
 
 #include "library_dialog.h"
 
+#include <QColor>
+#include <QPalette>
+
 LibraryDialog::LibraryDialog(QWidget* parent)
     : QDialog(parent, Qt::WindowType::WindowTitleHint |
                       Qt::WindowType::WindowSystemMenuHint |
@@ -43,6 +46,24 @@ LibraryDialog::LibraryDialog(QWidget* parent)
     this->tree_view->setIndentation(0);
     this->tree_view->setItemsExpandable(false);
     this->tree_view->setAllColumnsShowFocus(true);
+    this->tree_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    // Keep selected molecules clearly visible even when focus moves to one
+    // of the dialog buttons. The native Windows inactive selection is grey
+    // and has insufficient contrast with the rich-text delegate.
+    QPalette library_palette = this->tree_view->palette();
+    const QColor selection_blue("#2878b8");
+    for (QPalette::ColorGroup group : {QPalette::Active, QPalette::Inactive}) {
+        library_palette.setColor(group, QPalette::Highlight, selection_blue);
+        library_palette.setColor(group, QPalette::HighlightedText, Qt::white);
+    }
+    this->tree_view->setPalette(library_palette);
+    this->tree_view->setStyleSheet(
+        "QTreeView::item:selected {"
+        "  background-color: #2878b8;"
+        "  color: white;"
+        "}"
+    );
     this->tree_view->setModel(this->proxy_model);
     this->tree_view->setItemDelegate(delegate);
     // this->tree_view->header()->setSectionResizeMode(QHeaderView::ResizeMode::ResizeToContents);

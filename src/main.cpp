@@ -18,6 +18,8 @@
 
 #include "main.h"
 
+#include <QTimer>
+
 int main(int argc, char** argv) {
     if (argc > 1) {
         // parse command-line arguments
@@ -80,8 +82,7 @@ int main_cmd(int argc, char** argv) {
  * @return int return code
  */
 int main_gui(int argc, char** argv) {
-    // configure application attributes
-    QApplication::setAttribute(Qt::ApplicationAttribute::AA_EnableHighDpiScaling);
+    // Configure Qt 6's fractional high-DPI scaling policy.
     QApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
     // Configure OpenGL before QApplication is created. Some platforms create
@@ -110,6 +111,7 @@ int main_gui(int argc, char** argv) {
     }
 
     main_window->show();
+    QTimer::singleShot(0, main_window.get(), SLOT(show_welcome_dialog()));
 
     return app.exec();
 }

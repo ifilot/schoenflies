@@ -49,6 +49,7 @@
 #include "gui_mode.h"
 #include "library_dialog.h"
 #include "stereoscopic_method.h"
+#include "welcome_dialog.h"
 
 class CentralWidget;  // forward declaration
 
@@ -92,6 +93,11 @@ private:
     void load_structure(const LibraryItem& item);
 
 private slots:
+    /**
+     * @brief Show the welcome screen and dispatch its selected action
+     */
+    void show_welcome_dialog();
+
     /**
      * @brief Open a new file
      */

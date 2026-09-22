@@ -64,11 +64,7 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option_i
 
         QFontMetrics metric(option.font);
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
         int ellipsis_width = metric.horizontalAdvance(this->ellipsis);
-#else
-        int ellipsis_width = metric.width(this->ellipsis);
-#endif
 
         while (doc.size().width() > max_text_width - ellipsis_width) {
             cursor.deletePreviousChar();
