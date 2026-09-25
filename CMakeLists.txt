@@ -12,8 +12,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Extra safety: tell GCC not to use modules TS
-add_compile_options(-fno-modules-ts)
+# Extra safety: tell GCC not to use modules TS. AppleClang does not support
+# this GCC-specific option.
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    add_compile_options(-fno-modules-ts)
+endif()
 add_compile_definitions(
     EIGEN_NO_DEBUG
     EIGEN_DONT_VECTORIZE
@@ -90,11 +93,25 @@ if (WIN32)
     list(APPEND APP_SOURCES resources.rc)
 endif()
 
-add_executable(schoenflies ${APP_SOURCES})
+if(APPLE)
+    add_executable(schoenflies MACOSX_BUNDLE ${APP_SOURCES})
+else()
+    add_executable(schoenflies ${APP_SOURCES})
+endif()
 
 if (WIN32)
     set_target_properties(schoenflies PROPERTIES
         WIN32_EXECUTABLE TRUE
+    )
+endif()
+
+if(APPLE)
+    set_target_properties(schoenflies PROPERTIES
+        OUTPUT_NAME "Schoenflies"
+        MACOSX_BUNDLE_BUNDLE_NAME "Schoenflies"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "nl.tue.schoenflies"
+        MACOSX_BUNDLE_BUNDLE_VERSION "1.3.0"
+        MACOSX_BUNDLE_SHORT_VERSION_STRING "1.3.0"
     )
 endif()
 

@@ -1,0 +1,63 @@
+name: macOS Package
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - develop
+    tags:
+      - "v*"
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  package-macos:
+    name: macOS (Apple Silicon)
+    runs-on: macos-15
+
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          brew install \
+            cmake \
+            ninja \
+            qt \
+            boost \
+            eigen@3 \
+            glm \
+            freetype \
+            nlohmann-json \
+            dylibbundler
+
+      - name: Build, test, and package
+        run: |
+          export PATH="$(brew --prefix qt)/bin:$PATH"
+          export CMAKE_PREFIX_PATH="$(brew --prefix qt);$(brew --prefix eigen@3)"
+          ./package-macos.sh
+
+      - name: Upload disk image
+        uses: actions/upload-artifact@v4
+        with:
+          name: Schoenflies-macOS-arm64
+          path: dist/macos/*.dmg
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Add disk image to GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: dist/macos/*.dmg

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+- Added an Apple Silicon macOS workflow that builds, tests, audits, and packages a self-contained disk image
 - Added configurable per-atom 1s, 2p, 3d, and 4f basis-function visualization
 - Added multi-orbital atom assignments, live modal previews, phase-color swatches, and a custom color picker
 - Added translucent ghost orbitals during symmetry-operation animations
