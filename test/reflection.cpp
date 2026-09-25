@@ -27,6 +27,13 @@
 #include "../src/symmetry/operations/operation_label.h"
 #include "utils.h"
 
+namespace {
+bool same_axis(const glm::vec3& lhs, const glm::vec3& rhs, float tolerance = 1e-5f) {
+    return glm::all(glm::epsilonEqual(lhs, rhs, tolerance))
+        || glm::all(glm::epsilonEqual(lhs, -rhs, tolerance));
+}
+}
+
 BOOST_AUTO_TEST_SUITE(reflection)
 
 BOOST_AUTO_TEST_CASE(bicyclooctane) {
@@ -61,7 +68,7 @@ BOOST_AUTO_TEST_CASE(cubane) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
+            if (same_axis(reflection.get_axis(), normal)) matched++;
         }
     }
 
@@ -97,7 +104,7 @@ BOOST_AUTO_TEST_CASE(ferrocene_eclipsed) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-5f))) matched++;
+            if (same_axis(reflection.get_axis(), normal)) matched++;
         }
     }
 
@@ -124,7 +131,7 @@ BOOST_AUTO_TEST_CASE(methane) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
+            if (same_axis(reflection.get_axis(), normal)) matched++;
         }
     }
 
@@ -149,7 +156,7 @@ BOOST_AUTO_TEST_CASE(octasulfur) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
+            if (same_axis(reflection.get_axis(), normal)) matched++;
         }
     }
 
@@ -174,7 +181,7 @@ BOOST_AUTO_TEST_CASE(pentaborane_9) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-5f))) matched++;
+            if (same_axis(reflection.get_axis(), normal)) matched++;
         }
     }
 

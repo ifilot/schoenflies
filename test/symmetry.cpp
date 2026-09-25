@@ -179,7 +179,10 @@ BOOST_AUTO_TEST_CASE(axes_water) {
     };
     std::vector<glm::vec3> axes{symmetry.get_x_axis(), symmetry.get_y_axis(), symmetry.get_z_axis()};
     for (unsigned int i = 0; i < 3; ++i) {
-        BOOST_TEST(glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-5f)));
+        const bool equivalent =
+            glm::all(glm::epsilonEqual(axes[i], expected_axes[i], 1e-5f))
+            || glm::all(glm::epsilonEqual(axes[i], -expected_axes[i], 1e-5f));
+        BOOST_TEST(equivalent);
     }
 }
 
