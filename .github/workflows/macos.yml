@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install dependencies
         run: |
@@ -45,10 +45,10 @@ jobs:
         run: |
           export PATH="$(brew --prefix qt)/bin:$PATH"
           export CMAKE_PREFIX_PATH="$(brew --prefix qt);$(brew --prefix eigen@3)"
-          ./package-macos.sh
+          bash package-macos.sh
 
       - name: Upload disk image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Schoenflies-macOS-arm64
           path: dist/macos/*.dmg
