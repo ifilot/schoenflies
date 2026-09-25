@@ -10,7 +10,7 @@ STAGED_APP="${DIST_DIR}/${APP_NAME}.app"
 DMG_PATH="${DIST_DIR}/${APP_NAME}-${APP_VERSION}-macOS-$(uname -m).dmg"
 BUILD_TYPE="${BUILD_TYPE:-Release}"
 
-for tool in cmake ninja macdeployqt dylibbundler hdiutil otool codesign; do
+for tool in cmake ninja macdeployqt hdiutil otool codesign; do
     command -v "${tool}" >/dev/null || {
         echo "ERROR: Required tool not found: ${tool}" >&2
         exit 1
@@ -49,14 +49,6 @@ cp -R "${APP_BUNDLE}" "${STAGED_APP}"
 echo "[INFO] Deploying Qt frameworks and plugins"
 macdeployqt "${STAGED_APP}" -always-overwrite -verbose=2
 
-echo "[INFO] Bundling non-Qt dynamic libraries"
-dylibbundler \
-    -od \
-    -b \
-    -x "${STAGED_APP}/Contents/MacOS/${APP_NAME}" \
-    -d "${STAGED_APP}/Contents/libs" \
-    -p "@executable_path/../libs/"
-
 echo "[INFO] Applying an ad-hoc signature"
 codesign --force --deep --sign - "${STAGED_APP}"
 codesign --verify --deep --strict --verbose=2 "${STAGED_APP}"
@@ -65,9 +57,21 @@ echo "[INFO] Auditing dynamic-library references"
 unexpected_references=""
 while IFS= read -r -d '' binary; do
     if file "${binary}" | grep -q "Mach-O"; then
-        references="$(otool -L "${binary}" | tail -n +2 | awk '{print $1}')"
-        leaked="$(printf '%s\n' "${references}" |
-            grep -E '^(/opt/homebrew|/usr/local|/Users/runner)' || true)"
+        binary_name="$(basename "${binary}")"
+        leaked=""
+        while IFS= read -r reference; do
+            [[ -n "${reference}" ]] || continue
+            # A dylib/framework may retain an absolute self-ID. It is metadata,
+            # not a dependency; consumers are audited separately below.
+            if [[ "$(basename "${reference}")" == "${binary_name}" ]]; then
+                continue
+            fi
+            case "${reference}" in
+                /opt/homebrew/*|/usr/local/*|/Users/runner/*)
+                    leaked+="${reference}"$'\n'
+                    ;;
+            esac
+        done < <(otool -L "${binary}" | tail -n +2 | awk '{print $1}')
         if [[ -n "${leaked}" ]]; then
             unexpected_references+="${binary}:"$'\n'"${leaked}"$'\n'
         fi

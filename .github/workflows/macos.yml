@@ -38,8 +38,7 @@ jobs:
             eigen@3 \
             glm \
             freetype \
-            nlohmann-json \
-            dylibbundler
+            nlohmann-json
 
       - name: Build, test, and package
         run: |
