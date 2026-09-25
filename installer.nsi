@@ -3,7 +3,7 @@
 ; ============================
 
 !define APP_NAME "Schoenflies"
-!define APP_VERSION "1.2.1"
+!define APP_VERSION "1.3.0"
 !define APP_PUBLISHER "Ivo Filot"
 !define APP_EXE "schoenflies.exe"
 
