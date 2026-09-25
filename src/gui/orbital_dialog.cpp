@@ -184,10 +184,17 @@ QGroupBox* OrbitalDialog::create_orbital_group(
         checkbox->setTristate(true);
         this->orbital_checkboxes[type] = checkbox;
         layout->addWidget(checkbox, i / columns, i % columns);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
         connect(checkbox, &QCheckBox::checkStateChanged, this, [this, type](Qt::CheckState state) {
             if (this->updating_controls) return;
             this->set_orbital_checked(type, state != Qt::Unchecked);
         });
+#else
+        connect(checkbox, &QCheckBox::stateChanged, this, [this, type](int state) {
+            if (this->updating_controls) return;
+            this->set_orbital_checked(type, state != Qt::Unchecked);
+        });
+#endif
     }
     return group;
 }
