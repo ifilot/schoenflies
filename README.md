@@ -9,7 +9,9 @@ Versions ≥ 1.2: maintained as a port by Ivo Filot
 
 ## Download
 
-[Download the latest Windows installer](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-1.2.1-Setup.exe)
+[Download the latest Windows installer](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-Windows-Setup.exe)
+
+[Download the latest macOS installer (Apple Silicon)](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-macOS-arm64.dmg)
 
 ## Compilation
 

@@ -22,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added a Help menu command for reopening the welcome screen
 
 ### Changed
+- Standardized Windows and macOS release asset names so the latest-download links remain stable across versions
 - Updated the Windows package to include the application version in the installer filename
 - Fully migrated the application, build system, documentation, and CI workflows to Qt 6
 - Changed the library selection highlight to blue for better contrast and readability

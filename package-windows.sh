@@ -119,4 +119,4 @@ makensis installer.nsi
 
 echo
 echo "[SUCCESS] Windows package staged in ${DIST_DIR}"
-echo "[SUCCESS] Windows installer created: ${APP_NAME}-${APP_VERSION}-Setup.exe"
+echo "[SUCCESS] Windows installer created: ${APP_NAME}-Windows-Setup.exe"

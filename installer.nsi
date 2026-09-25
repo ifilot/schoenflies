@@ -7,7 +7,7 @@
 !define APP_PUBLISHER "Ivo Filot"
 !define APP_EXE "schoenflies.exe"
 
-OutFile "${APP_NAME}-${APP_VERSION}-Setup.exe"
+OutFile "${APP_NAME}-Windows-Setup.exe"
 InstallDir "$PROGRAMFILES64\${APP_NAME}"
 InstallDirRegKey HKLM "Software\${APP_NAME}" "InstallDir"
 

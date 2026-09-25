@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: Schoenflies-macOS-arm64
-          path: dist/macos/*.dmg
+          path: dist/macos/Schoenflies-macOS-arm64.dmg
           if-no-files-found: error
           retention-days: 14
 
@@ -59,4 +59,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: dist/macos/*.dmg
+          files: dist/macos/Schoenflies-macOS-arm64.dmg

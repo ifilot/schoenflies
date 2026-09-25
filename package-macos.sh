@@ -7,7 +7,7 @@ BUILD_DIR="${BUILD_DIR:-build-macos}"
 DIST_DIR="${DIST_DIR:-dist/macos}"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"
 STAGED_APP="${DIST_DIR}/${APP_NAME}.app"
-DMG_PATH="${DIST_DIR}/${APP_NAME}-${APP_VERSION}-macOS-$(uname -m).dmg"
+DMG_PATH="${DIST_DIR}/${APP_NAME}-macOS-$(uname -m).dmg"
 BUILD_TYPE="${BUILD_TYPE:-Release}"
 
 for tool in cmake ninja macdeployqt hdiutil otool codesign; do
