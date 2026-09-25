@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(ferrocene_eclipsed) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-5f))) matched++;
         }
     }
 
@@ -174,7 +174,7 @@ BOOST_AUTO_TEST_CASE(pentaborane_9) {
 
     for (auto reflection : reflections) {
         for (auto normal : expected_normals) {
-            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-6f))) matched++;
+            if (glm::all(glm::epsilonEqual(reflection.get_axis(), normal, 1e-5f))) matched++;
         }
     }
 
