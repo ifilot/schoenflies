@@ -169,6 +169,14 @@ MainWindow::MainWindow() {
     menu_view->addAction(action_show_default_labels);
     connect(action_show_default_labels, &QAction::triggered, this->central_widget->get_gl_widget()->get_structure_renderer().get(), &StructureRenderer::set_default_labels_visible);
 
+    this->action_orbitals = new QAction(menu_view);
+    this->action_orbitals->setText(tr("Atomic orbital basis functions…"));
+    this->action_orbitals->setShortcut(QKeySequence("Ctrl+Alt+B"));
+    this->action_orbitals->setEnabled(false);
+    this->action_orbitals->setToolTip(tr("Assign visualized basis functions to atoms"));
+    menu_view->addAction(this->action_orbitals);
+    connect(this->action_orbitals, &QAction::triggered, this, &MainWindow::configure_orbitals);
+
     // actions for practice menu
     this->action_determine_point_group = new QAction(menu_practice);
     this->action_determine_point_group->setText(tr("Determine point group for current molecule"));
@@ -242,6 +250,7 @@ void MainWindow::load_structure(const std::string& filename) {
     statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
     this->central_widget->set_structure(structure);
     this->action_determine_point_group->setEnabled(false);
+    this->action_orbitals->setEnabled(true);
 }
 
 /**
@@ -255,6 +264,7 @@ void MainWindow::load_structure(const LibraryItem& item) {
     statusBar()->showMessage(QString::fromStdString(structure->get_description_filename()));
     this->central_widget->set_structure(structure);
     this->action_determine_point_group->setEnabled(true);
+    this->action_orbitals->setEnabled(true);
 }
 
 /**
@@ -372,4 +382,19 @@ void MainWindow::about() {
     message_box.setTextInteractionFlags(Qt::TextBrowserInteraction);
 
     message_box.exec();
+}
+
+/**
+ * @brief Configure atomic-orbital basis functions for the current molecule
+ */
+void MainWindow::configure_orbitals() {
+    if (!this->central_widget->get_symmetry_set()) return;
+
+    const std::shared_ptr<Structure> structure =
+        this->central_widget->get_symmetry()->get_structure();
+    const std::shared_ptr<StructureRenderer> renderer =
+        this->central_widget->get_gl_widget()->get_structure_renderer();
+
+    OrbitalDialog dialog(structure, renderer, this);
+    dialog.exec();
 }

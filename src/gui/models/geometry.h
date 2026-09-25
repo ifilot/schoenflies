@@ -25,6 +25,7 @@
 #include <vector>
 #include <numbers>
 #include <glm/glm.hpp>
+#include "../../orbitals/orbital_type.h"
 #include "model_2d.h"
 #include "model_3d.h"
 
@@ -37,6 +38,13 @@ public:
      * @return std::unique_ptr<Model3D>
      */
     static std::unique_ptr<Model3D> sphere(unsigned int tesselation_level = 3);
+
+    /** Create one phase of a real atomic-orbital angular surface. */
+    static std::unique_ptr<Model3D> orbital(
+        OrbitalType type,
+        bool positive_phase,
+        unsigned int latitude_count = 32,
+        unsigned int longitude_count = 64);
 
     /**
      * @brief Create a unique pointer to a cylinder model

@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Added
+- Added configurable per-atom 1s, 2p, 3d, and 4f basis-function visualization
+- Added multi-orbital atom assignments, live modal previews, phase-color swatches, and a custom color picker
+- Added translucent ghost orbitals during symmetry-operation animations
+
+### Fixed
+- Removed dark triangular banding artifacts from translucent orbital rendering
+
 ## [1.2.1] - 2026-09-22
 
 ### Added

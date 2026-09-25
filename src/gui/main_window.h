@@ -48,6 +48,7 @@
 #include "character_table_dialog.h"
 #include "gui_mode.h"
 #include "library_dialog.h"
+#include "orbital_dialog.h"
 #include "stereoscopic_method.h"
 #include "welcome_dialog.h"
 
@@ -62,6 +63,7 @@ private:
     CharacterTableDialog* character_table_dialog = nullptr;
     QAction* action_practice;
     QAction* action_determine_point_group;
+    QAction* action_orbitals;
 
 public:
     /**
@@ -130,6 +132,9 @@ private slots:
      * @brief Open the character table dialog
      */
     void open_character_table_dialog();
+
+    /** Open the per-atom orbital basis-function configuration dialog. */
+    void configure_orbitals();
 
     /**
      * @brief Close the application
