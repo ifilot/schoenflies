@@ -32,15 +32,17 @@ QPushButton* make_action_button(
     button->setIcon(QIcon(icon_path));
     button->setIconSize(QSize(34, 34));
     button->setMinimumSize(250, 78);
+    button->setMinimumWidth(qMax(button->fontMetrics().horizontalAdvance(title),
+                                 button->fontMetrics().horizontalAdvance(description)) + 100);
     button->setCursor(Qt::PointingHandCursor);
     button->setStyleSheet(
         "QPushButton {"
-        "  background: #ffffff; color: #243447; border: 1px solid #cbd8e6;"
+        "  background: palette(button); color: palette(button-text); border: 1px solid palette(mid);"
         "  border-radius: 8px; padding: 10px 14px; text-align: left;"
         "  font-size: 12px;"
         "}"
-        "QPushButton:hover { background: #edf6ff; border-color: #3984c6; }"
-        "QPushButton:pressed { background: #dceeff; }"
+        "QPushButton:hover { background: palette(midlight); border-color: palette(link); }"
+        "QPushButton:pressed { background: palette(highlight); color: palette(highlighted-text); }"
     );
     return button;
 }
@@ -52,7 +54,7 @@ WelcomeDialog::WelcomeDialog(QWidget* parent): QDialog(parent) {
     setWindowIcon(QIcon(":/assets/icons/schoenflies-v2.ico"));
     setModal(true);
     setMinimumWidth(590);
-    setStyleSheet("QDialog { background: #f5f8fb; }");
+    setStyleSheet("QDialog { background: palette(window); }");
 
     auto* layout = new QVBoxLayout(this);
     layout->setContentsMargins(28, 24, 28, 22);
@@ -65,7 +67,7 @@ WelcomeDialog::WelcomeDialog(QWidget* parent): QDialog(parent) {
 
     auto* heading = new QLabel(
         tr("<span style='font-size:24px; font-weight:600;'>Welcome to %1</span>"
-           "<br><span style='color:#587087;'>Explore and understand molecular symmetry.</span>")
+           "<br><span>Explore and understand molecular symmetry.</span>")
             .arg(PROGRAM_NAME),
         this
     );
@@ -74,7 +76,7 @@ WelcomeDialog::WelcomeDialog(QWidget* parent): QDialog(parent) {
     layout->addLayout(heading_layout);
 
     auto* prompt = new QLabel(tr("What would you like to do?"), this);
-    prompt->setStyleSheet("font-size: 14px; font-weight: 600; color: #243447;");
+    prompt->setStyleSheet("font-size: 14px; font-weight: 600; color: palette(window-text);");
     layout->addWidget(prompt);
 
     auto* actions = new QGridLayout;
@@ -107,17 +109,17 @@ WelcomeDialog::WelcomeDialog(QWidget* parent): QDialog(parent) {
     );
     tip->setWordWrap(true);
     tip->setStyleSheet(
-        "background: #e8f2fb; color: #344d63; border-radius: 7px; padding: 12px;"
+        "background: palette(alternate-base); color: palette(window-text); border-radius: 7px; padding: 12px;"
     );
     layout->addWidget(tip);
 
     auto* footer = new QHBoxLayout;
     auto* version = new QLabel(tr("Version %1").arg(PROGRAM_VERSION), this);
-    version->setStyleSheet("color: #718096;");
+    version->setStyleSheet("color: palette(placeholder-text);");
     footer->addWidget(version);
     footer->addStretch();
     auto* dismiss_hint = new QLabel(tr("Press Esc to continue to the application"), this);
-    dismiss_hint->setStyleSheet("color: #718096;");
+    dismiss_hint->setStyleSheet("color: palette(placeholder-text);");
     footer->addWidget(dismiss_hint);
     layout->addLayout(footer);
 

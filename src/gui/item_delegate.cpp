@@ -17,6 +17,7 @@
  */
 
 #include "item_delegate.h"
+#include <QAbstractTextDocumentLayout>
 
 /**
  * @brief Renders the delegate using the given painter and style option_in
@@ -87,7 +88,15 @@ void ItemDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option_i
 
     // translate painter to origin of layout rectangle to render text correctly
     painter->translate(layout_rect.topLeft());
-    doc.drawContents(painter, text_rect.translated(-text_rect.topLeft()));
+    QAbstractTextDocumentLayout::PaintContext context;
+    context.palette = option.palette;
+    const auto group = !(option.state & QStyle::State_Enabled) ? QPalette::Disabled :
+        ((option.state & QStyle::State_Active) ? QPalette::Active : QPalette::Inactive);
+    const auto role = (option.state & QStyle::State_Selected) ?
+        QPalette::HighlightedText : QPalette::Text;
+    context.palette.setColor(QPalette::Text, option.palette.color(group, role));
+    context.clip = text_rect.translated(-text_rect.topLeft());
+    doc.documentLayout()->draw(painter, context);
 
     painter->restore();
 }

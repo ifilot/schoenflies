@@ -17,6 +17,7 @@
  */
 
 #include "main.h"
+#include "gui/theme.h"
 
 #include <QTimer>
 
@@ -98,6 +99,7 @@ int main_gui(int argc, char** argv) {
 
     // create application
     QApplication app(argc, argv);
+    Theme::restore(app);
 
     std::unique_ptr<MainWindow> main_window;
 

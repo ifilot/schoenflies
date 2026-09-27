@@ -17,6 +17,7 @@
  */
 
 #include "practice_flowchart_step_widget.h"
+#include <QStyle>
 
 /**
  * @brief Construct a new Practice Flowchart Step Widget object
@@ -28,17 +29,20 @@ PracticeFlowchartStepWidget::PracticeFlowchartStepWidget(QWidget* parent, int st
     this->step_index = step_index;
     this->step = step;
     this->setObjectName("flowchartQuestionCard");
+    this->setAttribute(Qt::WA_StyledBackground, true);
     this->setStyleSheet(
         "QWidget#flowchartQuestionCard {"
-        "  background: #f7f9fc; border: 1px solid #d7dfeb;"
+        "  background: palette(alternate-base); border: 1px solid palette(mid);"
         "  border-radius: 12px; }"
-        "QLabel { border: none; background: transparent; color: #172033; }"
+        "QLabel { border: none; background: transparent; }"
         "QPushButton { min-height: 30px; padding: 3px 14px; border-radius: 7px;"
-        "  border: 1px solid #9aa9bf; background: white; font-weight: 600; }"
-        "QPushButton:hover { border-color: #0ea5e9; background: #eaf8ff; }"
-        "QPushButton:checked { border-color: #0284c7; color: white; background: #0284c7; }"
+        "  border: 1px solid palette(mid); background: palette(button); color: palette(button-text); font-weight: 600; }"
+        "QPushButton:hover { border-color: palette(link); background: palette(midlight); }"
+        "QPushButton:focus { border: 2px solid palette(link); }"
+        "QPushButton:checked { border-color: palette(link); color: palette(highlighted-text); background: palette(highlight); }"
+        "QPushButton:disabled { background: palette(button); }"
         "QComboBox { min-height: 30px; padding: 2px 8px; border-radius: 7px;"
-        "  border: 1px solid #9aa9bf; background: white; }");
+        "  border: 1px solid palette(mid); background: palette(button); color: palette(button-text); }");
     this->build_widget();
 }
 
@@ -49,14 +53,14 @@ void PracticeFlowchartStepWidget::show_answer() {
     if (this->step->get_type() != PracticeFlowchartStep::Type::Result) {
         if (this->step->get_correct_answer() == this->answer) {
             answer_label->setText("✓ Correct — that branch matches the molecule.");
-            answer_label->setStyleSheet("color: #047857; font-weight: 700; padding: 6px;");
+            answer_label->setObjectName("correctFeedback");
         } else {
             if (this->step->get_type() == PracticeFlowchartStep::Type::ChooseN) {
                 answer_label->setText(QString("Not quite — the highest order is %1.").arg(this->step->get_correct_answer()));
             } else {
                 answer_label->setText("Not quite — review the highlighted route above.");
             }
-            answer_label->setStyleSheet("color: #b45309; font-weight: 700; padding: 6px;");
+            answer_label->setObjectName("incorrectFeedback");
         }
     } else {
         PointGroupLabel correct_group = this->step->get_correct_point_group();
@@ -64,13 +68,15 @@ void PracticeFlowchartStepWidget::show_answer() {
 
         if (correct_group.matches(result_group)) {
             answer_label->setText("✓ Correct — point group determined!");
-            answer_label->setStyleSheet("color: #047857; font-weight: 700; padding: 6px;");
+            answer_label->setObjectName("correctFeedback");
         } else {
             answer_label->setText(QString("The route needs another look; the correct group is %1.").arg(QString::fromStdString(correct_group.get_name_html())));
-            answer_label->setStyleSheet("color: #b45309; font-weight: 700; padding: 6px;");
+            answer_label->setObjectName("incorrectFeedback");
         }
     }
 
+    answer_label->style()->unpolish(answer_label);
+    answer_label->style()->polish(answer_label);
     this->set_answer_visible(true);
 }
 
@@ -94,7 +100,7 @@ void PracticeFlowchartStepWidget::build_widget() {
     this->main_layout->setSpacing(9);
 
     QLabel *step_label = new QLabel(QString("STEP %1").arg(this->step_index + 1));
-    step_label->setStyleSheet("color: #0284c7; font-size: 10px; font-weight: 800; letter-spacing: 1px;");
+    step_label->setStyleSheet("color: palette(link); font-size: 10px; font-weight: 800; letter-spacing: 1px;");
     this->main_layout->addWidget(step_label);
 
     QLabel *text_label = new QLabel;

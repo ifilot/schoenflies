@@ -3,7 +3,13 @@
 #include <QCheckBox>
 #include <QLabel>
 #include <QPushButton>
+#include <cmath>
+#include <algorithm>
+#include <QSettings>
+#include <QTemporaryDir>
+#include "../src/gui/practice_flowchart_diagram.h"
 #include "../src/gui/practice_widget.h"
+#include "../src/gui/theme.h"
 
 namespace {
 struct ApplicationFixture {
@@ -11,6 +17,7 @@ struct ApplicationFixture {
     char name[16] = "practice-test";
     char* argv[2] = {name, nullptr};
     QApplication application{argc, argv};
+    ApplicationFixture() { Theme::apply(application); }
 };
 
 std::shared_ptr<Symmetry> load(const char* name) {
@@ -40,6 +47,96 @@ void answer(PracticeFlowchartWidget* chart, const std::vector<int>& answers) {
 }
 
 BOOST_FIXTURE_TEST_SUITE(practice_widget, ApplicationFixture)
+
+BOOST_AUTO_TEST_CASE(theme_preference_survives_settings_recreation) {
+    QTemporaryDir directory;
+    BOOST_REQUIRE(directory.isValid());
+    const auto file = directory.filePath("settings.ini");
+    {
+        QSettings settings(file, QSettings::IniFormat);
+        BOOST_CHECK(Theme::load(settings) == Theme::Mode::Dark);
+        BOOST_REQUIRE(Theme::save(settings, Theme::Mode::Light));
+    }
+    {
+        QSettings settings(file, QSettings::IniFormat);
+        BOOST_CHECK(Theme::load(settings) == Theme::Mode::Light);
+        BOOST_REQUIRE(Theme::save(settings, Theme::Mode::Dark));
+    }
+    QSettings settings(file, QSettings::IniFormat);
+    BOOST_CHECK(Theme::load(settings) == Theme::Mode::Dark);
+    settings.setValue("appearance/theme", "invalid");
+    BOOST_CHECK(Theme::load(settings) == Theme::Mode::Dark);
+}
+
+BOOST_AUTO_TEST_CASE(live_theme_switch_preserves_exercise_and_updates_feedback) {
+    PracticeWidget widget(nullptr);
+    PracticeFlowchartDiagram diagram;
+    widget.create_practice_structure(load("methane"));
+    widget.start_current_structure_flowchart();
+    auto chart = widget.findChild<PracticeFlowchartWidget*>();
+    answer(chart, {0, 1, 0});
+    diagram.set_path({"start", "higher_order", "high_sym", "Td"});
+    const auto path = diagram.get_path();
+    const auto cards = chart->findChildren<PracticeFlowchartStepWidget*>();
+    auto feedback = chart->findChild<QLabel*>("correctFeedback");
+    BOOST_REQUIRE(feedback);
+    for (auto mode : {Theme::Mode::Light, Theme::Mode::Dark, Theme::Mode::Light}) {
+        Theme::apply(application, mode);
+        application.processEvents();
+        feedback->ensurePolished();
+        BOOST_TEST(diagram.get_path() == path);
+        BOOST_TEST(chart->findChildren<PracticeFlowchartStepWidget*>() == cards);
+        BOOST_CHECK(diagram.palette().color(QPalette::Window) == application.palette().color(QPalette::Window));
+        BOOST_CHECK(feedback->palette().color(QPalette::WindowText) ==
+                   QColor(mode == Theme::Mode::Light ? "#17653b" : "#80e0b0"));
+        for (auto button : chart->findChildren<QPushButton*>()) {
+            button->ensurePolished();
+            const auto palette = button->palette();
+            BOOST_CHECK(palette.color(QPalette::ButtonText) != palette.color(QPalette::Button));
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(both_themes_have_readable_controls) {
+    // Reproduce issue #3's system palette: white foregrounds before applying
+    // the app theme. Check the actual styled controls, not just theme constants.
+    QPalette system_palette;
+    system_palette.setColor(QPalette::ButtonText, Qt::white);
+    system_palette.setColor(QPalette::Text, Qt::white);
+    application.setPalette(system_palette);
+    auto check_theme = [&](Theme::Mode mode) {
+    Theme::apply(application, mode);
+    PracticeWidget widget(nullptr);
+    widget.create_practice_structure(load("borane"));
+    widget.start_current_structure_flowchart();
+    auto chart = widget.findChild<PracticeFlowchartWidget*>();
+    chart->handle_answer(0, 0);
+    chart->handle_answer(1, 0);
+    chart->handle_answer(2, 1);
+    widget.ensurePolished();
+    auto luminance = [](QColor color) {
+        auto linear = [](double c) { return c <= .04045 ? c / 12.92 : std::pow((c + .055) / 1.055, 2.4); };
+        return .2126 * linear(color.redF()) + .7152 * linear(color.greenF()) + .0722 * linear(color.blueF());
+    };
+    for (auto button : chart->findChildren<QPushButton*>()) {
+        button->ensurePolished();
+        double text = luminance(button->palette().color(QPalette::ButtonText));
+        double background = luminance(button->palette().color(QPalette::Button));
+        BOOST_TEST((std::max(text, background) + .05) / (std::min(text, background) + .05) >= 4.5);
+    }
+    auto combo = chart->findChild<QComboBox*>();
+    BOOST_REQUIRE(combo);
+    combo->ensurePolished();
+    const auto text = luminance(combo->palette().color(QPalette::Text));
+    const auto background = luminance(combo->palette().color(QPalette::Base));
+    BOOST_TEST((std::max(text, background) + .05) / (std::min(text, background) + .05) >= 4.5);
+    const auto palette = application.palette();
+    BOOST_TEST((luminance(palette.color(QPalette::HighlightedText)) + .05) /
+               (luminance(palette.color(QPalette::Highlight)) + .05) >= 4.5);
+    };
+    check_theme(Theme::Mode::Dark);
+    check_theme(Theme::Mode::Light);
+}
 
 BOOST_AUTO_TEST_CASE(manual_load_resets_completed_route) {
     PracticeWidget widget(nullptr);

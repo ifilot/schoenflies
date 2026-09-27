@@ -17,6 +17,7 @@
  */
 
 #include "main_window.h"
+#include "settings_dialog.h"
 
 /**
  * @brief Construct a new Main Window object
@@ -176,6 +177,14 @@ MainWindow::MainWindow() {
     this->action_orbitals->setToolTip(tr("Assign visualized basis functions to atoms"));
     menu_view->addAction(this->action_orbitals);
     connect(this->action_orbitals, &QAction::triggered, this, &MainWindow::configure_orbitals);
+
+    menu_view->addSeparator();
+    auto settings_action = menu_view->addAction(tr("Settings…"));
+    settings_action->setMenuRole(QAction::PreferencesRole);
+    connect(settings_action, &QAction::triggered, this, [this] {
+        SettingsDialog dialog(this);
+        dialog.exec();
+    });
 
     // actions for practice menu
     this->action_determine_point_group = new QAction(menu_practice);

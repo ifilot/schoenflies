@@ -117,7 +117,14 @@ void GLWidget::initializeGL() {
 /**
  * @brief Render scene
  */
+void GLWidget::changeEvent(QEvent* event) {
+    QOpenGLWidget::changeEvent(event);
+    if (event->type() == QEvent::PaletteChange) update();
+}
+
 void GLWidget::paintGL() {
+    this->bg = palette().color(QPalette::Window);
+    glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
