@@ -317,9 +317,11 @@ void Symmetry::find_improper_rotational_axes() {
     } else {
         // improper rotational axes are coincident with proper rotational axes, and
         // have degree equal to either n or 2n
-        for (Operation& operation : this->operation_manager->get_operations()) {
-            if (operation.get_label().get_element() != OperationLabel::Element::ProperRotation) continue;
-
+        // Work from a snapshot: add_operation() may append to the operation
+        // manager's vector and invalidate iterators into that vector.
+        const std::vector<Operation> proper_rotations =
+            this->operation_manager->get_proper_rotations();
+        for (const Operation& operation : proper_rotations) {
             for (unsigned int degree_factor = 1; degree_factor <= 2; ++degree_factor) {  // {1, 2}
                 unsigned int degree = operation.get_degree() * degree_factor;
                 if (degree <= 2) continue;  // S1 = σ, S2 = i
@@ -381,9 +383,12 @@ void Symmetry::find_reflection_planes_normal_to_principal_axes() {
  * case of octahedral and icosahedral symmetry)
  */
 void Symmetry::find_reflection_planes_normal_to_proper_rotational_axes(bool only_C2s) {
-    for (Operation& operation : this->operation_manager->get_operations()) {
-        if (operation.get_label().get_element() != OperationLabel::Element::ProperRotation ||
-            (only_C2s && operation.get_degree() != 2)) continue;
+    // Work from a snapshot: add_operation() may append to the operation
+    // manager's vector and invalidate iterators into that vector.
+    const std::vector<Operation> proper_rotations =
+        this->operation_manager->get_proper_rotations();
+    for (const Operation& operation : proper_rotations) {
+        if (only_C2s && operation.get_degree() != 2) continue;
 
         Operation reflection(OperationLabel::Element::Reflection, operation.get_axis());
         this->operation_manager->add_operation(reflection);

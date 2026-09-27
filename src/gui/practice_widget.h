@@ -60,6 +60,7 @@ private:
     std::shared_ptr<PracticeStructure> practice_structure;
     std::shared_ptr<Library> library;
     bool current_structure_flowchart = false;
+    bool requesting_exercise_structure = false;
 
 public:
     /**

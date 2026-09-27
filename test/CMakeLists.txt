@@ -20,3 +20,7 @@ add_test(
     NAME schoenflies_tests
     COMMAND schoenflies_test
 )
+set_tests_properties(schoenflies_tests PROPERTIES
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+)
