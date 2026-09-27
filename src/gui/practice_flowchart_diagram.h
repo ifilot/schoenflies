@@ -23,7 +23,11 @@ public:
     /** Return the route currently highlighted by the diagram. */
     const std::vector<std::string>& get_path() const;
 
+protected:
+    void changeEvent(QEvent* event) override;
+
 private:
+    void load_themed_svg(QString svg);
     bool overview_mode = false;
     std::vector<std::string> current_path = {"start"};
 

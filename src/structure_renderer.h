@@ -36,6 +36,7 @@
 #include "gui/models/model_instance.h"
 #include "gui/text/character.h"
 #include "gui/text/freetype_font.h"
+#include "orbitals/orbital_type.h"
 #include "periodic_table/element.h"
 #include "periodic_table/periodic_table.h"
 #include "symmetry/operations/operation.h"
@@ -72,6 +73,12 @@ private:
     std::vector<std::string> default_labels;
 
     std::unordered_map<unsigned int, std::string> custom_labels;
+
+    OrbitalAssignments orbitals;
+    std::vector<glm::mat3x3> orbital_orientations;
+    glm::mat3x3 orbital_base_orientation = glm::mat3x3(1.0f);
+    glm::vec3 orbital_positive_colour = glm::vec3(0.10f, 0.42f, 0.95f);
+    glm::vec3 orbital_negative_colour = glm::vec3(0.95f, 0.24f, 0.12f);
 
     std::shared_ptr<FreeTypeFont> freetype_font;
 
@@ -169,6 +176,23 @@ public:
      * @return std::vector<ModelInstance>
      */
     std::vector<ModelInstance> get_structure_model_instances();
+
+    /** Get the assigned atomic-orbital surfaces to draw. */
+    std::vector<ModelInstance> get_orbital_model_instances();
+
+    /** Get translucent orbital surfaces at the animation start position. */
+    std::vector<ModelInstance> get_ghost_orbital_model_instances();
+
+    /** Replace the per-atom orbital assignments. */
+    void set_orbitals(const OrbitalAssignments& orbitals);
+
+    /** Return the current per-atom orbital assignments. */
+    const OrbitalAssignments& get_orbitals() const;
+
+    /** Set and query the positive and negative orbital phase colours. */
+    void set_orbital_colours(const glm::vec3& positive, const glm::vec3& negative);
+    const glm::vec3& get_orbital_positive_colour() const;
+    const glm::vec3& get_orbital_negative_colour() const;
 
     /**
      * @brief Get a translucent snapshot of the structure at the position from
@@ -281,6 +305,9 @@ private:
      * @param operation
      */
     void apply_operation_to_animated_indices(Operation operation);
+
+    /** Apply a completed symmetry operation to orbital sites and orientations. */
+    void apply_operation_to_orbitals(Operation operation);
 
 public slots:
     /**

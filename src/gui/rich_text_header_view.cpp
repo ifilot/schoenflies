@@ -17,6 +17,7 @@
  */
 
 #include "rich_text_header_view.h"
+#include <QAbstractTextDocumentLayout>
 
 RichTextHeaderView::RichTextHeaderView(Qt::Orientation orientation, QWidget *parent)
     : QHeaderView(orientation, parent) {}
@@ -53,7 +54,11 @@ void RichTextHeaderView::paintSection(QPainter* painter, const QRect& rect, int 
 
     painter->save();
     painter->translate(layout_rect.topLeft());
-    doc.drawContents(painter, QRect(QPoint(0, 0), text_rect.size()));
+    QAbstractTextDocumentLayout::PaintContext context;
+    context.palette = option.palette;
+    context.palette.setColor(QPalette::Text, option.palette.color(QPalette::ButtonText));
+    context.clip = QRect(QPoint(0, 0), text_rect.size());
+    doc.documentLayout()->draw(painter, context);
     painter->restore();
 }
 

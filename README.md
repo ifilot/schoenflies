@@ -9,7 +9,16 @@ Versions ≥ 1.2: maintained as a port by Ivo Filot
 
 ## Download
 
-[Download the latest Windows installer](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-1.2.1-Setup.exe)
+[Download the latest Windows installer](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-Windows-Setup.exe)
+
+[Download the latest macOS installer (Apple Silicon)](https://github.com/ifilot/schoenflies/releases/latest/download/Schoenflies-macOS-arm64.dmg)
+
+## Appearance
+
+Open **View → Settings…** to choose the dark or light theme (on macOS, Settings
+appears in the application menu). Changes apply immediately without restarting
+the molecule or exercise. The selected theme is saved automatically for future
+sessions; dark is the default.
 
 ## Compilation
 

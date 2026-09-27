@@ -18,6 +18,8 @@
 
 #include <boost/test/unit_test.hpp>
 #include "../src/library/library.h"
+#include "../src/structure.h"
+#include "../src/symmetry/symmetry.h"
 #include "../src/symmetry/point_groups/point_group_label.h"
 
 BOOST_AUTO_TEST_SUITE(library);
@@ -49,6 +51,21 @@ BOOST_AUTO_TEST_CASE(library_item) {
     }
 
     BOOST_TEST(found);
+}
+
+BOOST_AUTO_TEST_CASE(all_structures_have_registered_point_group) {
+    Library library;  // built-in library
+
+    for (const LibraryItem& item : library.get_items()) {
+        BOOST_TEST_CONTEXT("Library structure: " << item.get_name()) {
+            auto structure = std::make_shared<Structure>(item.get_path());
+            Symmetry symmetry(structure);
+
+            const std::string calculated = symmetry.get_point_group().get_label().get_name();
+            const std::string registered = item.get_point_group_label().get_name();
+            BOOST_TEST(calculated == registered);
+        }
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END();

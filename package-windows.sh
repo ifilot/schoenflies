@@ -6,7 +6,7 @@ set -euo pipefail
 # ============================
 APP_NAME="Schoenflies"
 APP_EXE="schoenflies.exe"
-APP_VERSION="1.2.1"
+APP_VERSION="1.3.0"
 BUILD_DIR="build"
 DIST_ROOT="dist"
 DIST_DIR="${DIST_ROOT}/${APP_NAME}"
@@ -119,4 +119,4 @@ makensis installer.nsi
 
 echo
 echo "[SUCCESS] Windows package staged in ${DIST_DIR}"
-echo "[SUCCESS] Windows installer created: ${APP_NAME}-${APP_VERSION}-Setup.exe"
+echo "[SUCCESS] Windows installer created: ${APP_NAME}-Windows-Setup.exe"

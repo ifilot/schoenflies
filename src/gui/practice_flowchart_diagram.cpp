@@ -6,6 +6,29 @@
 #include <unordered_set>
 #include <QByteArray>
 #include <QString>
+#include <QEvent>
+#include <QPalette>
+
+void PracticeFlowchartDiagram::changeEvent(QEvent* event) {
+    QSvgWidget::changeEvent(event);
+    if (event->type() == QEvent::PaletteChange)
+        set_path(current_path);
+}
+
+void PracticeFlowchartDiagram::load_themed_svg(QString svg) {
+    if (palette().color(QPalette::Window).lightnessF() > 0.5) {
+        const std::pair<const char*, const char*> colors[] = {
+            {"#edf2f7", "#20242b"}, {"#bdc9d8", "#586575"},
+            {"#214b3c", "#dcfce7"}, {"#30664c", "#bbf7d0"},
+            {"#80e0b0", "#15803d"}, {"#e4fff0", "#14532d"},
+            {"#64748b", "#9aa6b5"}, {"#292f39", "#e8edf3"},
+            {"#343e4c", "#ffffff"}, {"#80caff", "#005ea8"},
+            {"#b6a885", "#81796d"}, {"#51432c", "#f3e3b5"}
+        };
+        for (const auto& [dark, light] : colors) svg.replace(dark, light);
+    }
+    load(svg.toUtf8());
+}
 
 namespace {
 struct Node {
@@ -108,11 +131,11 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
         "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 620 900'>"
         "<defs>"
         "<linearGradient id='done' x1='0' y1='0' x2='1' y2='1'>"
-        "<stop offset='0' stop-color='#dcfce7'/><stop offset='1' stop-color='#86efac'/></linearGradient>"
+        "<stop offset='0' stop-color='#214b3c'/><stop offset='1' stop-color='#30664c'/></linearGradient>"
         "</defs>"
-        "<text x='30' y='42' fill='#20242b' font-family='Segoe UI' font-size='25' font-weight='700'>"
+        "<text x='30' y='42' fill='#edf2f7' font-family='Segoe UI' font-size='25' font-weight='700'>"
         "Your route</text>"
-        "<text x='30' y='69' fill='#667085' font-family='Segoe UI' font-size='14'>"
+        "<text x='30' y='69' fill='#bdc9d8' font-family='Segoe UI' font-size='14'>"
         "Only the relevant part of the decision tree is expanded.</text>");
 
     // Completed decisions form a compact, readable breadcrumb down the centre.
@@ -120,11 +143,11 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
         const Node& node = by_key.at(path[i]);
         const double y = 112.0 + i * route_gap;
         const int width = node_width(node, 150, 230);
-        svg += QString("<rect x='%1' y='%2' width='%3' height='38' rx='19' fill='#dcfce7' "
-                       "stroke='#15803d' stroke-width='2'/>")
+        svg += QString("<rect x='%1' y='%2' width='%3' height='38' rx='19' fill='#214b3c' "
+                       "stroke='#80e0b0' stroke-width='2'/>")
             .arg(310 - width / 2).arg(y).arg(width);
         svg += QString("<text x='310' y='%1' text-anchor='middle' dominant-baseline='middle' "
-                       "fill='#14532d' font-family='Segoe UI' font-size='13' font-weight='600'>%2</text>")
+                       "fill='#e4fff0' font-family='Segoe UI' font-size='13' font-weight='600'>%2</text>")
             .arg(y + 20).arg(escaped(node.label));
 
         const std::string& next_key = path[i + 1];
@@ -134,23 +157,23 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
             if (edge.to == next_key) answer = edge.answer;
             else rejected = &edge;
         }
-        svg += QString("<path d='M310 %1 V %2' stroke='#15803d' stroke-width='3'/>")
+        svg += QString("<path d='M310 %1 V %2' stroke='#80e0b0' stroke-width='3'/>")
             .arg(y + 38).arg(y + route_gap);
-        svg += QString("<text x='322' y='%1' fill='#15803d' font-family='Segoe UI' font-size='12' "
+        svg += QString("<text x='322' y='%1' fill='#80e0b0' font-family='Segoe UI' font-size='12' "
                        "font-weight='700'>%2</text>").arg(y + 53).arg(answer);
 
         // The unchosen sibling stays visible as quiet context, without its subtree.
         if (rejected != nullptr && route_gap >= 52.0) {
             const Node& sibling = by_key.at(rejected->to);
             int sibling_width = node_width(sibling, 86, 170);
-            svg += QString("<path d='M %1 %2 H %3' stroke='#c7cbd1' stroke-width='2' "
+            svg += QString("<path d='M %1 %2 H %3' stroke='#64748b' stroke-width='2' "
                            "stroke-dasharray='4 5'/>")
                 .arg(310 - width / 2).arg(y + 19).arg(105 + sibling_width / 2);
-            svg += QString("<rect x='%1' y='%2' width='%3' height='30' rx='15' fill='#f3f4f6' "
-                           "stroke='#d1d5db'/>")
+            svg += QString("<rect x='%1' y='%2' width='%3' height='30' rx='15' fill='#292f39' "
+                           "stroke='#64748b'/>")
                 .arg(105 - sibling_width / 2).arg(y + 4).arg(sibling_width);
             svg += QString("<text x='105' y='%1' text-anchor='middle' dominant-baseline='middle' "
-                           "fill='#9ca3af' font-family='Segoe UI' font-size='10'>%2: %3</text>")
+                           "fill='#bdc9d8' font-family='Segoe UI' font-size='10'>%2: %3</text>")
                 .arg(y + 20).arg(rejected->answer).arg(escaped(sibling.label));
         }
     }
@@ -160,9 +183,9 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
     const int active_width = node_width(active_node, active_node.result ? 100 : 230,
                                         active_node.result ? 180 : 330);
     const int active_height = active_node.result ? 48 : 58;
-    const QString active_fill = active_node.result ? "#ecfdf5" : "#ffffff";
-    const QString active_stroke = active_node.result ? "#15803d" : "#0284c7";
-    const QString active_text = active_node.result ? "#14532d" : "#172033";
+    const QString active_fill = active_node.result ? "#214b3c" : "#343e4c";
+    const QString active_stroke = active_node.result ? "#80e0b0" : "#80caff";
+    const QString active_text = active_node.result ? "#e4fff0" : "#edf2f7";
     svg += QString("<rect x='%1' y='%2' width='%3' height='%4' rx='12' fill='%5' "
                    "stroke='%6' stroke-width='2'/>")
         .arg(310 - active_width / 2).arg(active_y).arg(active_width).arg(active_height)
@@ -184,27 +207,27 @@ void PracticeFlowchartDiagram::render(const std::vector<std::string>& path) {
             const Node& child = by_key.at(edge.to);
             const double x = options.size() == 1 ? 310.0 : (i == 0 ? 165.0 : 455.0);
             const int width = node_width(child, child.result ? 100 : 155, 230);
-            svg += QString("<path d='M310 %1 C310 %2, %3 %2, %3 %4' fill='none' stroke='#9ca3af' "
+            svg += QString("<path d='M310 %1 C310 %2, %3 %2, %3 %4' fill='none' stroke='#bdc9d8' "
                            "stroke-width='2' stroke-dasharray='6 6'/>")
                 .arg(active_y + active_height).arg((active_y + option_y) / 2).arg(x).arg(option_y);
-            svg += QString("<text x='%1' y='%2' text-anchor='middle' fill='#667085' font-family='Segoe UI' "
+            svg += QString("<text x='%1' y='%2' text-anchor='middle' fill='#bdc9d8' font-family='Segoe UI' "
                            "font-size='13' font-weight='700'>%3</text>")
                 .arg((310 + x) / 2).arg((active_y + option_y) / 2 - 5).arg(edge.answer);
-            svg += QString("<rect x='%1' y='%2' width='%3' height='48' rx='14' fill='%4' stroke='#8b8172' "
+            svg += QString("<rect x='%1' y='%2' width='%3' height='48' rx='14' fill='%4' stroke='#b6a885' "
                            "stroke-width='2'/>")
-                .arg(x - width / 2).arg(option_y).arg(width).arg(child.result ? "#dcebd8" : "#f3e3b5");
-            svg += QString("<text x='%1' y='%2' text-anchor='middle' dominant-baseline='middle' fill='#30343b' "
+                .arg(x - width / 2).arg(option_y).arg(width).arg(child.result ? "#214b3c" : "#51432c");
+            svg += QString("<text x='%1' y='%2' text-anchor='middle' dominant-baseline='middle' fill='#edf2f7' "
                            "font-family='Segoe UI' font-size='13' font-weight='600'>%3</text>")
                 .arg(x).arg(option_y + 25).arg(escaped(child.label));
         }
     } else {
-        svg += QString("<text x='310' y='%1' text-anchor='middle' fill='#15803d' font-family='Segoe UI' "
+        svg += QString("<text x='310' y='%1' text-anchor='middle' fill='#80e0b0' font-family='Segoe UI' "
                        "font-size='13' font-weight='600'>Route complete</text>")
             .arg(active_y + 76);
     }
 
     svg += "</svg>";
-    this->load(svg.toUtf8());
+    this->load_themed_svg(svg);
 }
 
 void PracticeFlowchartDiagram::render_overview(const std::vector<std::string>& path) {
@@ -258,11 +281,11 @@ void PracticeFlowchartDiagram::render_overview(const std::vector<std::string>& p
     QString svg = QStringLiteral(
         "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1400 930'>"
         "<defs><linearGradient id='done' x1='0' y1='0' x2='1' y2='1'>"
-        "<stop offset='0' stop-color='#dcfce7'/><stop offset='1' stop-color='#86efac'/></linearGradient>"
+        "<stop offset='0' stop-color='#214b3c'/><stop offset='1' stop-color='#30664c'/></linearGradient>"
         "</defs>"
-        "<text x='28' y='38' fill='#20242b' font-family='Segoe UI' font-size='24' font-weight='700'>"
+        "<text x='28' y='38' fill='#edf2f7' font-family='Segoe UI' font-size='24' font-weight='700'>"
         "Complete point-group decision tree</text>"
-        "<text x='28' y='62' fill='#667085' font-family='Segoe UI' font-size='13'>"
+        "<text x='28' y='62' fill='#bdc9d8' font-family='Segoe UI' font-size='13'>"
         "Blue marks the current decision; green marks the completed route and results.</text>");
 
     // Connections are painted first so nodes remain crisp and legible.
@@ -271,7 +294,7 @@ void PracticeFlowchartDiagram::render_overview(const std::vector<std::string>& p
         const Position& to = positions.at(edge.to);
         bool selected = is_selected_edge(edge);
         bool blocked = inaccessible.count(edge.to) > 0;
-        const QString colour = selected ? "#15803d" : (blocked ? "#d7d9dc" : "#9ca3af");
+        const QString colour = selected ? "#80e0b0" : (blocked ? "#64748b" : "#bdc9d8");
         const QString dash = selected ? "" : " stroke-dasharray='6 6'";
         int middle_y = (from.second + to.second) / 2;
         svg += QString("<path d='M %1 %2 C %1 %3, %4 %3, %4 %5' fill='none' stroke='%6' "
@@ -290,22 +313,22 @@ void PracticeFlowchartDiagram::render_overview(const std::vector<std::string>& p
         bool is_visited = visited.count(node.key) > 0 && !is_active;
         bool blocked = inaccessible.count(node.key) > 0;
         int width = node_width(node);
-        QString fill = is_active ? (node.result ? "#ecfdf5" : "#ffffff") :
-            (is_visited ? "url(#done)" : (node.result ? "#dcebd8" : "#f3e3b5"));
-        QString stroke = is_active ? (node.result ? "#15803d" : "#0284c7") :
-            (is_visited ? "#15803d" : "#81796d");
+        QString fill = is_active ? (node.result ? "#214b3c" : "#343e4c") :
+            (is_visited ? "url(#done)" : (node.result ? "#214b3c" : "#51432c"));
+        QString stroke = is_active ? (node.result ? "#80e0b0" : "#80caff") :
+            (is_visited ? "#80e0b0" : "#b6a885");
         QString opacity = blocked ? "0.25" : "1";
         int radius = node.result ? 22 : 12;
         svg += QString("<rect x='%1' y='%2' width='%3' height='46' rx='%4' fill='%5' stroke='%6' "
                        "stroke-width='%7' opacity='%8'/>")
             .arg(position.first - width / 2).arg(position.second - 23).arg(width).arg(radius)
             .arg(fill).arg(stroke).arg(is_active ? 3 : 2).arg(opacity);
-        svg += QString("<text x='%1' y='%2' text-anchor='middle' dominant-baseline='middle' fill='#25282d' "
+        svg += QString("<text x='%1' y='%2' text-anchor='middle' dominant-baseline='middle' fill='#edf2f7' "
                        "font-family='Segoe UI' font-size='%3' font-weight='%4' opacity='%5'>%6</text>")
             .arg(position.first).arg(position.second + 1).arg(node.result ? 14 : 12)
             .arg(is_active ? 700 : 600).arg(opacity).arg(escaped(node.label));
     }
 
     svg += "</svg>";
-    this->load(svg.toUtf8());
+    this->load_themed_svg(svg);
 }

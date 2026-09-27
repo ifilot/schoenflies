@@ -3,6 +3,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+## [1.3.0] - 2026-09-27
+
+### Added
+- Added an Apple Silicon macOS workflow that builds, tests, audits, and packages a self-contained disk image
+- Added configurable per-atom 1s, 2p, 3d, and 4f basis-function visualization
+- Added multi-orbital atom assignments, live modal previews, phase-color swatches, and a custom color picker
+- Added translucent ghost orbitals during symmetry-operation animations
+- Added application-wide dark and light themes, selectable through View → Settings (the application menu on macOS), with preferences saved across sessions
+- Added regression tests for all 40 bundled molecules against their registered point groups, exercise transitions, theme persistence, live theme switching, and text contrast
+
+### Changed
+- Standardized Windows and macOS installer download names and added a stable latest-release download link for the Apple Silicon disk image
+- Made dialogs, practice controls, feedback, rich-text tables, decision-tree diagrams, and the 3D background follow the selected theme immediately without resetting the current exercise
+- Made symmetry-vector tests portable across platforms by accepting directionally equivalent axes and plane normals
+
+### Fixed
+- Removed dark triangular banding artifacts from translucent orbital rendering
+- Fixed white-on-white practice buttons under Windows system-wide dark mode by using an explicit application style and matching foreground/background palettes ([#3](https://github.com/ifilot/schoenflies/issues/3))
+- Fixed stale practice answers and point-group routes when loading another molecule during an active exercise, while preserving automatic progression between random exercises
+- Fixed iterator invalidation when adding symmetry operations while traversing proper rotations
+- Restored orbital-control compatibility with older Qt 6 versions
+- Corrected macOS packaging invocation and dependency auditing, and limited GCC-specific compiler options to GCC builds
+
 ## [1.2.1] - 2026-09-22
 
 ### Added
@@ -68,7 +93,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.1...main
+[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.3.0...develop
+[1.3.0]: https://github.com/ifilot/schoenflies/compare/v1.2.1...v1.3.0
 [1.2.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...1.2.1
 [1.2.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...1.2.0
 [1.1.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.0...1.1.1

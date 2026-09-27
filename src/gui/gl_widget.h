@@ -139,6 +139,7 @@ public:
     void window_move_event();
 
 protected:
+    void changeEvent(QEvent* event) override;
     /**
      * @brief Initialise OpenGL environment
      */

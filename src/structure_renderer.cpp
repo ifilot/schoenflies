@@ -46,6 +46,10 @@ void StructureRenderer::set_structure(const std::shared_ptr<Structure> structure
     this->create_animated_indices();
     this->create_default_labels();
 
+    this->orbitals.assign(this->structure->get_num_atoms(), {});
+    this->orbital_base_orientation = cartesian_axes;
+    this->orbital_orientations.assign(this->structure->get_num_atoms(), this->orbital_base_orientation);
+
     this->unhighlight_atoms();
     this->clear_custom_labels();
 }
@@ -568,6 +572,7 @@ void StructureRenderer::process_animations() {
         this->animating = false;
         this->animation_matrix = glm::mat3x3(1.0f);  // reset to identity matrix
         this->apply_operation_to_animated_indices(this->operation);
+        this->apply_operation_to_orbitals(this->operation);
         emit this->animation_finished();
     } else {
         this->animation_matrix = this->operation.calculate_fractional_matrix(f);

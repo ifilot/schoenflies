@@ -17,6 +17,7 @@
  */
 
 #include "practice_widget.h"
+#include <QScopedValueRollback>
 
 /**
  * @brief Construct a new PracticeWidget object
@@ -78,6 +79,18 @@ PracticeWidget::PracticeWidget(QWidget* parent) {
  */
 void PracticeWidget::create_practice_structure(const std::shared_ptr<Symmetry> symmetry) {
     this->practice_structure = std::make_shared<PracticeStructure>(symmetry);
+
+    // create_exercise() initializes its selected module after the synchronous
+    // structure request returns. A manual load must invalidate the old exercise.
+    if (this->requesting_exercise_structure) return;
+    if (this->get_flowchart_visible()) {
+        this->start_current_structure_flowchart();
+    } else if (this->subwidgets->currentWidget() != this->config_widget) {
+        // Other modules require library basis-set metadata which an opened XYZ
+        // file need not provide. Return to configuration instead of grading it
+        // against the previous molecule.
+        this->stop_practice();
+    }
 }
 
 /**
@@ -153,6 +166,7 @@ void PracticeWidget::create_exercise() {
 
     PracticeModule practice_module = this->practice_config->get_next_module();
     if (this->practice_config->get_select_new_structure()) {
+        QScopedValueRollback<bool> loading(this->requesting_exercise_structure, true);
         emit request_new_structure();
     } else {
         emit this->highlight_atoms({});

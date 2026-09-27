@@ -38,6 +38,14 @@ GLWidget::GLWidget(QWidget* parent): QOpenGLWidget(parent) {
     this->model_manager->add_model("circle", Geometry::circle());
     this->model_manager->add_model("quad_3d", Geometry::quad_3d());
 
+    for (OrbitalType type : orbital_types()) {
+        const std::string name = orbital_type_model_name(type);
+        this->model_manager->add_model(name + "_positive", Geometry::orbital(type, true));
+        if (type != OrbitalType::S) {
+            this->model_manager->add_model(name + "_negative", Geometry::orbital(type, false));
+        }
+    }
+
     this->model_manager->add_model("arrow", ObjLoader::load_from_obj(":/assets/models/arrow.obj"));
     this->model_manager->add_model("quad", Geometry::quad());
 
@@ -109,7 +117,14 @@ void GLWidget::initializeGL() {
 /**
  * @brief Render scene
  */
+void GLWidget::changeEvent(QEvent* event) {
+    QOpenGLWidget::changeEvent(event);
+    if (event->type() == QEvent::PaletteChange) update();
+}
+
 void GLWidget::paintGL() {
+    this->bg = palette().color(QPalette::Window);
+    glClearColor(this->bg.redF(), this->bg.greenF(), this->bg.blueF(), 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -444,6 +459,8 @@ void GLWidget::paint_structure_models() {
 
     auto paint_instances = [this, model_shader](const std::vector<ModelInstance>& instances) {
         for (const ModelInstance& instance : instances) {
+            const float determinant = glm::determinant(glm::mat3x3(instance.transform));
+            glFrontFace(determinant < 0.0f ? GL_CW : GL_CCW);
             Model *model = this->model_manager->get_model(instance.model_name);
 
             this->model = this->convert_glm_matrix(instance.transform);
@@ -457,14 +474,18 @@ void GLWidget::paint_structure_models() {
 
             model->draw();
         }
+        glFrontFace(GL_CCW);
     };
 
-    // Ghosts must not write depth: the opaque, moving molecule drawn next
-    // should always be able to occlude its translucent starting position.
+    // Ghost atoms, bonds, and orbitals retain the animation start pose.
+    // Front-face culling prevents translucent back-face banding.
     glDepthMask(GL_FALSE);
     paint_instances(this->structure_renderer->get_ghost_model_instances());
+    paint_instances(this->structure_renderer->get_ghost_orbital_model_instances());
     glDepthMask(GL_TRUE);
+
     paint_instances(this->structure_renderer->get_structure_model_instances());
+    paint_instances(this->structure_renderer->get_orbital_model_instances());
 
     model_shader->release();
 }
