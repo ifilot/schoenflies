@@ -30,6 +30,15 @@
 
 BOOST_AUTO_TEST_SUITE(practice_flowchart);
 
+BOOST_AUTO_TEST_CASE(improper_result_uses_twice_the_proper_axis_order) {
+    for (int n : {2, 3, 4}) {
+        auto step = PracticeFlowchartSteps::get_step("S2n");
+        step.set_n(n);
+        BOOST_CHECK(step.get_result_point_group().get_class() == PointGroupLabel::Class::S);
+        BOOST_TEST(step.get_result_point_group().get_order() == 2 * n);
+    }
+}
+
 BOOST_AUTO_TEST_CASE(Dinfh) {
     std::string file = resolve_path("test/files/carbon-dioxide.xyz");
     auto struc = std::make_shared<Structure>(file);

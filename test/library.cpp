@@ -21,6 +21,7 @@
 #include "../src/structure.h"
 #include "../src/symmetry/symmetry.h"
 #include "../src/symmetry/point_groups/point_group_label.h"
+#include "../src/practice/practice_flowchart.h"
 
 BOOST_AUTO_TEST_SUITE(library);
 
@@ -64,6 +65,26 @@ BOOST_AUTO_TEST_CASE(all_structures_have_registered_point_group) {
             const std::string calculated = symmetry.get_point_group().get_label().get_name();
             const std::string registered = item.get_point_group_label().get_name();
             BOOST_TEST(calculated == registered);
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE(all_enabled_flowcharts_accept_correct_answers) {
+    Library library;
+    for (const auto& item : library.get_items()) {
+        if (!item.get_item_practice_config().value("flowchart", json::object()).value("enabled", false)) continue;
+        BOOST_TEST_CONTEXT("Library flowchart: " << item.get_name()) {
+            auto symmetry = std::make_shared<Symmetry>(std::make_shared<Structure>(item.get_path()));
+            PracticeFlowchart flowchart(std::make_shared<PracticeStructure>(symmetry));
+            unsigned int index = 0;
+            while (flowchart.get_step(index)->get_type() != PracticeFlowchartStep::Type::Result) {
+                BOOST_REQUIRE_LT(index, 16u);
+                flowchart.handle_answer(index, flowchart.get_step(index)->get_correct_answer());
+                ++index;
+            }
+            auto expected = item.get_point_group_label();
+            BOOST_TEST(flowchart.get_step(index)->get_result_point_group().matches(expected));
+            BOOST_TEST_MESSAGE(item.get_name() << ": accepted " << expected.get_name());
         }
     }
 }

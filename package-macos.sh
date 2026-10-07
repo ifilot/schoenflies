@@ -2,7 +2,7 @@
 set -euo pipefail
 
 APP_NAME="Schoenflies"
-APP_VERSION="${APP_VERSION:-1.3.0}"
+APP_VERSION="${APP_VERSION:-1.3.1}"
 BUILD_DIR="${BUILD_DIR:-build-macos}"
 DIST_DIR="${DIST_DIR:-dist/macos}"
 APP_BUNDLE="${BUILD_DIR}/${APP_NAME}.app"

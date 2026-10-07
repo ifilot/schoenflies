@@ -290,6 +290,12 @@ private:
     void find_x_axis_not_planar();
 
     /**
+     * @brief Choose the perpendicular C2 axis through the most atoms as x
+     * for even-order D/Dh groups, defining the C2' and sigma-v families.
+     */
+    void find_x_axis_dihedral();
+
+    /**
      * @brief Pick an arbitrary x axis for the structure if it is linear.
      */
     void pick_arbitrary_x_axis();

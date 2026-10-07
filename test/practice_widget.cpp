@@ -48,6 +48,16 @@ void answer(PracticeFlowchartWidget* chart, const std::vector<int>& answers) {
 
 BOOST_FIXTURE_TEST_SUITE(practice_widget, ApplicationFixture)
 
+BOOST_AUTO_TEST_CASE(tetraphenylmethane_accepts_S4_route) {
+    PracticeWidget widget(nullptr);
+    auto symmetry = load("tetraphenylmethane");
+    PointGroupLabel expected(PointGroupLabel::Class::S, 4);
+    BOOST_REQUIRE(symmetry->get_point_group().get_label().matches(expected));
+    widget.create_practice_structure(symmetry);
+    widget.start_current_structure_flowchart();
+    answer(widget.findChild<PracticeFlowchartWidget*>(), {0, 0, 1, 2, 0, 0, 0, 1});
+}
+
 BOOST_AUTO_TEST_CASE(theme_preference_survives_settings_recreation) {
     QTemporaryDir directory;
     BOOST_REQUIRE(directory.isValid());
