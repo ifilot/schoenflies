@@ -18,12 +18,12 @@ Versions ≥ 1.2: maintained as a port by Ivo Filot
 Explore benzene's D₆ₕ symmetry and select a symmetry operation to display its axis
 or plane in the molecular viewer.
 
-![Benzene in the dark theme, with its C6 rotation axis selected and symmetry operations listed](assets/screenshots/symmetry-viewer-dark.png)
+![Benzene in the light theme, with its C6 rotation axis selected and symmetry operations listed](assets/screenshots/symmetry-viewer-light.png)
 
 Follow the guided decision tree to determine a molecule's point group, with
 feedback on each answer. This completed methane exercise identifies T<sub>d</sub> symmetry.
 
-![Completed methane point-group practice, showing the decision-tree route, 3D molecule, and correct-answer feedback](assets/screenshots/point-group-practice-dark.png)
+![Completed methane point-group practice in the light theme, showing the decision-tree route, 3D molecule, and correct-answer feedback](assets/screenshots/point-group-practice-light.png)
 
 Visualise atomic orbital basis functions with distinct colours for their positive
 and negative phases. Here, carbon 2p orbitals are displayed on benzene in the light theme.
