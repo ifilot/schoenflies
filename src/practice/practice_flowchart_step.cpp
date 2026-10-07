@@ -157,7 +157,10 @@ const PointGroupLabel PracticeFlowchartStep::get_result_point_group() const {
         throw std::runtime_error("A step without result type does not have a resulting point group!");
     }
     if (n >= 2) {
-        return PointGroupLabel(this->result_point_group.get_class(), this->n);
+        const auto group_class = this->result_point_group.get_class();
+        // The S2n branch uses the selected proper rotation order n.
+        const int order = group_class == PointGroupLabel::Class::S ? 2 * this->n : this->n;
+        return PointGroupLabel(group_class, order);
     } else {
         return this->result_point_group;
     }

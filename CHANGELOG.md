@@ -5,6 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-10-07
+
+### Fixed
+- Fixed rejection of correct S4 point-group practice routes for tetraphenylmethane ([#5](https://github.com/ifilot/schoenflies/issues/5))
+- Corrected C2′/C2″ and σ_v/σ_d labels for 18-crown-6 by choosing the perpendicular C2 axis through the most atoms ([#6](https://github.com/ifilot/schoenflies/issues/6))
+- Corrected the same axis-family reversal for iron porphyrin and prevented floating-point rounding from mislabeling its vertical mirror planes as dihedral
+
+### Added
+- Added library-wide checks for all enabled point-group practice routes and even-order axis/mirror-plane label families
+
 ## [1.3.0] - 2026-09-27
 
 ### Added
@@ -93,7 +103,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.3.0...develop
+[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.3.1...develop
+[1.3.1]: https://github.com/ifilot/schoenflies/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ifilot/schoenflies/compare/v1.2.1...v1.3.0
 [1.2.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...1.2.1
 [1.2.0]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.1.1...1.2.0

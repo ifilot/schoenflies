@@ -476,8 +476,43 @@ void Symmetry::find_cartesian_axes() {
         }
     }
 
+    this->find_x_axis_dihedral();
     this->orthonormalise_xz_axes();
     this->find_y_axis();
+}
+
+/**
+ * @brief Choose C2' through the most atoms for even-order D/Dh groups.
+ */
+void Symmetry::find_x_axis_dihedral() {
+    const auto label = this->point_group.get_label();
+    if ((label.get_class() != PointGroupLabel::Class::D &&
+         label.get_class() != PointGroupLabel::Class::Dh) || label.get_order() % 2 != 0) return;
+
+    const glm::vec3 previous_x = glm::normalize(this->x_axis);
+    unsigned int max_intersections = 0;
+    float best_alignment = -1;
+    for (auto& operation : this->operation_manager->get_operations()) {
+        if (operation.get_label().get_element() != OperationLabel::Element::ProperRotation ||
+            operation.get_degree() != 2) continue;
+        const auto axis = operation.get_axis();
+        if (std::abs(glm::dot(axis, this->z_axis)) > .02f) continue;
+
+        // Atoms on a C2 axis map to themselves. This shares the symmetry
+        // detector's tolerance and also handles atoms at the origin.
+        unsigned int intersections = 0;
+        for (unsigned int i = 0; i < this->structure->get_num_atoms(); ++i) {
+            if (operation.get_result_index(i) == i) ++intersections;
+        }
+        const float alignment = std::abs(glm::dot(axis, previous_x));
+        if (intersections > max_intersections ||
+            (intersections == max_intersections && alignment > best_alignment)) {
+            max_intersections = intersections;
+            best_alignment = alignment;
+            // Preserve the previous orientation when equivalent axes tie.
+            this->x_axis = glm::dot(axis, previous_x) < 0 ? -axis : axis;
+        }
+    }
 }
 
 /**
@@ -785,11 +820,11 @@ void Symmetry::label_proper_rotational_axes_dihedral() {
         }
 
         // D/Dh point groups with even n: angle between x axis and C2' is integer multiple of 360°/n
-        double theta_x = std::acos(glm::dot(operation.get_axis(), this->x_axis));
+        double theta_x = std::acos(glm::clamp(glm::dot(operation.get_axis(), this->x_axis), -1.f, 1.f));
         double divisor = 2 * std::numbers::pi / point_group_label.get_order();
         double remainder = std::fmod(theta_x, divisor);
 
-        if (remainder <= .25 * divisor | remainder > .75 * divisor) {
+        if (remainder <= .25 * divisor || remainder > .75 * divisor) {
             // approximately integer multiple
             operation_label.set_prime(OperationLabel::Prime::Single);
         } else {
@@ -888,7 +923,9 @@ void Symmetry::label_reflection_planes_cyclic_dihedral() {
 
         // even n: angle between y axis and normal (xz plane and reflection plane)
         // of σv is integer multiple of 360°/n
-        double theta_y = std::acos(glm::dot(operation.get_axis(), this->y_axis));
+        // Rounding can put a dot product just outside [-1, 1], making acos
+        // return NaN and assigning a vertical plane to the dihedral family.
+        double theta_y = std::acos(glm::clamp(glm::dot(operation.get_axis(), this->y_axis), -1.f, 1.f));
         double divisor = 2 * std::numbers::pi / point_group_label.get_order();
         double remainder = std::fmod(theta_y, divisor);
 
