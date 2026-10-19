@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.3.2] - 2026-10-19
+
+### Added
+- Added tetrathiazyl tetrafluoride (S<sub>4</sub>N<sub>4</sub>F<sub>4</sub>) to the molecule library as a second S4 example
+
 ## [1.3.1] - 2026-10-07
 
 ### Fixed
@@ -103,7 +108,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.3.1...develop
+[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.3.2...develop
+[1.3.2]: https://github.com/ifilot/schoenflies/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/ifilot/schoenflies/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ifilot/schoenflies/compare/v1.2.1...v1.3.0
 [1.2.1]: https://gitlab.com/lkkmpn/schoenflies/-/compare/1.2.0...1.2.1

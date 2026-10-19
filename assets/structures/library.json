@@ -725,6 +725,17 @@
         }
     },
     {
+        "path": "tetrathiazyl-tetrafluoride.xyz",
+        "name": "Tetrathiazyl tetrafluoride",
+        "chemical_formula": "S<sub>4</sub>N<sub>4</sub>F<sub>4</sub>",
+        "point_group": ["S", 4],
+        "practice_config": {
+            "flowchart": {
+                "enabled": true
+            }
+        }
+    },
+    {
         "path": "trans-1,2-dichloroethene.xyz",
         "name": "trans-1,2-Dichloroethene",
         "chemical_formula": "C<sub>2</sub>H<sub>2</sub>Cl<sub>2</sub>",
