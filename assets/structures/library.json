@@ -721,7 +721,23 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "C",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "H",
+                    "orbital": "1s"
+                }
+            ]
         }
     },
     {
@@ -732,7 +748,27 @@
         "practice_config": {
             "flowchart": {
                 "enabled": true
-            }
+            },
+            "irreps": {
+                "enabled": true
+            },
+            "projection": {
+                "enabled": true
+            },
+            "basis_sets": [
+                {
+                    "element": "F",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "N",
+                    "orbital": "2s"
+                },
+                {
+                    "element": "S",
+                    "orbital": "2s"
+                }
+            ]
         }
     },
     {

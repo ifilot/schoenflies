@@ -411,6 +411,46 @@ const bool OperationLabel::matches_strict(OperationLabel& other) const {
 }
 
 /**
+ * @brief Check whether this symmetry operation is the same power of the
+ * same symmetry element as another symmetry operation
+ *
+ * Unlike matches_strict, this check distinguishes an operation from its
+ * inverse (e.g. C4 from C4^3 = C4^-1). Powers are compared modulo the
+ * order of the element, such that e.g. S4^3 matches S4^-1.
+ *
+ * @param other other symmetry operation
+ * @return true if operations match
+ * @return false if operations don't match
+ */
+const bool OperationLabel::matches_power(OperationLabel& other) const {
+    return this->matches(other) && this->get_reduced_multiple() == other.get_reduced_multiple();
+}
+
+/**
+ * @brief Get the power of this operation reduced modulo the order of its
+ * symmetry element
+ *
+ * @return const int reduced power
+ */
+const int OperationLabel::get_reduced_multiple() const {
+    int order;
+    switch (this->element) {
+        case Element::ProperRotation:
+            order = this->degree;
+            break;
+        case Element::ImproperRotation:
+            // S_n with odd n only returns to the identity after 2n steps
+            order = (this->degree % 2 == 0) ? this->degree : 2 * this->degree;
+            break;
+        default:
+            return this->multiple;
+    }
+
+    if (order == 0) return this->multiple;  // infinite degree
+    return ((this->multiple % order) + order) % order;
+}
+
+/**
  * @brief Format a number for string output
  *
  * @param number number to format

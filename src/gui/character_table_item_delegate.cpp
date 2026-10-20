@@ -24,7 +24,7 @@
  * @param doc
  */
 void CharacterTableItemDelegate::configure_document(QTextDocument& doc) const {
-    if (doc.toRawText().contains("cos")) {
+    if (doc.toRawText().contains("cos") || doc.toRawText().contains("exp")) {
         QFont font = doc.defaultFont();
         font.setPointSizeF(font.pointSizeF() * 0.75);
         doc.setDefaultFont(font);

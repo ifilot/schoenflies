@@ -118,6 +118,79 @@ IrrepLabel::IrrepLabel(Mulliken mulliken, unsigned int subscript, Prime prime) {
 }
 
 /**
+ * @brief Construct a new Irrep Label object
+ *
+ * @param mulliken Mulliken symbol
+ * @param component component of a complex-conjugate pair
+ */
+IrrepLabel::IrrepLabel(Mulliken mulliken, Component component)
+    : IrrepLabel(mulliken) {
+    this->component = component;
+}
+
+/**
+ * @brief Construct a new Irrep Label object
+ *
+ * @param mulliken Mulliken symbol
+ * @param subscript integer subscript
+ * @param component component of a complex-conjugate pair
+ */
+IrrepLabel::IrrepLabel(Mulliken mulliken, unsigned int subscript, Component component)
+    : IrrepLabel(mulliken, subscript) {
+    this->component = component;
+}
+
+/**
+ * @brief Construct a new Irrep Label object
+ *
+ * @param mulliken Mulliken symbol
+ * @param parity symmetry with respect to a center of inversion
+ * @param component component of a complex-conjugate pair
+ */
+IrrepLabel::IrrepLabel(Mulliken mulliken, Parity parity, Component component)
+    : IrrepLabel(mulliken, parity) {
+    this->component = component;
+}
+
+/**
+ * @brief Construct a new Irrep Label object
+ *
+ * @param mulliken Mulliken symbol
+ * @param subscript integer subscript
+ * @param parity symmetry with respect to a center of inversion
+ * @param component component of a complex-conjugate pair
+ */
+IrrepLabel::IrrepLabel(Mulliken mulliken, unsigned int subscript, Parity parity, Component component)
+    : IrrepLabel(mulliken, subscript, parity) {
+    this->component = component;
+}
+
+/**
+ * @brief Construct a new Irrep Label object
+ *
+ * @param mulliken Mulliken symbol
+ * @param prime symmetry with respect to a horizontal mirror plane
+ * @param component component of a complex-conjugate pair
+ */
+IrrepLabel::IrrepLabel(Mulliken mulliken, Prime prime, Component component)
+    : IrrepLabel(mulliken, prime) {
+    this->component = component;
+}
+
+/**
+ * @brief Construct a new Irrep Label object
+ *
+ * @param mulliken Mulliken symbol
+ * @param subscript integer subscript
+ * @param prime symmetry with respect to a horizontal mirror plane
+ * @param component component of a complex-conjugate pair
+ */
+IrrepLabel::IrrepLabel(Mulliken mulliken, unsigned int subscript, Prime prime, Component component)
+    : IrrepLabel(mulliken, subscript, prime) {
+    this->component = component;
+}
+
+/**
  * @brief Get the Mulliken symbol of this irreducible representation
  *
  * @return const Mulliken
@@ -151,6 +224,15 @@ const IrrepLabel::Parity IrrepLabel::get_parity() const {
  */
 const IrrepLabel::Prime IrrepLabel::get_prime() const {
     return this->prime;
+}
+
+/**
+ * @brief Get the component (E+ or E-) of this irreducible representation
+ *
+ * @return const Component
+ */
+const IrrepLabel::Component IrrepLabel::get_component() const {
+    return this->component;
 }
 
 /**
@@ -198,6 +280,8 @@ const std::string IrrepLabel::get_name() const {
                 throw std::runtime_error("Unexpected parity encountered.");
         }
     }
+
+    name += this->get_component_suffix();
 
     if (this->prime != Prime::None) {
         switch (this->prime) {
@@ -264,6 +348,8 @@ const std::string IrrepLabel::get_name_html() const {
         }
     }
 
+    subscript_str += this->get_component_suffix();
+
     if (!subscript_str.empty()) name += "<sub>" + subscript_str + "</sub>";
 
     if (this->prime != Prime::None) {
@@ -280,4 +366,22 @@ const std::string IrrepLabel::get_name_html() const {
     }
 
     return name;
+}
+
+/**
+ * @brief Get the sign denoting the component of a complex-conjugate pair
+ *
+ * @return const std::string "+", "\u2212" or an empty string
+ */
+const std::string IrrepLabel::get_component_suffix() const {
+    switch (this->component) {
+        case Component::None:
+            return "";
+        case Component::Plus:
+            return "+";
+        case Component::Minus:
+            return "\u2212";
+        default:
+            throw std::runtime_error("Unexpected component encountered.");
+    }
 }

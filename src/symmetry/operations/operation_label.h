@@ -246,7 +246,29 @@ public:
      */
     const bool matches_strict(OperationLabel& other) const;
 
+    /**
+     * @brief Check whether this symmetry operation is the same power of the
+     * same symmetry element as another symmetry operation
+     *
+     * Unlike matches_strict, this check distinguishes an operation from its
+     * inverse (e.g. C4 from C4^3 = C4^-1). Powers are compared modulo the
+     * order of the element, such that e.g. S4^3 matches S4^-1.
+     *
+     * @param other other symmetry operation
+     * @return true if operations match
+     * @return false if operations don't match
+     */
+    const bool matches_power(OperationLabel& other) const;
+
 private:
+    /**
+     * @brief Get the power of this operation reduced modulo the order of its
+     * symmetry element
+     *
+     * @return const int reduced power
+     */
+    const int get_reduced_multiple() const;
+
     /**
      * @brief Format a number for string output
      *

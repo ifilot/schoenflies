@@ -19,6 +19,7 @@
 #ifndef SYMMETRY_POINT_GROUPS_POINT_GROUP_H
 #define SYMMETRY_POINT_GROUPS_POINT_GROUP_H
 
+#include <complex>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
@@ -39,8 +40,9 @@ private:
     std::unordered_map<unsigned int, unsigned int> num_improper_rotations;
     unsigned int num_reflections;
     std::vector<OperationLabelCount> unique_operations;
+    std::vector<OperationLabelCount> character_columns;
     std::vector<IrrepLabel> irreps;
-    std::vector<std::vector<double>> characters;
+    std::vector<std::vector<std::complex<double>>> characters;
 
 public:
     /**
@@ -74,7 +76,41 @@ public:
         unsigned int num_reflections,
         std::vector<OperationLabelCount> unique_operations,
         std::vector<IrrepLabel> irreps,
-        std::vector<std::vector<double>> characters
+        std::vector<std::vector<std::complex<double>>> characters
+    );
+
+    /**
+     * @brief Construct a new Point Group object whose character table has
+     * different columns than its list of unique operations
+     *
+     * This is needed for point groups with complex-conjugate pairs of
+     * irreducible representations (E+ and E-). An operation and its inverse
+     * (e.g. C4 and C4^3) have conjugate characters in these irreps, so they
+     * have to be listed as separate columns, whereas the list of unique
+     * operations groups them together (e.g. 2 C4).
+     *
+     * @param label point group label
+     * @param order order of this point group (total number of unique symmetry operations)
+     * @param num_inversions number of inversions in this point group
+     * @param num_proper_rotations number of proper rotations per degree in this point group
+     * @param num_improper_rotations number of improper rotations per degree in this point group
+     * @param num_reflections number of reflections in this point group
+     * @param unique_operations vector of labels of unique operations in this point group
+     * @param character_columns vector of labels of the columns of the character table
+     * @param irreps vector of irreducible representations in this point group
+     * @param characters matrix of characters (indexed as [irrep][column])
+     */
+    PointGroup(
+        PointGroupLabel label,
+        unsigned int order,
+        unsigned int num_inversions,
+        std::unordered_map<unsigned int, unsigned int> num_proper_rotations,
+        std::unordered_map<unsigned int, unsigned int> num_improper_rotations,
+        unsigned int num_reflections,
+        std::vector<OperationLabelCount> unique_operations,
+        std::vector<OperationLabelCount> character_columns,
+        std::vector<IrrepLabel> irreps,
+        std::vector<std::vector<std::complex<double>>> characters
     );
 
     /**
@@ -109,6 +145,18 @@ public:
     const std::vector<OperationLabelCount>& get_unique_operations() const;
 
     /**
+     * @brief Get the columns of the character table of the point group
+     * (excluding the identity)
+     *
+     * For most point groups these are the unique operations, but for point
+     * groups with complex-conjugate irreps an operation and its inverse are
+     * listed separately.
+     *
+     * @return const std::vector<OperationLabelCount>&
+     */
+    const std::vector<OperationLabelCount>& get_character_columns() const;
+
+    /**
      * @brief Get the irreducible representations of the point group
      *
      * @return const std::vector<IrrepLabel>&
@@ -118,9 +166,18 @@ public:
     /**
      * @brief Get the characters matrix of the point group
      *
-     * @return const std::vector<std::vector<double>>&
+     * @return const std::vector<std::vector<std::complex<double>>>&
      */
-    const std::vector<std::vector<double>>& get_characters() const;
+    const std::vector<std::vector<std::complex<double>>>& get_characters() const;
+
+    /**
+     * @brief Check whether the character table contains complex characters,
+     * i.e. whether the point group has complex-conjugate pairs of irreps
+     *
+     * @return true if any character has a non-zero imaginary part
+     * @return false otherwise
+     */
+    const bool has_complex_characters() const;
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUP_H

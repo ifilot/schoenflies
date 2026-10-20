@@ -5,6 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-10-20
+
+### Added
+- Character tables of point groups with complex-conjugate pairs of irreps (C<sub>3</sub>–C<sub>10</sub>, C<sub>3h</sub>–C<sub>10h</sub>, S<sub>4</sub>–S<sub>10</sub>, T and T<sub>h</sub>) now list E<sub>+</sub> and E<sub>−</sub> separately with their complex characters, split the classes of an operation and its inverse (e.g. S<sub>4</sub> and S<sub>4</sub><sup>3</sup>), and explain that the little orthogonality theorem requires the complex conjugate
+- Added a setting (View → Settings, off by default) to include molecules from these point groups in irreducible-representation exercises
+- Enabled irreducible-representation and projection exercises for tetraphenylmethane and S<sub>4</sub>N<sub>4</sub>F<sub>4</sub>
+- Added checks that every character table is square and orthonormal, and that all library irreps exercises reduce to integer multiplicities matching the number of orbitals
+
+### Fixed
+- Irreducible-representation exercises in these point groups applied the little orthogonality theorem to a merged real E row, which doubled the multiplicity of E; the reduction now uses the complex-conjugate characters
+- Characters of p orbitals under powers of rotations (e.g. C<sub>5</sub><sup>2</sup>) were calculated with the single rotation
+- Corrected the class sizes of C<sub>2</sub> in C<sub>6h</sub> and of σ<sub>v</sub>/σ<sub>d</sub> in C<sub>10v</sub>, and the σ<sub>h</sub>C<sub>5</sub><sup>2</sup> class of C<sub>10h</sub> and D<sub>10h</sub>, which was labelled S<sub>5</sub><sup>2</sup> instead of S<sub>5</sub><sup>3</sup>
+
 ## [1.3.2] - 2026-10-19
 
 ### Added
@@ -108,7 +121,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Initial release
 
-[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.3.2...develop
+[Unreleased]: https://github.com/ifilot/schoenflies/compare/v1.4.0...develop
+[1.4.0]: https://github.com/ifilot/schoenflies/compare/v1.3.2...v1.4.0
 [1.3.2]: https://github.com/ifilot/schoenflies/compare/v1.3.1...v1.3.2
 [1.3.1]: https://github.com/ifilot/schoenflies/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/ifilot/schoenflies/compare/v1.2.1...v1.3.0

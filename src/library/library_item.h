@@ -93,6 +93,10 @@ public:
      * @brief Get whether this item can appear in a practice session given the
      * provided practice configuration
      *
+     * Items whose point group has complex-conjugate pairs of irreps (E+ and
+     * E-) only appear in irreducible representation exercises if the
+     * practice configuration includes them.
+     *
      * @param practice_config practice configuration
      * @return true
      * @return false

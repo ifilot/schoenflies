@@ -20,6 +20,8 @@
 #define GUI_CHARACTER_TABLE_DIALOG_H
 
 #include <cmath>
+#include <complex>
+#include <numbers>
 #include <stdexcept>
 #include <Qt>
 #include <QDialog>
@@ -55,6 +57,7 @@ private:
     QTreeView* point_group_view;
     QStandardItemModel* character_table_model;
     QTableView* character_table_view;
+    QLabel* complex_characters_note;
 
 public:
     /**
@@ -126,6 +129,17 @@ private:
      * @return QString
      */
     QString format_number(double number);
+
+    /**
+     * @brief Format a (possibly complex) character
+     *
+     * Real characters are formatted by format_number, ±i as such and other
+     * complex characters (on the unit circle) as exp(aπi/b).
+     *
+     * @param character
+     * @return QString
+     */
+    QString format_character(std::complex<double> character);
 
 private slots:
     /**

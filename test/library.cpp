@@ -21,6 +21,7 @@
 #include "../src/structure.h"
 #include "../src/symmetry/symmetry.h"
 #include "../src/symmetry/point_groups/point_group_label.h"
+#include "../src/practice/practice_config.h"
 #include "../src/practice/practice_flowchart.h"
 
 BOOST_AUTO_TEST_SUITE(library);
@@ -87,6 +88,37 @@ BOOST_AUTO_TEST_CASE(all_enabled_flowcharts_accept_correct_answers) {
             BOOST_TEST_MESSAGE(item.get_name() << ": accepted " << expected.get_name());
         }
     }
+}
+
+// structures whose point group has E+/E- pairs only appear in irreps
+// exercises when this is enabled in the settings (off by default)
+BOOST_AUTO_TEST_CASE(complex_irreps_setting_filters_irreps_exercises) {
+    Library library;
+    std::vector<LibraryItem> items = library.get_items();
+    auto find = [&](const std::string& name) -> LibraryItem& {
+        for (auto& item : items) {
+            if (item.get_name() == name) return item;
+        }
+        throw std::runtime_error("Library item not found: " + name);
+    };
+    LibraryItem& s4n4f4 = find("Tetrathiazyl tetrafluoride");
+    LibraryItem& benzene = find("Benzene");
+
+    auto irreps = std::make_shared<PracticeConfig>();
+    irreps->add_module(PracticeModule::Irreps);
+    BOOST_TEST(!irreps->get_include_complex_irreps());
+    BOOST_TEST(!s4n4f4.can_appear_in_practice(irreps));
+    BOOST_TEST(benzene.can_appear_in_practice(irreps));
+
+    irreps->set_include_complex_irreps(true);
+    BOOST_TEST(s4n4f4.can_appear_in_practice(irreps));
+    BOOST_TEST(benzene.can_appear_in_practice(irreps));
+
+    // other exercises are not affected by the setting
+    auto other = std::make_shared<PracticeConfig>();
+    other->add_module(PracticeModule::Flowchart);
+    other->add_module(PracticeModule::Projection);
+    BOOST_TEST(s4n4f4.can_appear_in_practice(other));
 }
 
 BOOST_AUTO_TEST_SUITE_END();

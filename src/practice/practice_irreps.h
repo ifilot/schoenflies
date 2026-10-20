@@ -19,8 +19,11 @@
 #ifndef PRACTICE_PRACTICE_IRREPS_H
 #define PRACTICE_PRACTICE_IRREPS_H
 
+#include <cmath>
+#include <complex>
 #include <memory>
 #include <stdexcept>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 #include <glm/glm.hpp>
@@ -73,13 +76,18 @@ private:
     void calculate();
 
     /**
-     * @brief Calculate the character of each operation (how many orbitals
-     * remain in place)
+     * @brief Calculate the character of each column of the character table
+     * (how many orbitals remain in place)
      */
     void calculate_characters();
 
     /**
      * @brief Calculate the irreducible representations of the structure
+     *
+     * This applies the little orthogonality theorem, using the complex
+     * conjugate of the characters of the irreducible representations. This
+     * matters for complex-conjugate pairs of irreps (E+ and E-), e.g. in C_n,
+     * C_nh and S_n.
      */
     void calculate_irreps();
 };

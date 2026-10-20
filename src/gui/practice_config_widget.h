@@ -24,10 +24,12 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QSettings>
 #include <QVBoxLayout>
 #include <QWidget>
 #include "../practice/practice_config.h"
 #include "../practice/practice_module.h"
+#include "settings_dialog.h"
 
 class PracticeConfigWidget: public QScrollArea {
     Q_OBJECT

@@ -17,6 +17,7 @@
  */
 
 #include "library_item.h"
+#include "../symmetry/point_groups/point_groups.h"
 
 /**
  * @brief Construct a new LibraryItem object
@@ -88,6 +89,10 @@ const json& LibraryItem::get_item_practice_config() const {
  * @brief Get whether this item can appear in a practice session given the
  * provided practice configuration
  *
+ * Items whose point group has complex-conjugate pairs of irreps (E+ and
+ * E-) only appear in irreducible representation exercises if the
+ * practice configuration includes them.
+ *
  * @param practice_config practice configuration
  * @return true
  * @return false
@@ -98,6 +103,11 @@ const bool LibraryItem::can_appear_in_practice(const std::shared_ptr<PracticeCon
     for (PracticeModule practice_module : practice_config->get_enabled_modules()) {
         std::string key = PracticeModules::get_key(practice_module);
         if (!(config.contains(key) && config[key].contains("enabled") && config[key]["enabled"])) {
+            return false;
+        }
+
+        if (practice_module == PracticeModule::Irreps && !practice_config->get_include_complex_irreps() &&
+            PointGroups::find(this->point_group_label).has_complex_characters()) {
             return false;
         }
     }
