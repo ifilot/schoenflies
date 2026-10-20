@@ -60,79 +60,87 @@ void PracticeIrreps::calculate() {
 }
 
 /**
- * @brief Calculate the character of each operation (how many orbitals
- * remain in place)
+ * @brief Calculate the character of each column of the character table (how
+ * many orbitals remain in place)
  */
 void PracticeIrreps::calculate_characters() {
     std::shared_ptr<Symmetry> symmetry = this->practice_structure->get_symmetry();
     std::shared_ptr<BasisSet> basis_set = this->practice_structure->get_basis_set();
 
-    std::vector<OperationLabelCount> operation_labels_count = symmetry->get_point_group().get_unique_operations();
-    std::vector<Operation> operations = symmetry->get_operation_manager()->get_operations();
+    std::vector<OperationLabelCount> character_columns = symmetry->get_point_group().get_character_columns();
+    std::unordered_map<unsigned int, Operation> operations = symmetry->get_operation_manager()->get_point_group_operations();
 
-    for (auto& operation_label_count : operation_labels_count) {
-        // find an operation with this label
-        unsigned int operation_index;
-        bool found = false;
+    for (auto& character_column : character_columns) {
+        // find an operation with this label and power; the basis set spans a
+        // real representation, so an operation and its inverse (and thus any
+        // operation with this label) have the same character
+        Operation* operation = nullptr;
+        for (auto& point_group_operation : operations) {
+            OperationLabel& label = point_group_operation.second.get_label();
+            if (!label.matches_power(character_column.get_label())) continue;
 
-        for (unsigned int i = 0; i < operations.size(); ++i) {
-            if (operations[i].get_label().matches(operation_label_count.get_label())) {
-                operation_index = i;
-                found = true;
-                break;
-            }
+            operation = &point_group_operation.second;
+            // prefer the operation as it was found, for reproducible rounding
+            if (label.get_multiple() == character_column.get_label().get_multiple()) break;
         }
 
-        if (!found) {
+        if (operation == nullptr) {
             throw std::runtime_error("Could not find an operation, this should not happen");
         }
 
-        Operation& operation = operations[operation_index];
+        // matrix including the power of the operation (e.g. C5^2 instead of C5)
+        glm::mat3x3 matrix = operation->calculate_fractional_matrix(1);
 
         // determine the character of this operation
         double character = 0;
         for (unsigned int index : basis_set->get_atoms()) {
-            if (operation.get_result_index(index) == index) {
+            if (operation->get_result_index(index) == index) {
                 if (basis_set->get_orbital_label().get_azimuthal() == 0) {  // s
                     character++;
                 } else {  // p
-                    character += glm::dot(operation.do_atom_operation(basis_set->get_orbital_vector()),
+                    character += glm::dot(matrix * basis_set->get_orbital_vector(),
                                           basis_set->get_orbital_vector());
                 }
             }
         }
-        character *= operation_label_count.get_count();  // multiply by number of operations
+        character *= character_column.get_count();  // multiply by number of operations
 
-        this->correct_characters.push_back(std::make_pair(operation_label_count, character));
+        this->correct_characters.push_back(std::make_pair(character_column, character));
     }
 }
 
 /**
  * @brief Calculate the irreducible representations of the structure
+ *
+ * This applies the little orthogonality theorem, using the complex conjugate
+ * of the characters of the irreducible representations. This matters for
+ * complex-conjugate pairs of irreps (E+ and E-), e.g. in C_n, C_nh and S_n.
  */
 void PracticeIrreps::calculate_irreps() {
     std::shared_ptr<Symmetry> symmetry = this->practice_structure->get_symmetry();
     std::shared_ptr<BasisSet> basis_set = this->practice_structure->get_basis_set();
 
-    std::vector<int> character_coefficients;
+    std::vector<double> character_coefficients;
     character_coefficients.push_back(basis_set->get_atoms().size());  // manually add identity
     for (auto character : correct_characters) {
         character_coefficients.push_back(character.second);
     }
 
     std::vector<IrrepLabel> irreps = symmetry->get_point_group().get_irreps();
-    std::vector<std::vector<double>> characters = symmetry->get_point_group().get_characters();
+    std::vector<std::vector<std::complex<double>>> characters = symmetry->get_point_group().get_characters();
     unsigned int order = symmetry->get_point_group().get_order();
 
     for (unsigned int i = 0; i < irreps.size(); ++i) {
         if (character_coefficients.size() != characters[i].size()) {
             throw std::runtime_error("Vector sizes have to be equal to calculate irreps");
         }
-        double dot = 0;
+        std::complex<double> dot = 0;
         for (unsigned int j = 0; j < character_coefficients.size(); ++j) {
-            dot += character_coefficients[j] * characters[i][j];
+            dot += character_coefficients[j] * std::conj(characters[i][j]);
         }
 
-        this->correct_irreps.push_back(std::make_pair(irreps[i], dot / order));
+        // multiplicities are integers, so remove numerical noise (and negative zero)
+        double multiplicity = std::round(dot.real() / order) + 0.0;
+        this->correct_irreps.push_back(std::make_pair(irreps[i], multiplicity));
     }
 }

@@ -296,4 +296,21 @@ BOOST_AUTO_TEST_CASE(tropylium) {
     BOOST_TEST(num_v == 7);
 }
 
+BOOST_AUTO_TEST_CASE(matches_power) {
+    OperationLabel C4(OperationLabel::Element::C, 4);
+    OperationLabel C4_3(OperationLabel::Element::C, 4, 3);
+    OperationLabel C4_m1(OperationLabel::Element::C, 4, -1);
+    OperationLabel S3_5(OperationLabel::Element::S, 3, 5);
+    OperationLabel S3_m1(OperationLabel::Element::S, 3, -1);
+    OperationLabel S4_3(OperationLabel::Element::S, 4, 3);
+    OperationLabel S4_m1(OperationLabel::Element::S, 4, -1);
+
+    BOOST_TEST(C4_3.matches_power(C4_m1));
+    BOOST_TEST(!C4_3.matches_power(C4));
+    BOOST_TEST(C4_m1.matches_strict(C4));    // an operation and its inverse form one class
+    BOOST_TEST(S3_5.matches_power(S3_m1));   // S3 has order 6
+    BOOST_TEST(S4_3.matches_power(S4_m1));
+    BOOST_TEST(!S4_3.matches_power(C4_m1));  // different element
+}
+
 BOOST_AUTO_TEST_SUITE_END();

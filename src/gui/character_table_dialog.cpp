@@ -70,7 +70,20 @@ CharacterTableDialog::CharacterTableDialog(QWidget* parent)
     this->character_table_view->setHorizontalHeader(horizontal_header);
     this->character_table_view->setVerticalHeader(vertical_header);
 
-    layout->addWidget(this->character_table_view);
+    QVBoxLayout *character_table_layout = new QVBoxLayout;
+    character_table_layout->addWidget(this->character_table_view);
+
+    this->complex_characters_note = new QLabel;
+    this->complex_characters_note->setText(
+        "E<sub>+</sub> and E<sub>\u2212</sub> form a complex-conjugate pair. They are degenerate "
+        "(time-reversal symmetry) and often combined into a single E. When applying the little "
+        "orthogonality theorem, use the complex conjugate of their characters.");
+    this->complex_characters_note->setTextFormat(Qt::TextFormat::RichText);
+    this->complex_characters_note->setWordWrap(true);
+    this->complex_characters_note->setVisible(false);
+    character_table_layout->addWidget(this->complex_characters_note);
+
+    layout->addLayout(character_table_layout);
 }
 
 /**
@@ -101,6 +114,8 @@ void CharacterTableDialog::show_point_group(unsigned int index) {
     this->character_table_model->clear();
 
     PointGroup point_group = PointGroups::point_groups[index];
+
+    this->complex_characters_note->setVisible(point_group.has_complex_characters());
 
     if (!point_group.get_label().is_linear()) {
         this->populate_character_table(point_group);
@@ -152,7 +167,7 @@ void CharacterTableDialog::populate_character_table(PointGroup& point_group) {
         this->character_table_model->setVerticalHeaderItem(i, item);
     }
 
-    std::vector<OperationLabelCount> operations = point_group.get_unique_operations();
+    std::vector<OperationLabelCount> operations = point_group.get_character_columns();
     // manually add identity
     QStandardItem *identity_item = new QStandardItem("<span><i>E</i></span>");
     this->character_table_model->setHorizontalHeaderItem(0, identity_item);
@@ -162,10 +177,10 @@ void CharacterTableDialog::populate_character_table(PointGroup& point_group) {
         this->character_table_model->setHorizontalHeaderItem(j + 1, item);
     }
 
-    std::vector<std::vector<double>> characters = point_group.get_characters();
+    std::vector<std::vector<std::complex<double>>> characters = point_group.get_characters();
     for (unsigned int i = 0; i < irreps.size(); ++i) {
         for (unsigned int j = 0; j < operations.size() + 1; ++j) {
-            QStandardItem *item = new QStandardItem(this->format_number(characters[i][j]));
+            QStandardItem *item = new QStandardItem(this->format_character(characters[i][j]));
             item->setFlags(Qt::ItemFlag::NoItemFlags);
             item->setTextAlignment(Qt::AlignmentFlag::AlignCenter);
             this->character_table_model->setItem(i, j, item);
@@ -356,6 +371,46 @@ QString CharacterTableDialog::format_number(double number) {
     QString numerator_str = (numerator > 1) ? QString::number(numerator) : "";
 
     return sign + QString("2 cos(%1π/%2)").arg(numerator_str).arg(denominator);
+}
+
+/**
+ * @brief Format a (possibly complex) character
+ *
+ * Real characters are formatted by format_number, ±i as such and other
+ * complex characters (on the unit circle) as exp(aπi/b).
+ *
+ * @param character
+ * @return QString
+ */
+QString CharacterTableDialog::format_character(std::complex<double> character) {
+    const double tolerance = 1e-8;
+
+    if (std::abs(character.imag()) < tolerance) {
+        return this->format_number(character.real());
+    }
+
+    if (std::abs(character.real()) < tolerance && std::abs(std::abs(character.imag()) - 1.0) < tolerance) {
+        return (character.imag() > 0) ? "i" : "\u2212i";
+    }
+
+    // complex number in the form exp(aπi/b), with the angle aπ/b in (-π, π]
+    if (std::abs(std::abs(character) - 1.0) < tolerance) {
+        double fraction = std::arg(character) / std::numbers::pi;
+        for (int denominator = 2; denominator <= 24; ++denominator) {
+            double numerator = fraction * denominator;
+            if (std::abs(numerator - std::round(numerator)) > 1e-6) continue;
+
+            int numerator_int = std::round(numerator);
+            QString sign = (numerator_int < 0) ? "\u2212" : "";
+            QString numerator_str = (std::abs(numerator_int) > 1) ? QString::number(std::abs(numerator_int)) : "";
+
+            return QString("exp(%1%2πi/%3)").arg(sign).arg(numerator_str).arg(denominator);
+        }
+    }
+
+    QString imag_sign = (character.imag() < 0) ? " \u2212 " : " + ";
+    return this->format_number(character.real()) + imag_sign +
+        QString::number(std::abs(character.imag()), 'g', 4) + "i";
 }
 
 /**

@@ -75,6 +75,8 @@ void PracticeConfigWidget::create_practice_config() {
     if (this->flowchart_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Flowchart);
     if (this->irreps_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Irreps);
     if (this->projection_checkbox->isChecked()) this->practice_config->add_module(PracticeModule::Projection);
+    QSettings settings("Schoenflies", "Schoenflies");
+    this->practice_config->set_include_complex_irreps(SettingsDialog::load_include_complex_irreps(settings));
 
     if (this->practice_config->get_enabled_modules().size() > 0) emit start();
 }

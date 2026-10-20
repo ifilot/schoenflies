@@ -23,6 +23,7 @@
 BOOST_TEST_DONT_PRINT_LOG_VALUE(IrrepLabel::Mulliken);
 BOOST_TEST_DONT_PRINT_LOG_VALUE(IrrepLabel::Parity);
 BOOST_TEST_DONT_PRINT_LOG_VALUE(IrrepLabel::Prime);
+BOOST_TEST_DONT_PRINT_LOG_VALUE(IrrepLabel::Component);
 
 BOOST_AUTO_TEST_SUITE(irrep_label);
 
@@ -84,6 +85,26 @@ BOOST_AUTO_TEST_CASE(subscript_prime) {
 
     BOOST_TEST(A1p.get_name() == "A1\u2032");
     BOOST_TEST(A1p.get_name_html() == "A<sub>1</sub>\u2032");
+}
+
+BOOST_AUTO_TEST_CASE(component) {
+    IrrepLabel Ep = IrrepLabel(IrrepLabel::Mulliken::E, IrrepLabel::Component::Plus);
+    IrrepLabel E1gm = IrrepLabel(IrrepLabel::Mulliken::E, 1, IrrepLabel::Parity::g, IrrepLabel::Component::Minus);
+    IrrepLabel Epp = IrrepLabel(IrrepLabel::Mulliken::E, IrrepLabel::Prime::Single, IrrepLabel::Component::Plus);
+    IrrepLabel E = IrrepLabel(IrrepLabel::Mulliken::E);
+
+    BOOST_TEST(Ep.get_component() == IrrepLabel::Component::Plus);
+    BOOST_TEST(E1gm.get_component() == IrrepLabel::Component::Minus);
+    BOOST_TEST(E1gm.get_subscript() == 1);
+    BOOST_TEST(E1gm.get_parity() == IrrepLabel::Parity::Gerade);
+    BOOST_TEST(E.get_component() == IrrepLabel::Component::None);
+
+    BOOST_TEST(Ep.get_name() == "E+");
+    BOOST_TEST(Ep.get_name_html() == "E<sub>+</sub>");
+    BOOST_TEST(E1gm.get_name() == "E1g\u2212");
+    BOOST_TEST(E1gm.get_name_html() == "E<sub>1g\u2212</sub>");
+    BOOST_TEST(Epp.get_name() == "E+\u2032");
+    BOOST_TEST(Epp.get_name_html() == "E<sub>+</sub>\u2032");
 }
 
 BOOST_AUTO_TEST_SUITE_END();

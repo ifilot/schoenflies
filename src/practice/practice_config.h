@@ -29,6 +29,7 @@ private:
     std::vector<PracticeModule> enabled_modules;
     int current_module_index = -1;
     bool select_new_structure;
+    bool include_complex_irreps = false;
 
 public:
     /**
@@ -66,6 +67,25 @@ public:
      * @return false
      */
     bool get_select_new_structure();
+
+    /**
+     * @brief Set whether structures whose point group has complex-conjugate
+     * pairs of irreps (E+ and E-) are included in irreducible representation
+     * exercises
+     *
+     * @param include_complex_irreps
+     */
+    void set_include_complex_irreps(bool include_complex_irreps);
+
+    /**
+     * @brief Get whether structures whose point group has complex-conjugate
+     * pairs of irreps (E+ and E-) are included in irreducible representation
+     * exercises
+     *
+     * @return true
+     * @return false
+     */
+    const bool get_include_complex_irreps() const;
 };
 
 #endif  // PRACTICE_PRACTICE_CONFIG_H

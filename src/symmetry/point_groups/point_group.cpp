@@ -49,7 +49,42 @@ PointGroup::PointGroup(
     unsigned int num_reflections,
     std::vector<OperationLabelCount> unique_operations,
     std::vector<IrrepLabel> irreps,
-    std::vector<std::vector<double>> characters
+    std::vector<std::vector<std::complex<double>>> characters
+) : PointGroup(label, order, num_inversions, num_proper_rotations, num_improper_rotations, num_reflections,
+               unique_operations, unique_operations, irreps, characters) {}
+
+/**
+ * @brief Construct a new Point Group object whose character table has
+ * different columns than its list of unique operations
+ *
+ * This is needed for point groups with complex-conjugate pairs of
+ * irreducible representations (E+ and E-). An operation and its inverse
+ * (e.g. C4 and C4^3) have conjugate characters in these irreps, so they
+ * have to be listed as separate columns, whereas the list of unique
+ * operations groups them together (e.g. 2 C4).
+ *
+ * @param label point group label
+ * @param order order of this point group (total number of unique symmetry operations)
+ * @param num_inversions number of inversions in this point group
+ * @param num_proper_rotations number of proper rotations per degree in this point group
+ * @param num_improper_rotations number of improper rotations per degree in this point group
+ * @param num_reflections number of reflections in this point group
+ * @param unique_operations vector of labels of unique operations in this point group
+ * @param character_columns vector of labels of the columns of the character table
+ * @param irreps vector of irreducible representations in this point group
+ * @param characters matrix of characters (indexed as [irrep][column])
+ */
+PointGroup::PointGroup(
+    PointGroupLabel label,
+    unsigned int order,
+    unsigned int num_inversions,
+    std::unordered_map<unsigned int, unsigned int> num_proper_rotations,
+    std::unordered_map<unsigned int, unsigned int> num_improper_rotations,
+    unsigned int num_reflections,
+    std::vector<OperationLabelCount> unique_operations,
+    std::vector<OperationLabelCount> character_columns,
+    std::vector<IrrepLabel> irreps,
+    std::vector<std::vector<std::complex<double>>> characters
 ) {
     this->label = label;
     this->order = order;
@@ -58,6 +93,7 @@ PointGroup::PointGroup(
     this->num_improper_rotations = num_improper_rotations;
     this->num_reflections = num_reflections;
     this->unique_operations = unique_operations;
+    this->character_columns = character_columns;
     this->irreps = irreps;
     this->characters = characters;
 }
@@ -153,6 +189,20 @@ const std::vector<OperationLabelCount>& PointGroup::get_unique_operations() cons
 }
 
 /**
+ * @brief Get the columns of the character table of the point group
+ * (excluding the identity)
+ *
+ * For most point groups these are the unique operations, but for point
+ * groups with complex-conjugate irreps an operation and its inverse are
+ * listed separately.
+ *
+ * @return const std::vector<OperationLabelCount>&
+ */
+const std::vector<OperationLabelCount>& PointGroup::get_character_columns() const {
+    return this->character_columns;
+}
+
+/**
  * @brief Get the irreducible representations of the point group
  *
  * @return const std::vector<IrrepLabel>&
@@ -164,8 +214,24 @@ const std::vector<IrrepLabel>& PointGroup::get_irreps() const {
 /**
  * @brief Get the characters matrix of the point group
  *
- * @return const std::vector<std::vector<double>>&
+ * @return const std::vector<std::vector<std::complex<double>>>&
  */
-const std::vector<std::vector<double>>& PointGroup::get_characters() const {
+const std::vector<std::vector<std::complex<double>>>& PointGroup::get_characters() const {
     return this->characters;
+}
+
+/**
+ * @brief Check whether the character table contains complex characters,
+ * i.e. whether the point group has complex-conjugate pairs of irreps
+ *
+ * @return true if any character has a non-zero imaginary part
+ * @return false otherwise
+ */
+const bool PointGroup::has_complex_characters() const {
+    for (auto& row : this->characters) {
+        for (auto& character : row) {
+            if (std::abs(character.imag()) > 1e-8) return true;
+        }
+    }
+    return false;
 }

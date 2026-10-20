@@ -20,7 +20,9 @@
 #define SYMMETRY_POINT_GROUPS_POINT_GROUPS_H
 
 #include <cmath>
+#include <complex>
 #include <math.h>
+#include <stdexcept>
 #include <vector>
 #include <numbers>
 #include "../irreps/irrep_label.h"
@@ -39,6 +41,7 @@ typedef IrrepLabel I;
 typedef IrrepLabel::Mulliken M;
 typedef IrrepLabel::Parity IParity;
 typedef IrrepLabel::Prime IPrime;
+typedef IrrepLabel::Component IComp;
 
 #define TC1P4  (2.0 * std::cos(1.0 * std::numbers::pi / 4.0))   // 1.4142
 #define TC1P5  (2.0 * std::cos(1.0 * std::numbers::pi / 5.0))   // 1.6180
@@ -55,12 +58,23 @@ typedef IrrepLabel::Prime IPrime;
 #define TC1P10 (2.0 * std::cos(1.0 * std::numbers::pi / 10.0))  // 1.9021
 #define TC3P10 (2.0 * std::cos(3.0 * std::numbers::pi / 10.0))  // 1.1756
 
+// exp(2πik/n), used for the complex characters of separably degenerate (E+/E-) irreps
+#define EPS(k, n) std::polar(1.0, 2.0 * std::numbers::pi * (k) / (n))
+
 class PointGroups final {
 public:
     /**
      * @brief List of supported point groups
      */
     static const std::vector<PointGroup> point_groups;
+
+    /**
+     * @brief Find the point group with the given label
+     *
+     * @param label point group label
+     * @return const PointGroup&
+     */
+    static const PointGroup& find(PointGroupLabel label);
 };
 
 #endif  // SYMMETRY_POINT_GROUPS_POINT_GROUPS_H

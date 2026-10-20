@@ -55,11 +55,22 @@ public:
         Double
     };
 
+    /**
+     * @brief Component of a separably degenerate pair (complex-conjugate
+     * one-dimensional irreducible representations, labelled E+ and E-)
+     */
+    enum class Component : unsigned char {
+        None,
+        Plus,
+        Minus
+    };
+
 private:
     Mulliken mulliken;
     unsigned int subscript;
     Parity parity;
     Prime prime;
+    Component component = Component::None;
 
 public:
     /**
@@ -127,6 +138,61 @@ public:
     IrrepLabel(Mulliken mulliken, unsigned int subscript, Prime prime);
 
     /**
+     * @brief Construct a new Irrep Label object
+     *
+     * @param mulliken Mulliken symbol
+     * @param component component of a complex-conjugate pair
+     */
+    IrrepLabel(Mulliken mulliken, Component component);
+
+    /**
+     * @brief Construct a new Irrep Label object
+     *
+     * @param mulliken Mulliken symbol
+     * @param subscript integer subscript
+     * @param component component of a complex-conjugate pair
+     */
+    IrrepLabel(Mulliken mulliken, unsigned int subscript, Component component);
+
+    /**
+     * @brief Construct a new Irrep Label object
+     *
+     * @param mulliken Mulliken symbol
+     * @param parity symmetry with respect to a center of inversion
+     * @param component component of a complex-conjugate pair
+     */
+    IrrepLabel(Mulliken mulliken, Parity parity, Component component);
+
+    /**
+     * @brief Construct a new Irrep Label object
+     *
+     * @param mulliken Mulliken symbol
+     * @param subscript integer subscript
+     * @param parity symmetry with respect to a center of inversion
+     * @param component component of a complex-conjugate pair
+     */
+    IrrepLabel(Mulliken mulliken, unsigned int subscript, Parity parity, Component component);
+
+    /**
+     * @brief Construct a new Irrep Label object
+     *
+     * @param mulliken Mulliken symbol
+     * @param prime symmetry with respect to a horizontal mirror plane
+     * @param component component of a complex-conjugate pair
+     */
+    IrrepLabel(Mulliken mulliken, Prime prime, Component component);
+
+    /**
+     * @brief Construct a new Irrep Label object
+     *
+     * @param mulliken Mulliken symbol
+     * @param subscript integer subscript
+     * @param prime symmetry with respect to a horizontal mirror plane
+     * @param component component of a complex-conjugate pair
+     */
+    IrrepLabel(Mulliken mulliken, unsigned int subscript, Prime prime, Component component);
+
+    /**
      * @brief Get the Mulliken symbol of this irreducible representation
      *
      * @return const Mulliken
@@ -155,6 +221,13 @@ public:
     const Prime get_prime() const;
 
     /**
+     * @brief Get the component (E+ or E-) of this irreducible representation
+     *
+     * @return const Component
+     */
+    const Component get_component() const;
+
+    /**
      * @brief Get the name of this irreducible representation in plaintext
      *
      * @return const std::string
@@ -168,6 +241,14 @@ public:
      * @return const std::string
      */
     const std::string get_name_html() const;
+
+private:
+    /**
+     * @brief Get the sign denoting the component of a complex-conjugate pair
+     *
+     * @return const std::string "+", "\u2212" or an empty string
+     */
+    const std::string get_component_suffix() const;
 };
 
 #endif  // SYMMETRY_IRREPS_IRREP_LABEL_H

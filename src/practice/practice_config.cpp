@@ -73,3 +73,26 @@ PracticeModule PracticeConfig::get_next_module() {
 bool PracticeConfig::get_select_new_structure() {
     return this->select_new_structure;
 }
+
+/**
+ * @brief Set whether structures whose point group has complex-conjugate
+ * pairs of irreps (E+ and E-) are included in irreducible representation
+ * exercises
+ *
+ * @param include_complex_irreps
+ */
+void PracticeConfig::set_include_complex_irreps(bool include_complex_irreps) {
+    this->include_complex_irreps = include_complex_irreps;
+}
+
+/**
+ * @brief Get whether structures whose point group has complex-conjugate
+ * pairs of irreps (E+ and E-) are included in irreducible representation
+ * exercises
+ *
+ * @return true
+ * @return false
+ */
+const bool PracticeConfig::get_include_complex_irreps() const {
+    return this->include_complex_irreps;
+}
